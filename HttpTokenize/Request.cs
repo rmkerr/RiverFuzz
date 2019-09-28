@@ -21,6 +21,7 @@ namespace HttpTokenize
             Request clone = new Request();
             clone.Url = Url;
             clone.Method = Method;
+            clone.Content = Content;
 
             return clone;
         }
@@ -28,6 +29,8 @@ namespace HttpTokenize
         public HttpRequestMessage GenerateRequest()
         {
             HttpRequestMessage request = new HttpRequestMessage(Method, Url);
+            request.Content = Content;
+            request.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
             return request;
         }
 

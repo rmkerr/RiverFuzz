@@ -47,19 +47,21 @@ namespace HttpTokenize
             return Task.CompletedTask;
         }
 
-        public void ReplaceValue(Request request, string value)
+        public Task ReplaceValue(Request request, string value)
         {
             QueryToken token = new QueryToken(Name, value, Types.Integer | Types.String);
             ReplaceToken(request, token);
+            return Task.CompletedTask;
         }
 
-        public void ReplaceName(Request request, string name)
+        public Task ReplaceName(Request request, string name)
         {
             QueryToken token = new QueryToken(name, Value, Types.Integer | Types.String);
             ReplaceToken(request, token);
+            return Task.CompletedTask;
         }
 
-        public void ReplaceToken(Request request, IToken replacement)
+        public Task ReplaceToken(Request request, IToken replacement)
         {
             Uri url = request.Url;
             NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
@@ -91,6 +93,7 @@ namespace HttpTokenize
             }
 
             request.Url = new Uri(builder.ToString());
+            return Task.CompletedTask;
         }
 
         public override string ToString()

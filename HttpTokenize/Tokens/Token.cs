@@ -30,8 +30,8 @@ namespace HttpTokenize.Tokens
         public Types SupportedTypes { get; }
 
         public Task CopyIntoRequest(Request request);
-        public void ReplaceValue(Request request, string name);
-        public void ReplaceName(Request request, string value);
-        public void ReplaceToken(Request request, IToken replacement);
+        public Task ReplaceValue(Request request, string name);
+        public Task ReplaceName(Request request, string value);
+        public Task ReplaceToken(Request request, IToken replacement);
     }
 }

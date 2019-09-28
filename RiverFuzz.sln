@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fuzz", "Fuzz\Fuzz.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpTokenize", "HttpTokenize\HttpTokenize.csproj", "{ABEC6E0C-37AF-44B0-9152-2CA490E014B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{8941F86D-18E3-491E-9A75-FDB33B18FF4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ABEC6E0C-37AF-44B0-9152-2CA490E014B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABEC6E0C-37AF-44B0-9152-2CA490E014B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABEC6E0C-37AF-44B0-9152-2CA490E014B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8941F86D-18E3-491E-9A75-FDB33B18FF4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8941F86D-18E3-491E-9A75-FDB33B18FF4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8941F86D-18E3-491E-9A75-FDB33B18FF4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8941F86D-18E3-491E-9A75-FDB33B18FF4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
