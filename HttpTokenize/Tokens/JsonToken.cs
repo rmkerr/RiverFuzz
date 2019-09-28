@@ -20,25 +20,26 @@ namespace HttpTokenize.Tokens
         public string Value { get; }
         public Types SupportedTypes { get; }
 
-        public async Task CopyIntoRequest(Request request)
+        public Task CopyIntoRequest(Request request)
         {
-            string content = await request.Content.ReadAsStringAsync();
+            string content = request.Content;
             try
             {
                 JObject json_content = JObject.Parse(content);
 
                 json_content.Add(Name, JValue.CreateString(Value));
-                request.Content = new StringContent(json_content.ToString());
+                request.Content = json_content.ToString();
             }
             catch
             {
                 // TODO: Not JSON
             }
+            return Task.CompletedTask;
         }
 
-        public async Task ReplaceName(Request request, string value)
+        public Task ReplaceName(Request request, string value)
         {
-            string content = await request.Content.ReadAsStringAsync();
+            string content = request.Content;
             try
             {
                 JObject json_content = JObject.Parse(content);
@@ -47,17 +48,18 @@ namespace HttpTokenize.Tokens
 
                 parent.Replace(new JProperty(value, token));
 
-                request.Content = new StringContent(json_content.ToString());
+                request.Content = json_content.ToString();
             }
             catch
             {
                 // TODO: Not JSON
             }
+            return Task.CompletedTask;
         }
 
-        public async Task ReplaceToken(Request request, IToken replacement)
+        public Task ReplaceToken(Request request, IToken replacement)
         {
-            string content = await request.Content.ReadAsStringAsync();
+            string content = request.Content;
             try
             {
                 JObject json_content = JObject.Parse(content);
@@ -73,29 +75,31 @@ namespace HttpTokenize.Tokens
                     parent.Replace(new JProperty(replacement.Name, JValue.CreateString(replacement.Value)));
                 }
 
-                request.Content = new StringContent(json_content.ToString());
+                request.Content = json_content.ToString();
             }
             catch
             {
                 // TODO: Not JSON
             }
+            return Task.CompletedTask;
         }
 
-        public async Task ReplaceValue(Request request, string value)
+        public Task ReplaceValue(Request request, string value)
         {
-            string content = await request.Content.ReadAsStringAsync();
+            string content = request.Content;
             try
             {
                 JObject json_content = JObject.Parse(content);
                 JToken token = json_content.SelectToken($"..{Name}");
                 token.Replace(JValue.CreateString(value));
 
-                request.Content = new StringContent(json_content.ToString());
+                request.Content = json_content.ToString();
             }
             catch
             {
                 // TODO: Not JSON
             }
+            return Task.CompletedTask;
         }
 
         public override string ToString()

@@ -7,9 +7,9 @@ using System.IO;
 
 namespace HttpTokenize.Tokenizers
 {
-    class JsonTokenizer
+    public class JsonTokenizer : ITokenizer
     {
-        List<IToken> ExtractTokens(string json)
+        public List<IToken> ExtractTokens(string json)
         {
             List<IToken> tokens = new List<IToken>();
 
