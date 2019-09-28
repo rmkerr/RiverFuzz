@@ -9,11 +9,11 @@ namespace HttpTokenize.Tokenizers
 {
     public class JsonTokenizer : ITokenizer
     {
-        public List<IToken> ExtractTokens(string json)
+        public List<IToken> ExtractTokens(Request request)
         {
             List<IToken> tokens = new List<IToken>();
 
-            JsonTextReader reader = new JsonTextReader(new StringReader(json));
+            JsonTextReader reader = new JsonTextReader(new StringReader(request.Content));
             while (reader.Read())
             {
                 if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)

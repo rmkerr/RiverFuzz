@@ -35,10 +35,18 @@ namespace Fuzz
             HttpResponseMessage responseMessage = await client.SendAsync(request2.GenerateRequest());
             Console.WriteLine(responseMessage.StatusCode);
 
-            ITokenizer tokenizer = new JsonTokenizer();
+            List<IToken> request1Tokens = new List<IToken>();
+            List<IToken> request2Tokens = new List<IToken>();
 
-            List<IToken> request1Tokens = tokenizer.ExtractTokens(request1.Content);
-            List<IToken> request2Tokens = tokenizer.ExtractTokens(request2.Content);
+            List<ITokenizer> tokenizers = new List<ITokenizer>();
+            tokenizers.Add(new JsonTokenizer());
+            tokenizers.Add(new QueryTokenizer());
+
+            foreach (ITokenizer tokenizer in tokenizers)
+            {
+                request1Tokens.AddRange(tokenizer.ExtractTokens(request1));
+                request2Tokens.AddRange(tokenizer.ExtractTokens(request2));
+            }
 
             foreach (IToken token1 in request1Tokens)
             {
