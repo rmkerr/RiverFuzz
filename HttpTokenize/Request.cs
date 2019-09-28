@@ -4,6 +4,8 @@ using System.Web;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using HttpTokenize.Tokens;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace HttpTokenize
 {
@@ -40,7 +42,30 @@ namespace HttpTokenize
             }
 
             // TODO: iff json
-               foreach
+            string body = Content.ReadAsStringAsync().Result;
+            JsonTextReader reader = new JsonTextReader(new StringReader(body));
+
+            while (reader.Read())
+            {
+                if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                {
+                    string name = reader.Value.ToString();
+                    reader.Read();
+                    if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
+                    {
+                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.String));
+                    }
+                    else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
+                    {
+                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Integer));
+                    }
+                    else if (reader.TokenType == Newtonsoft.Json.JsonToken.Boolean)
+                    {
+                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Boolean));
+                    }
+                }
+            }
+
 
             return tokens;
         }

@@ -40,5 +40,10 @@ namespace HttpTokenize.Tokens
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            return $"JsonToken: {Name}={Value}";
+        }
     }
 }

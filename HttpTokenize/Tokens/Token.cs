@@ -11,6 +11,7 @@ namespace HttpTokenize.Tokens
         None = 0,
         Integer = 1,
         String = 2,
+        Boolean = 4
     };
 
     // TODO
