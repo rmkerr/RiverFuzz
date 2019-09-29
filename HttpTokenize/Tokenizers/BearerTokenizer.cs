@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using HttpTokenize.Tokens;
+using Newtonsoft.Json;
 
 namespace HttpTokenize.Tokenizers
 {
@@ -27,7 +30,24 @@ namespace HttpTokenize.Tokenizers
 
         public List<IToken> ExtractTokens(Response response)
         {
-            throw new NotImplementedException();
+            List<IToken> tokens = new List<IToken>();
+
+            Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            JsonTextReader reader = new JsonTextReader(new StringReader(response.Content));
+            while (reader.Read())
+            {
+                if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                {
+                    string name = reader.Value.ToString();
+                    reader.Read();
+                    if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
+                    {
+                        tokens.Add(new BearerToken(reader.Value.ToString()));
+                    }
+                }
+            }
+            return tokens;
         }
     }
 }

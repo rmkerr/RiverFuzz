@@ -22,7 +22,7 @@ namespace Fuzz
             Request addItemToCart = new Request();
             addItemToCart.Url = new Uri(@"http://localhost/api/BasketItems/");
             addItemToCart.Method = HttpMethod.Post;
-            addItemToCart.Content = "{\"ProductId\":24,\"BasketId\":\"7\",\"quantity\":1}";
+            addItemToCart.Content = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
             addItemToCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
 
             Request loginUser = new Request();
@@ -35,15 +35,35 @@ namespace Fuzz
             knownRequests.Add(addItemToCart);
             knownRequests.Add(loginUser);
 
-            // Set up HttpClient. TODO: Break requirement that we hold bearer token and manually set content type json
+            // Set up HttpClient. TODO: Break requirement that we set content type json
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(5);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTcxODgxOCwiZXhwIjoxNTY5NzM2ODE4fQ.q9zs_-mfnFpWAOBhltgaVtQU115ZgiaoiOlKsy0qUqNNOZQNUo4IeXT0M2bglvIpW1qteixG_LdntAScCsNRLRfVkVlE87-VP5yAL09CdJwYQfhFwyPoZRrT_nW_JXnM6_r4ST6tnJ3Fq91-ZbaRdjwtaFT112fOT5LoyLamsbM");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
+            Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+
+            List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
+            responseTokenizers.Add(new JsonTokenizer());
+            responseTokenizers.Add(new BearerTokenizer());
+
+            List<IToken> results = parsedResponse.GetResults(responseTokenizers);
+            foreach (IToken req in results)
+            {
+                Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");
+                // TODO: Break requirement that we set the bearer token manually.
+                if ((req.SupportedTypes & Types.BearerToken) != Types.None)
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", req.Value);
+                }
+            }
+
+            response = await client.SendAsync(addItemToCart.GenerateRequest());
+            parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+            Console.WriteLine(parsedResponse.Status);
+            Console.WriteLine(parsedResponse.Content);
 
             // Add all supported tokenizers.
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
