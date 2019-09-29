@@ -32,10 +32,6 @@ namespace Fuzz
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTcxODgxOCwiZXhwIjoxNTY5NzM2ODE4fQ.q9zs_-mfnFpWAOBhltgaVtQU115ZgiaoiOlKsy0qUqNNOZQNUo4IeXT0M2bglvIpW1qteixG_LdntAScCsNRLRfVkVlE87-VP5yAL09CdJwYQfhFwyPoZRrT_nW_JXnM6_r4ST6tnJ3Fq91-ZbaRdjwtaFT112fOT5LoyLamsbM");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request2.GenerateRequest());
-            Console.WriteLine(responseMessage.StatusCode);
-
-
             List<IToken> currentSequenceTokens = new List<IToken>();
             List<IToken> request2Tokens = new List<IToken>();
 
