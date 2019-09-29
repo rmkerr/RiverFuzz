@@ -35,7 +35,10 @@ namespace HttpTokenize
             request.Content = new StringContent(Content);
             request.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
 
-            //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "");
+            if (Headers.ContainsKey("Authorization"))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Headers["Authorization"]);
+            }
 
             return request;
         }

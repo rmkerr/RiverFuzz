@@ -43,49 +43,35 @@ namespace Fuzz
             client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            // Force a login.
-            HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
-            Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-
             // Load all response tokenizers.
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
 
-            // Parse and iterate through all response tokens.
-            TokenCollection results = parsedResponse.GetResults(responseTokenizers);
-            foreach (IToken req in results)
-            {
-                Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");
-
-                // TODO: Break requirement that we set the bearer token manually.
-                if ((req.SupportedTypes & Types.BearerToken) != Types.None)
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", req.Value);
-                }
-            }
-
-            // 
-            response = await client.SendAsync(addItemToCart.GenerateRequest());
-            parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-            Console.WriteLine(parsedResponse.Status);
-            Console.WriteLine(parsedResponse.Content);
-
-            // Add all supported tokenizers.
+            // Load all request tokenizers.
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
             request_tokenizers.Add(new JsonTokenizer());
             request_tokenizers.Add(new QueryTokenizer());
             request_tokenizers.Add(new BearerTokenizer());
 
-            for (int i = 0; i < knownRequests.Count; ++i)
-            {
-                Console.WriteLine($"\n{knownRequests[i].Url}");
-                TokenCollection requirements = knownRequests[i].GetRequirements(request_tokenizers);
-                foreach (IToken req in requirements)
-                {
-                    Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");
-                }
-            }
+            // Force a login.
+            HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
+            Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+
+            // Parse and iterate through all response tokens from the login.
+            TokenCollection requestResults = parsedResponse.GetResults(responseTokenizers);
+
+            // Copy over the results to a new request.
+            Request addItemUpdated = addItemToCart.Clone();
+            TokenCollection requirements = addItemUpdated.GetRequirements(request_tokenizers);
+            requirements.GetByName("BearerToken")?.ReplaceValue(addItemUpdated, requestResults.GetByName("BearerToken").Value);
+            requirements.GetByName("BasketId")?.ReplaceValue(addItemUpdated, requestResults.GetByName("bid").Value);
+
+            // Send another request.
+            response = await client.SendAsync(addItemUpdated.GenerateRequest());
+            parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+            Console.WriteLine(parsedResponse.Status);
+            Console.WriteLine(parsedResponse.Content);
         }
     }
 }
