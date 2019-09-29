@@ -21,7 +21,7 @@ namespace HttpTokenize
         public string Value { get; }
         public Types SupportedTypes { get; }
 
-        public Task CopyIntoRequest(Request request)
+        public void CopyIntoRequest(Request request)
         {
             Uri url = request.Url;
             NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
@@ -44,24 +44,21 @@ namespace HttpTokenize
             }
 
             request.Url = new Uri(builder.ToString());
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceValue(Request request, string value)
+        public void ReplaceValue(Request request, string value)
         {
             QueryToken token = new QueryToken(Name, value, Types.Integer | Types.String);
             ReplaceToken(request, token);
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceName(Request request, string name)
+        public void ReplaceName(Request request, string name)
         {
             QueryToken token = new QueryToken(name, Value, Types.Integer | Types.String);
             ReplaceToken(request, token);
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceToken(Request request, IToken replacement)
+        public void ReplaceToken(Request request, IToken replacement)
         {
             Uri url = request.Url;
             NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
@@ -93,7 +90,6 @@ namespace HttpTokenize
             }
 
             request.Url = new Uri(builder.ToString());
-            return Task.CompletedTask;
         }
 
         public override string ToString()

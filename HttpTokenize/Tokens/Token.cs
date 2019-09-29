@@ -11,7 +11,8 @@ namespace HttpTokenize.Tokens
         None = 0,
         Integer = 1,
         String = 2,
-        Boolean = 4
+        Boolean = 4,
+        BearerToken = 8
     };
 
     // TODO
@@ -29,9 +30,9 @@ namespace HttpTokenize.Tokens
         public string Value { get; }
         public Types SupportedTypes { get; }
 
-        public Task CopyIntoRequest(Request request);
-        public Task ReplaceValue(Request request, string name);
-        public Task ReplaceName(Request request, string value);
-        public Task ReplaceToken(Request request, IToken replacement);
+        public void CopyIntoRequest(Request request);
+        public void ReplaceValue(Request request, string name);
+        public void ReplaceName(Request request, string value);
+        public void ReplaceToken(Request request, IToken replacement);
     }
 }

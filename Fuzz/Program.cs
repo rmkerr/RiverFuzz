@@ -14,15 +14,26 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
-            Request request1 = new Request();
-            request1.Url = new Uri(@"http://localhost/api/Users/");
-            request1.Method = HttpMethod.Post;
-            request1.Content = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
+            Request addUserRequest = new Request();
+            addUserRequest.Url = new Uri(@"http://localhost/api/Users/");
+            addUserRequest.Method = HttpMethod.Post;
+            addUserRequest.Content = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
 
-            Request request2 = new Request();
-            request2.Url = new Uri(@"http://localhost/api/BasketItems");
-            request2.Method = HttpMethod.Post;
-            request2.Content = "{\"ProductId\":24,\"BasketId\":\"7\",\"quantity\":1}";
+            Request addItemToCart = new Request();
+            addItemToCart.Url = new Uri(@"http://localhost/api/BasketItems/");
+            addItemToCart.Method = HttpMethod.Post;
+            addItemToCart.Content = "{\"ProductId\":24,\"BasketId\":\"7\",\"quantity\":1}";
+            addItemToCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
+
+            Request loginUser = new Request();
+            loginUser.Url = new Uri(@"http://localhost/rest/user/login/");
+            loginUser.Method = HttpMethod.Post;
+            loginUser.Content = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
+
+            List<Request> knownRequests = new List<Request>();
+            knownRequests.Add(addUserRequest);
+            knownRequests.Add(addItemToCart);
+            knownRequests.Add(loginUser);
 
             // Set up HttpClient. TODO: Break requirement that we hold bearer token and manually set content type json
             HttpClientHandler handler = new HttpClientHandler();
@@ -32,56 +43,21 @@ namespace Fuzz
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTcxODgxOCwiZXhwIjoxNTY5NzM2ODE4fQ.q9zs_-mfnFpWAOBhltgaVtQU115ZgiaoiOlKsy0qUqNNOZQNUo4IeXT0M2bglvIpW1qteixG_LdntAScCsNRLRfVkVlE87-VP5yAL09CdJwYQfhFwyPoZRrT_nW_JXnM6_r4ST6tnJ3Fq91-ZbaRdjwtaFT112fOT5LoyLamsbM");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            List<IToken> currentSequenceTokens = new List<IToken>();
-            List<IToken> request2Tokens = new List<IToken>();
+            HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
 
-            // Extract request tokens
+            // Add all supported tokenizers.
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
             request_tokenizers.Add(new JsonTokenizer());
             request_tokenizers.Add(new QueryTokenizer());
-            foreach (IRequestTokenizer tokenizer in request_tokenizers)
-            {
-                currentSequenceTokens.AddRange(tokenizer.ExtractTokens(request1));
-                request2Tokens.AddRange(tokenizer.ExtractTokens(request2));
-            }
+            request_tokenizers.Add(new BearerTokenizer());
 
-            HttpResponseMessage response = await client.SendAsync(request1.GenerateRequest());
-            Response response1 = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-
-            // Extract response tokens
-            List<IResponseTokenizer> response_tokenizers = new List<IResponseTokenizer>();
-            response_tokenizers.Add(new JsonTokenizer());
-            foreach (IResponseTokenizer tokenizer in response_tokenizers)
+            for (int i = 0; i < knownRequests.Count; ++i)
             {
-                currentSequenceTokens.AddRange(tokenizer.ExtractTokens(response1));
-            }
-
-            foreach (IToken token1 in currentSequenceTokens)
-            {
-                foreach (IToken token2 in request2Tokens)
+                Console.WriteLine($"\n{knownRequests[i].Url}");
+                List<IToken> requirements = knownRequests[i].GetRequirements(request_tokenizers);
+                foreach (IToken req in requirements)
                 {
-                    Console.WriteLine("\n-----------------------------------------------------------");
-                    Console.WriteLine($"Token 1: {token1}");
-                    Console.WriteLine($"Token 2: {token2}");
-
-                    Console.WriteLine("Replacement of value.");
-                    Request updated_request = request2.Clone();
-                    await token2.ReplaceValue(updated_request, token1.Value);
-                    Console.WriteLine(updated_request.Content);
-
-                    try
-                    {
-                        response = await client.SendAsync(updated_request.GenerateRequest());
-                        Console.WriteLine(response.StatusCode);
-
-                        Response response2 = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-
-                        Console.WriteLine(response2.Content);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Timeout.");
-                    }
+                    Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");
                 }
             }
         }

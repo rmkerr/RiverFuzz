@@ -20,7 +20,7 @@ namespace HttpTokenize.Tokens
         public string Value { get; }
         public Types SupportedTypes { get; }
 
-        public Task CopyIntoRequest(Request request)
+        public void CopyIntoRequest(Request request)
         {
             string content = request.Content;
             try
@@ -34,10 +34,9 @@ namespace HttpTokenize.Tokens
             {
                 // TODO: Not JSON
             }
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceName(Request request, string value)
+        public void ReplaceName(Request request, string value)
         {
             string content = request.Content;
             try
@@ -54,10 +53,9 @@ namespace HttpTokenize.Tokens
             {
                 // TODO: Not JSON
             }
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceToken(Request request, IToken replacement)
+        public void ReplaceToken(Request request, IToken replacement)
         {
             string content = request.Content;
             try
@@ -81,10 +79,9 @@ namespace HttpTokenize.Tokens
             {
                 // TODO: Not JSON
             }
-            return Task.CompletedTask;
         }
 
-        public Task ReplaceValue(Request request, string value)
+        public void ReplaceValue(Request request, string value)
         {
             string content = request.Content;
             try
@@ -99,7 +96,6 @@ namespace HttpTokenize.Tokens
             {
                 // TODO: Not JSON
             }
-            return Task.CompletedTask;
         }
 
         public override string ToString()
