@@ -7,6 +7,6 @@ namespace HttpTokenize.Tokenizers
 {
     public interface IResponseTokenizer
     {
-        public List<IToken> ExtractTokens(Response response);
+        public TokenCollection ExtractTokens(Response response);
     }
 }

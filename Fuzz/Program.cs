@@ -14,6 +14,7 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
+            // Set up known requests. TODO: Load this from a file or set of strings.
             Request addUserRequest = new Request();
             addUserRequest.Url = new Uri(@"http://localhost/api/Users/");
             addUserRequest.Method = HttpMethod.Post;
@@ -42,17 +43,21 @@ namespace Fuzz
             client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
+            // Force a login.
             HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
             Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
 
+            // Load all response tokenizers.
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
 
-            List<IToken> results = parsedResponse.GetResults(responseTokenizers);
+            // Parse and iterate through all response tokens.
+            TokenCollection results = parsedResponse.GetResults(responseTokenizers);
             foreach (IToken req in results)
             {
                 Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");
+
                 // TODO: Break requirement that we set the bearer token manually.
                 if ((req.SupportedTypes & Types.BearerToken) != Types.None)
                 {
@@ -60,6 +65,7 @@ namespace Fuzz
                 }
             }
 
+            // 
             response = await client.SendAsync(addItemToCart.GenerateRequest());
             parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
             Console.WriteLine(parsedResponse.Status);
@@ -74,7 +80,7 @@ namespace Fuzz
             for (int i = 0; i < knownRequests.Count; ++i)
             {
                 Console.WriteLine($"\n{knownRequests[i].Url}");
-                List<IToken> requirements = knownRequests[i].GetRequirements(request_tokenizers);
+                TokenCollection requirements = knownRequests[i].GetRequirements(request_tokenizers);
                 foreach (IToken req in requirements)
                 {
                     Console.WriteLine($"\t{req.Name} : {req.SupportedTypes}");

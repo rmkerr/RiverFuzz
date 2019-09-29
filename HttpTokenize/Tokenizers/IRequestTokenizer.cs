@@ -7,6 +7,6 @@ namespace HttpTokenize.Tokenizers
 {
     public interface IRequestTokenizer
     {
-        public List<IToken> ExtractTokens(Request request);
+        public TokenCollection ExtractTokens(Request request);
     }
 }

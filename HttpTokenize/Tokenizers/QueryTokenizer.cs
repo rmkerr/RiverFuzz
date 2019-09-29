@@ -9,9 +9,9 @@ namespace HttpTokenize.Tokenizers
 {
     public class QueryTokenizer : IRequestTokenizer
     {
-        public List<IToken> ExtractTokens(Request request)
+        public TokenCollection ExtractTokens(Request request)
         {
-            List<IToken> tokens = new List<IToken>();
+            TokenCollection tokens = new TokenCollection();
             NameValueCollection parameters = HttpUtility.ParseQueryString(request.Url.Query);
 
             foreach (string key in parameters.AllKeys)

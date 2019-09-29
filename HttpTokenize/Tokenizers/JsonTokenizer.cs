@@ -9,19 +9,19 @@ namespace HttpTokenize.Tokenizers
 {
     public class JsonTokenizer : IRequestTokenizer, IResponseTokenizer
     {
-        public List<IToken> ExtractTokens(Request request)
+        public TokenCollection ExtractTokens(Request request)
         {
             return JsonToTokens(request.Content);
         }
 
-        public List<IToken> ExtractTokens(Response response)
+        public TokenCollection ExtractTokens(Response response)
         {
             return JsonToTokens(response.Content);
         }
 
-        private List<IToken> JsonToTokens(string json)
+        private TokenCollection JsonToTokens(string json)
         {
-            List<IToken> tokens = new List<IToken>();
+            TokenCollection tokens = new TokenCollection();
 
             JsonTextReader reader = new JsonTextReader(new StringReader(json));
             while (reader.Read())

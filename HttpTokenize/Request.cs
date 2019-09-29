@@ -40,12 +40,12 @@ namespace HttpTokenize
             return request;
         }
 
-        public List<IToken> GetRequirements(List<IRequestTokenizer> tokenizers)
+        public TokenCollection GetRequirements(List<IRequestTokenizer> tokenizers)
         {
-            List<IToken> tokens = new List<IToken>();
+            TokenCollection tokens = new TokenCollection();
             foreach (IRequestTokenizer tokenizer in tokenizers)
             {
-                tokens.AddRange(tokenizer.ExtractTokens(this));
+                tokens.Add(tokenizer.ExtractTokens(this));
             }
             return tokens;
         }

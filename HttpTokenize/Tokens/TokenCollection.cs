@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HttpTokenize.Tokens
 {
-    class TokenCollection : IEnumerable
+    public class TokenCollection : IEnumerable
     {
         public TokenCollection()
         {
@@ -34,6 +34,39 @@ namespace HttpTokenize.Tokens
         public void Add(IToken token)
         {
             tokens.Add(token);
+        }
+
+        public void Add(TokenCollection collection)
+        {
+            foreach (IToken t in collection)
+            {
+                tokens.Add(t);
+            }
+        }
+
+        public IToken? ContainsExactMatch(IToken token)
+        {
+            foreach (IToken match in tokens)
+            {
+                // Exact match only. TODO: Consider making more flexible.
+                if (token.Name == match.Name && (token.SupportedTypes & match.SupportedTypes) != Types.None)
+                {
+                    return match;
+                }
+            }
+            return null;
+        }
+
+        public IToken? ContainsCustomMatch(IToken token, Func<IToken, IToken, bool> equal)
+        {
+            foreach (IToken match in tokens)
+            {
+                if (equal(token, match))
+                {
+                    return match;
+                }
+            }
+            return null;
         }
 
         private List<IToken> tokens;

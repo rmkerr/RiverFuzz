@@ -10,9 +10,9 @@ namespace HttpTokenize.Tokenizers
 {
     public class BearerTokenizer : IRequestTokenizer, IResponseTokenizer
     {
-        public List<IToken> ExtractTokens(Request request)
+        public TokenCollection ExtractTokens(Request request)
         {
-            List<IToken> tokens = new List<IToken>();
+            TokenCollection tokens = new TokenCollection();
             try
             {
                 if (request.Headers.ContainsKey("Authorization"))
@@ -28,9 +28,9 @@ namespace HttpTokenize.Tokenizers
             return tokens;
         }
 
-        public List<IToken> ExtractTokens(Response response)
+        public TokenCollection ExtractTokens(Response response)
         {
-            List<IToken> tokens = new List<IToken>();
+            TokenCollection tokens = new TokenCollection();
 
             Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
