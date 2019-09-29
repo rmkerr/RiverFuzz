@@ -35,20 +35,32 @@ namespace Fuzz
             HttpResponseMessage responseMessage = await client.SendAsync(request2.GenerateRequest());
             Console.WriteLine(responseMessage.StatusCode);
 
-            List<IToken> request1Tokens = new List<IToken>();
+
+            List<IToken> currentSequenceTokens = new List<IToken>();
             List<IToken> request2Tokens = new List<IToken>();
 
-            List<IRequestTokenizer> tokenizers = new List<IRequestTokenizer>();
-            tokenizers.Add(new JsonTokenizer());
-            tokenizers.Add(new QueryTokenizer());
-
-            foreach (IRequestTokenizer tokenizer in tokenizers)
+            // Extract request tokens
+            List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
+            request_tokenizers.Add(new JsonTokenizer());
+            request_tokenizers.Add(new QueryTokenizer());
+            foreach (IRequestTokenizer tokenizer in request_tokenizers)
             {
-                request1Tokens.AddRange(tokenizer.ExtractTokens(request1));
+                currentSequenceTokens.AddRange(tokenizer.ExtractTokens(request1));
                 request2Tokens.AddRange(tokenizer.ExtractTokens(request2));
             }
 
-            foreach (IToken token1 in request1Tokens)
+            HttpResponseMessage response = await client.SendAsync(request1.GenerateRequest());
+            Response response1 = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+
+            // Extract response tokens
+            List<IResponseTokenizer> response_tokenizers = new List<IResponseTokenizer>();
+            response_tokenizers.Add(new JsonTokenizer());
+            foreach (IResponseTokenizer tokenizer in response_tokenizers)
+            {
+                currentSequenceTokens.AddRange(tokenizer.ExtractTokens(response1));
+            }
+
+            foreach (IToken token1 in currentSequenceTokens)
             {
                 foreach (IToken token2 in request2Tokens)
                 {
@@ -61,15 +73,14 @@ namespace Fuzz
                     await token2.ReplaceValue(updated_request, token1.Value);
                     Console.WriteLine(updated_request.Content);
 
-                    HttpResponseMessage response = null;
-
                     try
                     {
                         response = await client.SendAsync(updated_request.GenerateRequest());
                         Console.WriteLine(response.StatusCode);
 
-                        Response response1 = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-                        Console.WriteLine(response1.Content);
+                        Response response2 = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+
+                        Console.WriteLine(response2.Content);
                     }
                     catch
                     {
