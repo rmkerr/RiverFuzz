@@ -7,7 +7,7 @@ using HttpTokenize.Tokens;
 
 namespace HttpTokenize.Tokenizers
 {
-    public class QueryTokenizer : ITokenizer
+    public class QueryTokenizer : IRequestTokenizer
     {
         public List<IToken> ExtractTokens(Request request)
         {

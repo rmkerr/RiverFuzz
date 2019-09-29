@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HttpTokenize.Tokenizers
 {
-    public interface ITokenizer
+    public interface IRequestTokenizer
     {
         public List<IToken> ExtractTokens(Request request);
     }

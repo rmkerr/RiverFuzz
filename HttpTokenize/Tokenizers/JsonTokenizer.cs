@@ -7,13 +7,23 @@ using System.IO;
 
 namespace HttpTokenize.Tokenizers
 {
-    public class JsonTokenizer : ITokenizer
+    public class JsonTokenizer : IRequestTokenizer, IResponseTokenizer
     {
         public List<IToken> ExtractTokens(Request request)
         {
+            return JsonToTokens(request.Content);
+        }
+
+        public List<IToken> ExtractTokens(Response response)
+        {
+            return JsonToTokens(response.Content);
+        }
+
+        private List<IToken> JsonToTokens(string json)
+        {
             List<IToken> tokens = new List<IToken>();
 
-            JsonTextReader reader = new JsonTextReader(new StringReader(request.Content));
+            JsonTextReader reader = new JsonTextReader(new StringReader(json));
             while (reader.Read())
             {
                 if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)

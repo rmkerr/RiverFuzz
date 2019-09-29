@@ -34,11 +34,6 @@ namespace HttpTokenize
             return request;
         }
 
-        public List<IToken> GetTokens()
-        {
-            
-        }
-
         public Uri Url { get; set; }
         public HttpMethod Method { get; set; }
         public string Content { get; set; }
