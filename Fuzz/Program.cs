@@ -71,19 +71,17 @@ namespace Fuzz
 
             Random rand = new Random(0);
 
-            Request addItemUpdated = initializeCart.Clone();
-            TokenCollection requirements = addItemUpdated.GetRequirements(request_tokenizers);
-            requirements.GetByName("BearerToken")?.ReplaceValue(addItemUpdated, requestResults.GetByName("BearerToken").Value);
-            requirements.GetByName("BasketId")?.ReplaceValue(addItemUpdated, requestResults.GetByName("bid").Value);
-            requirements.GetByName("quantity")?.ReplaceValue(addItemUpdated, rand.Next(-5, 5).ToString());
+            Request initializeCartUpdated = initializeCart.Clone();
+            TokenCollection requirements = initializeCartUpdated.GetRequirements(request_tokenizers);
+            requirements.GetByName("BearerToken")?.ReplaceValue(initializeCartUpdated, requestResults.GetByName("BearerToken").Value);
+            requirements.GetByName("BasketId")?.ReplaceValue(initializeCartUpdated, requestResults.GetByName("bid").Value);
+            requirements.GetByName("quantity")?.ReplaceValue(initializeCartUpdated, rand.Next(-5, 5).ToString());
 
             // Send another request.
-            response = await client.SendAsync(addItemUpdated.GenerateRequest());
+            response = await client.SendAsync(initializeCartUpdated.GenerateRequest());
             parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-            Console.WriteLine(parsedResponse.Status);
-            Console.WriteLine(parsedResponse.Content);
 
-            IBucketer bucketer = new ExactStringBucketer();
+            IBucketer bucketer = new TokenNameBucketer();
 
             // Copy over the results to a new request.
             for (int i = 0; i < 10; ++i)
@@ -91,13 +89,11 @@ namespace Fuzz
                 Request addToCartUpdated = addToCart.Clone();
                 requirements = addToCartUpdated.GetRequirements(request_tokenizers);
                 requirements.GetByName("BearerToken")?.ReplaceValue(addToCartUpdated, requestResults.GetByName("BearerToken").Value);
-                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-10, 10).ToString());
+                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-10, 30).ToString());
 
                 // Send another request.
                 response = await client.SendAsync(addToCartUpdated.GenerateRequest());
                 parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-                Console.WriteLine(parsedResponse.Status);
-                Console.WriteLine(parsedResponse.Content);
 
                 bucketer.Responses.Add(parsedResponse);
             }
@@ -106,7 +102,7 @@ namespace Fuzz
             Console.WriteLine($"{bucketed.Count} buckets.");
             foreach(List<Response> bucket in bucketed)
             {
-                Console.WriteLine(bucket[0].Content);
+                Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
             }
         }
     }
