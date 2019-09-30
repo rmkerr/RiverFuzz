@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
+using HttpTokenize.Bucketers;
 
 namespace Fuzz
 {
@@ -20,20 +21,27 @@ namespace Fuzz
             addUserRequest.Method = HttpMethod.Post;
             addUserRequest.Content = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
 
-            Request addItemToCart = new Request();
-            addItemToCart.Url = new Uri(@"http://localhost/api/BasketItems/");
-            addItemToCart.Method = HttpMethod.Post;
-            addItemToCart.Content = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
-            addItemToCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
+            Request initializeCart = new Request();
+            initializeCart.Url = new Uri(@"http://localhost/api/BasketItems/");
+            initializeCart.Method = HttpMethod.Post;
+            initializeCart.Content = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
+            initializeCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
 
             Request loginUser = new Request();
             loginUser.Url = new Uri(@"http://localhost/rest/user/login/");
             loginUser.Method = HttpMethod.Post;
             loginUser.Content = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
 
+            Request addToCart = new Request();
+            addToCart.Url = new Uri(@"http://localhost/api/BasketItems/82/");
+            addToCart.Method = HttpMethod.Put;
+            addToCart.Content = "{\"quantity\":2}";
+            addToCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
+
+
             List<Request> knownRequests = new List<Request>();
             knownRequests.Add(addUserRequest);
-            knownRequests.Add(addItemToCart);
+            knownRequests.Add(initializeCart);
             knownRequests.Add(loginUser);
 
             // Set up HttpClient. TODO: Break requirement that we set content type json
@@ -61,17 +69,45 @@ namespace Fuzz
             // Parse and iterate through all response tokens from the login.
             TokenCollection requestResults = parsedResponse.GetResults(responseTokenizers);
 
-            // Copy over the results to a new request.
-            Request addItemUpdated = addItemToCart.Clone();
+            Random rand = new Random(0);
+
+            Request addItemUpdated = initializeCart.Clone();
             TokenCollection requirements = addItemUpdated.GetRequirements(request_tokenizers);
             requirements.GetByName("BearerToken")?.ReplaceValue(addItemUpdated, requestResults.GetByName("BearerToken").Value);
             requirements.GetByName("BasketId")?.ReplaceValue(addItemUpdated, requestResults.GetByName("bid").Value);
+            requirements.GetByName("quantity")?.ReplaceValue(addItemUpdated, rand.Next(-5, 5).ToString());
 
             // Send another request.
             response = await client.SendAsync(addItemUpdated.GenerateRequest());
             parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
             Console.WriteLine(parsedResponse.Status);
             Console.WriteLine(parsedResponse.Content);
+
+            IBucketer bucketer = new ExactStringBucketer();
+
+            // Copy over the results to a new request.
+            for (int i = 0; i < 10; ++i)
+            {
+                Request addToCartUpdated = addToCart.Clone();
+                requirements = addToCartUpdated.GetRequirements(request_tokenizers);
+                requirements.GetByName("BearerToken")?.ReplaceValue(addToCartUpdated, requestResults.GetByName("BearerToken").Value);
+                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-10, 10).ToString());
+
+                // Send another request.
+                response = await client.SendAsync(addToCartUpdated.GenerateRequest());
+                parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+                Console.WriteLine(parsedResponse.Status);
+                Console.WriteLine(parsedResponse.Content);
+
+                bucketer.Responses.Add(parsedResponse);
+            }
+
+            List<List<Response>> bucketed = bucketer.Bucketize();
+            Console.WriteLine($"{bucketed.Count} buckets.");
+            foreach(List<Response> bucket in bucketed)
+            {
+                Console.WriteLine(bucket[0].Content);
+            }
         }
     }
 }
