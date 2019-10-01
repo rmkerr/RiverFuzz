@@ -17,7 +17,6 @@ namespace HttpTokenize
 
     public interface ISubstitution
     {
-        // TODO: Rework th
         public void MakeSubstitution(RequestSequence? previous, Request? next);
 
         // TODO: Rework this. It's odd that we don't initialize with a token, but
@@ -40,6 +39,28 @@ namespace HttpTokenize
             {
                 target.ReplaceValue(next, value);
             }
+        }
+
+        public bool ReplacesToken(IToken token)
+        {
+            return token.GetType() == target.GetType() && token.Name == target.Name;
+        }
+    }
+
+    public class SubstituteNamedToken : ISubstitution
+    {
+        private readonly IToken target;
+        private readonly string sourceName;
+        private readonly Types sourceType;
+        public SubstituteNamedToken (IToken token, string name, Types type)
+        {
+            target = token;
+            sourceName = name;
+            sourceType = type;
+        }
+        public void MakeSubstitution(RequestSequence? previous, Request? next)
+        {
+            // Get token from previous sequence and replace new value with old one.
         }
 
         public bool ReplacesToken(IToken token)
