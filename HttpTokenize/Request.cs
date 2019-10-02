@@ -12,18 +12,17 @@ namespace HttpTokenize
 {
     public class Request
     {
-        public Request()
+        public Request(Uri url, HttpMethod method, string? content = null)
         {
-            Method = HttpMethod.Get;
+            Method = method;
+            Url = url;
+            Content = content;
             Headers = new Dictionary<string, string>();
         }
 
         public Request Clone()
         {
-            Request clone = new Request();
-            clone.Url = Url;
-            clone.Method = Method;
-            clone.Content = Content;
+            Request clone = new Request(Url, Method, Content);
             clone.Headers = new Dictionary<string, string>(Headers);
 
             return clone;
@@ -37,7 +36,8 @@ namespace HttpTokenize
 
             if (Headers.ContainsKey("Authorization"))
             {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Headers["Authorization"]);
+                string[] values = Headers["Authorization"].Split(' ');
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(values[0], values[1]);
             }
 
             return request;
@@ -55,7 +55,7 @@ namespace HttpTokenize
 
         public Uri Url { get; set; }
         public HttpMethod Method { get; set; }
-        public string Content { get; set; }
+        public string? Content { get; set; }
         public Dictionary<string, string> Headers { get; set; }
     }
 }

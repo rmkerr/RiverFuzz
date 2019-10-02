@@ -1,5 +1,6 @@
 ﻿using HttpTokenize.Tokens;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,12 +8,16 @@ namespace HttpTokenize
 {
     // Holds a request and a sequence of substitutions into that request.
     // Execution sequence will be 'perform substitutions' -> 'execute request'
-    class Stage
+    public class Stage
     {
-        List<ISubstitution> Substitutions;
-        public Request? Request;
+        public List<ISubstitution> Substitutions { get; }
+        public Request Request { get; }
 
-
+        public Stage(Request request)
+        {
+            Request = request;
+            Substitutions = new List<ISubstitution>();
+        }
     }
 
     public interface ISubstitution
@@ -69,7 +74,22 @@ namespace HttpTokenize
         }
     }
 
-    public class RequestSequence
+    public class RequestSequence : IEnumerable<Stage>
     {
+        List<Stage> Stages;
+        RequestSequence()
+        {
+            Stages = new List<Stage>();
+        }
+
+        public IEnumerator<Stage> GetEnumerator()
+        {
+            return ((IEnumerable<Stage>)Stages).GetEnumerator();
+        }
+
+        public IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<Stage>)Stages).GetEnumerator();
+        }
     }
 }

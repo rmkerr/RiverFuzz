@@ -13,9 +13,7 @@ namespace UnitTests
         [Fact]
         public void Request_ExtractJsonRequirements_ExpectedValues()
         {
-            Request addItemToCart = new Request();
-            addItemToCart.Url = new Uri(@"http://localhost/api/BasketItems/");
-            addItemToCart.Method = HttpMethod.Post;
+            Request addItemToCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post);
             addItemToCart.Content = "{\"ProductId\":24,\"BasketId\":\"7\",\"quantity\":1}";
 
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();

@@ -35,7 +35,7 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceValue(Request request, string value)
         {
-            request.Headers["Authorization"] = value;
+            request.Headers["Authorization"] = "Bearer " + value;
         }
     }
 }

@@ -15,29 +15,19 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
-            // Set up known requests. TODO: Load this from a file or set of strings.
-            Request addUserRequest = new Request();
-            addUserRequest.Url = new Uri(@"http://localhost/api/Users/");
-            addUserRequest.Method = HttpMethod.Post;
-            addUserRequest.Content = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
+            string addUserJson = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
+            Request addUserRequest = new Request(new Uri(@"http://localhost/api/Users/"), HttpMethod.Post, addUserJson);
 
-            Request initializeCart = new Request();
-            initializeCart.Url = new Uri(@"http://localhost/api/BasketItems/");
-            initializeCart.Method = HttpMethod.Post;
-            initializeCart.Content = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
-            initializeCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
+            string initializeCartJson = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
+            Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
+            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
 
-            Request loginUser = new Request();
-            loginUser.Url = new Uri(@"http://localhost/rest/user/login/");
-            loginUser.Method = HttpMethod.Post;
-            loginUser.Content = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
+            string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
+            Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
 
-            Request addToCart = new Request();
-            addToCart.Url = new Uri(@"http://localhost/api/BasketItems/82/");
-            addToCart.Method = HttpMethod.Put;
-            addToCart.Content = "{\"quantity\":2}";
-            addToCart.Headers.Add("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MTYsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJhc2RmQGFzZGYuY29tIiwicGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsInJvbGUiOiJjdXN0b21lciIsImxhc3RMb2dpbklwIjoiMTI3LjAuMC4xIiwicHJvZmlsZUltYWdlIjoiZGVmYXVsdC5zdmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMTktMDktMjggMDQ6NTA6NDYuMjc3ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMTktMDktMjggMTk6MTI6MDMuNjIzICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTU2OTc0MzEwNSwiZXhwIjoxNTY5NzYxMTA1fQ.Hwjir8myg-rWOpEXlpD-YpA785rY3yRJH24SQkISBYW1MlxnIFmFera3Q48E0VEtlcGSpViBfUCLBFMqMGDdfp5-ujzRrRTq0pHbVjMWqnAMygheO3KYxpvGyY2o1LbAx4EOUksdIGwpxnTRMugVudOWPzZFr89uvKj-Iet6Ig0");
-
+            string addToCartJson = "{\"quantity\":2}";
+            Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
+            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
 
             List<Request> knownRequests = new List<Request>();
             knownRequests.Add(addUserRequest);
@@ -89,7 +79,7 @@ namespace Fuzz
                 Request addToCartUpdated = addToCart.Clone();
                 requirements = addToCartUpdated.GetRequirements(request_tokenizers);
                 requirements.GetByName("BearerToken")?.ReplaceValue(addToCartUpdated, requestResults.GetByName("BearerToken").Value);
-                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-10, 30).ToString());
+                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-50, 50).ToString());
 
                 // Send another request.
                 response = await client.SendAsync(addToCartUpdated.GenerateRequest());

@@ -2,6 +2,7 @@ using System;
 using Xunit;
 using HttpTokenize.Tokens;
 using HttpTokenize;
+using System.Net.Http;
 
 namespace UnitTests
 {
@@ -10,7 +11,7 @@ namespace UnitTests
         [Fact]
         public void JsonToken_SingleDepthEmpty_AddsStringToCollection()
         {
-            Request request = new Request();
+            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "{}";
 
             JsonToken token = new JsonToken("test", "test", Types.String);
@@ -23,7 +24,7 @@ namespace UnitTests
         [Fact]
         public void JsonToken_SingleDepthReplaceName_ReplacesName()
         {
-            Request request = new Request();
+            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "{}";
 
             JsonToken token = new JsonToken("testname", "testval", Types.String);
@@ -37,7 +38,7 @@ namespace UnitTests
         [Fact]
         public void JsonToken_SingleDepthReplaceValue_ReplacesName()
         {
-            Request request = new Request();
+            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "{}";
 
             JsonToken token = new JsonToken("testname", "testval", Types.String);
