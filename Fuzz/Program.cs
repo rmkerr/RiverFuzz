@@ -47,23 +47,21 @@ namespace Fuzz
             TokenCollection initializeTokens = initializeCart.GetRequirements(request_tokenizers);
             Stage initialize = new Stage(initializeCart);
             initialize.Substitutions.Add(new SubstituteNamedToken(initializeTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
+            initialize.Substitutions.Add(new SubstituteNamedToken(initializeTokens.GetByName("BasketId"), "bid", Types.Integer));
 
             string addToCartJson = "{\"quantity\":2}";
             Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
             addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
             TokenCollection addTokens = addToCart.GetRequirements(request_tokenizers);
             Stage addItem = new Stage(addToCart);
+            addItem.Substitutions.Add(new SubstituteNamedToken(addTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
 
             RequestSequence sequence = new RequestSequence();
             sequence.Add(login);
             sequence.Add(initialize);
             sequence.Add(addItem);
 
-            await sequence.Execute(client, responseTokenizers);
-
-/*            // Force a login.
-            HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
-            Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
+            List<Response> results = await sequence.Execute(client, responseTokenizers);
 
             // Parse and iterate through all response tokens from the login.
             TokenCollection requestResults = parsedResponse.GetResults(responseTokenizers);

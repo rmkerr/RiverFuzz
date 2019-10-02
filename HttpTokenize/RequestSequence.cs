@@ -94,10 +94,11 @@ namespace HttpTokenize
         }
 
         // TODO: More informative return information.
-        public async Task<Response?> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
+        public async Task<List<Response>?> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
         {
             TokenCollection tokens = new TokenCollection();
-            Response? response = null;
+            List<Response> responses = new List<Response>();
+
             // For each request.
             for (int i = 0; i < Stages.Count; ++i)
             {
@@ -110,12 +111,13 @@ namespace HttpTokenize
 
                 // Make the request.
                 HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
-                response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
+                Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
+                responses.Add(response);
 
                 TokenCollection results = response.GetResults(responseTokenizers);
                 tokens.Add(results);
             }
-            return response;
+            return responses;
         }
 
         public void Add(Stage stage)
