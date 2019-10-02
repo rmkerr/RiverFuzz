@@ -15,24 +15,8 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
-            string addUserJson = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
-            Request addUserRequest = new Request(new Uri(@"http://localhost/api/Users/"), HttpMethod.Post, addUserJson);
-
-            string initializeCartJson = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
-            Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
-            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
-
-            string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
-            Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
-
-            string addToCartJson = "{\"quantity\":2}";
-            Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
-            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
-
-            List<Request> knownRequests = new List<Request>();
-            knownRequests.Add(addUserRequest);
-            knownRequests.Add(initializeCart);
-            knownRequests.Add(loginUser);
+            // string addUserJson = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
+            // Request addUserRequest = new Request(new Uri(@"http://localhost/api/Users/"), HttpMethod.Post, addUserJson);
 
             // Set up HttpClient. TODO: Break requirement that we set content type json
             HttpClientHandler handler = new HttpClientHandler();
@@ -52,7 +36,32 @@ namespace Fuzz
             request_tokenizers.Add(new QueryTokenizer());
             request_tokenizers.Add(new BearerTokenizer());
 
-            // Force a login.
+            string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
+            Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
+            TokenCollection loginTokens = loginUser.GetRequirements(request_tokenizers);
+            Stage login = new Stage(loginUser);
+
+            string initializeCartJson = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
+            Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
+            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
+            TokenCollection initializeTokens = initializeCart.GetRequirements(request_tokenizers);
+            Stage initialize = new Stage(initializeCart);
+            initialize.Substitutions.Add(new SubstituteNamedToken(initializeTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
+
+            string addToCartJson = "{\"quantity\":2}";
+            Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
+            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
+            TokenCollection addTokens = addToCart.GetRequirements(request_tokenizers);
+            Stage addItem = new Stage(addToCart);
+
+            RequestSequence sequence = new RequestSequence();
+            sequence.Add(login);
+            sequence.Add(initialize);
+            sequence.Add(addItem);
+
+            await sequence.Execute(client, responseTokenizers);
+
+/*            // Force a login.
             HttpResponseMessage response = await client.SendAsync(loginUser.GenerateRequest());
             Response parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
 
@@ -93,7 +102,7 @@ namespace Fuzz
             foreach(List<Response> bucket in bucketed)
             {
                 Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
-            }
+            }*/
         }
     }
 }

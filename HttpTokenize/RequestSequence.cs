@@ -87,8 +87,8 @@ namespace HttpTokenize
 
     public class RequestSequence : IEnumerable<Stage>
     {
-        List<Stage> Stages;
-        RequestSequence()
+        readonly List<Stage> Stages;
+        public RequestSequence()
         {
             Stages = new List<Stage>();
         }
@@ -116,6 +116,11 @@ namespace HttpTokenize
                 tokens.Add(results);
             }
             return response;
+        }
+
+        public void Add(Stage stage)
+        {
+            Stages.Add(stage);
         }
 
         public IEnumerator<Stage> GetEnumerator()
