@@ -1,8 +1,11 @@
-﻿using HttpTokenize.Tokens;
+﻿using HttpTokenize.Tokenizers;
+using HttpTokenize.Tokens;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HttpTokenize
 {
@@ -22,7 +25,7 @@ namespace HttpTokenize
 
     public interface ISubstitution
     {
-        public void MakeSubstitution(RequestSequence? previous, Request? next);
+        public void MakeSubstitution(TokenCollection previous, Request next);
 
         // TODO: Rework this. It's odd that we don't initialize with a token, but
         // we compare to one here.
@@ -38,7 +41,7 @@ namespace HttpTokenize
             target = token;
             value = constant;
         }
-        public void MakeSubstitution(RequestSequence? previous, Request? next)
+        public void MakeSubstitution(TokenCollection previous, Request next)
         {
             if (next != null)
             {
@@ -63,9 +66,17 @@ namespace HttpTokenize
             sourceName = name;
             sourceType = type;
         }
-        public void MakeSubstitution(RequestSequence? previous, Request? next)
+        public void MakeSubstitution(TokenCollection previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.
+            IToken? replacement = previous.GetByName(sourceName);
+
+            if (replacement == null)
+            {
+                throw new Exception($"Unable to find token by name '{sourceName}'.");
+            }
+
+            target.ReplaceValue(next, replacement.Value);
         }
 
         public bool ReplacesToken(IToken token)
@@ -82,12 +93,37 @@ namespace HttpTokenize
             Stages = new List<Stage>();
         }
 
+        // TODO: More informative return information.
+        public async Task<Response?> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
+        {
+            TokenCollection tokens = new TokenCollection();
+            Response? response = null;
+            // For each request.
+            for (int i = 0; i < Stages.Count; ++i)
+            {
+                // Apply all substitutions.
+                Request request = Stages[i].Request.Clone();
+                foreach (ISubstitution substitution in Stages[i].Substitutions)
+                {
+                    substitution.MakeSubstitution(tokens, request);
+                }
+
+                // Make the request.
+                HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
+                response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
+
+                TokenCollection results = response.GetResults(responseTokenizers);
+                tokens.Add(results);
+            }
+            return response;
+        }
+
         public IEnumerator<Stage> GetEnumerator()
         {
             return ((IEnumerable<Stage>)Stages).GetEnumerator();
         }
 
-        public IEnumerator IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<Stage>)Stages).GetEnumerator();
         }
