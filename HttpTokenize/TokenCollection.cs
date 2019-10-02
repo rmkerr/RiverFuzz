@@ -5,8 +5,9 @@ using System.Text;
 
 namespace HttpTokenize.Tokens
 {
-    public class TokenCollection : IEnumerable
+    public class TokenCollection : IEnumerable<IToken>
     {
+        private List<IToken> tokens;
         public TokenCollection()
         {
             tokens = new List<IToken>();
@@ -96,10 +97,14 @@ namespace HttpTokenize.Tokens
             return null;
         }
 
-        private List<IToken> tokens;
+        IEnumerator<IToken> IEnumerable<IToken>.GetEnumerator()
+        {
+            return ((IEnumerable<IToken>)tokens).GetEnumerator();
+        }
+
         public IEnumerator GetEnumerator()
         {
-            return tokens.GetEnumerator();
+            return ((IEnumerable<IToken>)tokens).GetEnumerator();
         }
     }
 }
