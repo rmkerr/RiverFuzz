@@ -62,27 +62,33 @@ namespace Fuzz
             RequestSequence sequence = new RequestSequence();
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("email", "asdf@asdf.com", Types.String));
-            startingData.Add(new JsonToken("password", "123456", Types.String));
+            startingData.Add(new JsonToken("Email", "asdf@asdf.com", Types.String));
+            startingData.Add(new JsonToken("Password", "123456", Types.String));
 
-            TypeMatchGenerator generator = new TypeMatchGenerator();
+            BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
             IBucketer bucketer = new TokenNameBucketer();
 
-            int i = 0;
-            foreach (RequestSequence candidate in generator.Generate(endpoints, sequence, startingData, request_tokenizers))
+            for (int generation = 0; generation < 3; generation++)
             {
-                Console.WriteLine($"Candidate {++i}");
-                Console.WriteLine(candidate.ToString());
+                Console.WriteLine("\n----------------------------------------------------");
+                Console.WriteLine($"Generation {generation}");
+                int candidateNumber = 0;
+                foreach (RequestSequence candidate in generator.Generate(endpoints, sequence, startingData, request_tokenizers))
+                {
+                    Console.WriteLine($"Candidate {++candidateNumber}");
+                    Console.WriteLine(candidate.ToString());
 
-                Tuple<List<Response>, TokenCollection> results = await candidate.Execute(client, responseTokenizers, startingData);
-                bucketer.Responses.AddRange(results.Item1);
-            }
+                    Tuple<List<Response>, TokenCollection> results = await candidate.Execute(client, responseTokenizers, startingData);
+                    bucketer.Responses.AddRange(results.Item1);
+                    startingData.Add(results.Item2);
+                }
 
-            List<List<Response>> bucketed = bucketer.Bucketize();
-            Console.WriteLine($"\n{bucketed.Count} buckets.");
-            foreach(List<Response> bucket in bucketed)
-            {
-                Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
+                List<List<Response>> bucketed = bucketer.Bucketize();
+                Console.WriteLine($"\n{bucketed.Count} buckets.");
+                foreach (List<Response> bucket in bucketed)
+                {
+                    Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
+                }
             }
         }
     }

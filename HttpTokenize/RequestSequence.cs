@@ -59,13 +59,21 @@ namespace HttpTokenize
                 }
 
                 // Make the request.
-                HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
-                Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
-                responses.Add(response);
+                try
+                {
+                    HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
+                    Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
+                    responses.Add(response);
 
-                // Parse the response and add tokens to the results.
-                TokenCollection results = response.GetResults(responseTokenizers);
-                tokens.Add(results);
+                    // Parse the response and add tokens to the results.
+                    TokenCollection results = response.GetResults(responseTokenizers);
+                    tokens.Add(results);
+                }
+                catch
+                {
+                    Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "Timeout.");
+                    responses.Add(response);
+                }
             }
             return new Tuple<List<Response>, TokenCollection>(responses, tokens);
         }

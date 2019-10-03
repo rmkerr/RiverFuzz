@@ -58,31 +58,6 @@ namespace HttpTokenize.Tokens
             return null;
         }
 
-        public IToken? ContainsTypeMatch(IToken token)
-        {
-            foreach (IToken match in tokens)
-            {
-                // Exact match only. TODO: Consider making more flexible.
-                if ((token.SupportedTypes & match.SupportedTypes) != Types.None)
-                {
-                    return match;
-                }
-            }
-            return null;
-        }
-
-        public IToken? ContainsCustomMatch(IToken token, Func<IToken, IToken, bool> equal)
-        {
-            foreach (IToken match in tokens)
-            {
-                if (equal(token, match))
-                {
-                    return match;
-                }
-            }
-            return null;
-        }
-
         // TODO: Consider returning list.
         public IToken? GetByName(string name)
         {
