@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Generators\Generators.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
   </ItemGroup>
 

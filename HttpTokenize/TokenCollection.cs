@@ -83,13 +83,26 @@ namespace HttpTokenize.Tokens
             return null;
         }
 
-        // TODO: Assumes uniqueness.
+        // TODO: Consider returning list.
         public IToken? GetByName(string name)
         {
             foreach (IToken match in tokens)
             {
                 // Exact match only. TODO: Consider making more flexible.
                 if (match.Name == name)
+                {
+                    return match;
+                }
+            }
+            return null;
+        }
+
+        // TODO: Consider returning list.
+        public IToken? GetByType(Types type)
+        {
+            foreach (IToken match in tokens)
+            {
+                if ((match.SupportedTypes & type) != Types.None)
                 {
                     return match;
                 }

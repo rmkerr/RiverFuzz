@@ -40,8 +40,8 @@ namespace HttpTokenize
             Stages = new List<Stage>();
         }
 
-        // TODO: More informative return information.
-        public async Task<List<Response>?> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
+        // TODO: More informative return information. Get rid of the stupid tuple.
+        public async Task<Tuple<List<Response>, TokenCollection>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
         {
             TokenCollection tokens = new TokenCollection();
             List<Response> responses = new List<Response>();
@@ -65,7 +65,7 @@ namespace HttpTokenize
                 TokenCollection results = response.GetResults(responseTokenizers);
                 tokens.Add(results);
             }
-            return responses;
+            return new Tuple<List<Response>, TokenCollection>(responses, tokens);
         }
 
         public void Add(Stage stage)

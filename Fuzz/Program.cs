@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Collections.Generic;
 using HttpTokenize.Bucketers;
 using HttpTokenize.Substitutions;
+using Generators;
 
 namespace Fuzz
 {
@@ -56,18 +57,42 @@ namespace Fuzz
             Stage addItem = new Stage(addToCart);
             addItem.Substitutions.Add(new SubstituteNamedToken(addTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
 
-            RequestSequence sequence = new RequestSequence();
-            sequence.Add(login);
-            sequence.Add(initialize);
-            sequence.Add(addItem);
+            List<Request> endpoints = new List<Request>();
+            endpoints.Add(loginUser);
+            endpoints.Add(initializeCart);
+            endpoints.Add(addToCart);
 
-            List<Response> results = await sequence.Execute(client, responseTokenizers);
+            RequestSequence sequence = new RequestSequence();
+/*            sequence.Add(login);
+            sequence.Add(initialize);
+            sequence.Add(addItem);*/
+
+            Tuple<List<Response>, TokenCollection> results = await sequence.Execute(client, responseTokenizers);
+
+            TokenCollection startingData = new TokenCollection();
+            startingData.Add(new JsonToken("email", "asdf@asdf.com", Types.String));
+            startingData.Add(new JsonToken("password", "123456", Types.String));
+
+            TypeMatchGenerator generator = new TypeMatchGenerator();
+            int i = 0;
+            foreach (RequestSequence candidate in generator.Generate(endpoints, sequence, startingData, request_tokenizers))
+            {
+                Console.WriteLine($"Candidate {++i}");
+                foreach (Stage stage in candidate)
+                {
+                    Console.WriteLine(stage.Request.Url);
+                    foreach (ISubstitution sub in stage.Substitutions)
+                    {
+                        Console.WriteLine('\t' + sub.ToString());
+                    }
+                }
+            }
 
             IBucketer bucketer = new TokenNameBucketer();
-            bucketer.Responses.AddRange(results);
+            bucketer.Responses.AddRange(results.Item1);
 
             List<List<Response>> bucketed = bucketer.Bucketize();
-            Console.WriteLine($"{bucketed.Count} buckets.");
+            Console.WriteLine($"\n{bucketed.Count} buckets.");
             foreach(List<Response> bucket in bucketed)
             {
                 Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");

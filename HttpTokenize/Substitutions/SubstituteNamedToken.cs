@@ -33,5 +33,10 @@ namespace HttpTokenize.Substitutions
         {
             return token.GetType() == target.GetType() && token.Name == target.Name;
         }
+
+        public override string ToString()
+        {
+            return $"SubstituteNamedToken Target: {target.Name} Source: {sourceName}";
+        }
     }
 }
