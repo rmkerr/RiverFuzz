@@ -47,15 +47,12 @@ namespace Fuzz
             initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
             TokenCollection initializeTokens = initializeCart.GetRequirements(request_tokenizers);
             Stage initialize = new Stage(initializeCart);
-            initialize.Substitutions.Add(new SubstituteNamedToken(initializeTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
-            initialize.Substitutions.Add(new SubstituteNamedToken(initializeTokens.GetByName("BasketId"), "bid", Types.Integer));
 
             string addToCartJson = "{\"quantity\":2}";
             Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
             addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
             TokenCollection addTokens = addToCart.GetRequirements(request_tokenizers);
             Stage addItem = new Stage(addToCart);
-            addItem.Substitutions.Add(new SubstituteNamedToken(addTokens.GetByName("BearerToken"), "BearerToken", Types.BearerToken));
 
             List<Request> endpoints = new List<Request>();
             endpoints.Add(loginUser);
@@ -63,33 +60,23 @@ namespace Fuzz
             endpoints.Add(addToCart);
 
             RequestSequence sequence = new RequestSequence();
-/*            sequence.Add(login);
-            sequence.Add(initialize);
-            sequence.Add(addItem);*/
-
-            Tuple<List<Response>, TokenCollection> results = await sequence.Execute(client, responseTokenizers);
 
             TokenCollection startingData = new TokenCollection();
             startingData.Add(new JsonToken("email", "asdf@asdf.com", Types.String));
             startingData.Add(new JsonToken("password", "123456", Types.String));
 
             TypeMatchGenerator generator = new TypeMatchGenerator();
+            IBucketer bucketer = new TokenNameBucketer();
+
             int i = 0;
             foreach (RequestSequence candidate in generator.Generate(endpoints, sequence, startingData, request_tokenizers))
             {
                 Console.WriteLine($"Candidate {++i}");
-                foreach (Stage stage in candidate)
-                {
-                    Console.WriteLine(stage.Request.Url);
-                    foreach (ISubstitution sub in stage.Substitutions)
-                    {
-                        Console.WriteLine('\t' + sub.ToString());
-                    }
-                }
-            }
+                Console.WriteLine(candidate.ToString());
 
-            IBucketer bucketer = new TokenNameBucketer();
-            bucketer.Responses.AddRange(results.Item1);
+                Tuple<List<Response>, TokenCollection> results = await candidate.Execute(client, responseTokenizers, startingData);
+                bucketer.Responses.AddRange(results.Item1);
+            }
 
             List<List<Response>> bucketed = bucketer.Bucketize();
             Console.WriteLine($"\n{bucketed.Count} buckets.");

@@ -89,7 +89,7 @@ namespace HttpTokenize.Tokens
             foreach (IToken match in tokens)
             {
                 // Exact match only. TODO: Consider making more flexible.
-                if (match.Name == name)
+                if (String.Equals(match.Name, name, StringComparison.OrdinalIgnoreCase))
                 {
                     return match;
                 }

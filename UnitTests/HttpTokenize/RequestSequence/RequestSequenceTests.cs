@@ -6,6 +6,7 @@ using System.Text;
 using Xunit;
 using HttpTokenize.Tokens;
 using HttpTokenize.Tokenizers;
+using HttpTokenize.Substitutions;
 
 namespace UnitTests.HttpTokenize.RequestSequence
 {

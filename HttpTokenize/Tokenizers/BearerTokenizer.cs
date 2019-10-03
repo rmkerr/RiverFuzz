@@ -32,21 +32,29 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
 
-            Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-            JsonTextReader reader = new JsonTextReader(new StringReader(response.Content));
-            while (reader.Read())
+            try
             {
-                if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                JsonTextReader reader = new JsonTextReader(new StringReader(response.Content));
+                while (reader.Read())
                 {
-                    string name = reader.Value.ToString();
-                    reader.Read();
-                    if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
+                    if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                     {
-                        tokens.Add(new BearerToken(reader.Value.ToString()));
+                        string name = reader.Value.ToString();
+                        reader.Read();
+                        if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
+                        {
+                            tokens.Add(new BearerToken(reader.Value.ToString()));
+                        }
                     }
                 }
             }
+            catch
+            {
+                Console.WriteLine("JSON parsing failure.");
+            }
+
             return tokens;
         }
     }

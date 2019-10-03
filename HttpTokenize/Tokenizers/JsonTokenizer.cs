@@ -23,27 +23,35 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
 
-            JsonTextReader reader = new JsonTextReader(new StringReader(json));
-            while (reader.Read())
+            try
             {
-                if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                JsonTextReader reader = new JsonTextReader(new StringReader(json));
+                while (reader.Read())
                 {
-                    string name = reader.Value.ToString();
-                    reader.Read();
-                    if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
+                    if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                     {
-                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.String));
-                    }
-                    else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
-                    {
-                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Integer));
-                    }
-                    else if (reader.TokenType == Newtonsoft.Json.JsonToken.Boolean)
-                    {
-                        tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Boolean));
+                        string name = reader.Value.ToString();
+                        reader.Read();
+                        if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
+                        {
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.String));
+                        }
+                        else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
+                        {
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Integer));
+                        }
+                        else if (reader.TokenType == Newtonsoft.Json.JsonToken.Boolean)
+                        {
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Boolean));
+                        }
                     }
                 }
             }
+            catch
+            {
+                Console.WriteLine("JSON parsing failure.");
+            }
+
             return tokens;
         }
     }

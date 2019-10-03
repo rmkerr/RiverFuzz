@@ -41,10 +41,12 @@ namespace HttpTokenize
         }
 
         // TODO: More informative return information. Get rid of the stupid tuple.
-        public async Task<Tuple<List<Response>, TokenCollection>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers)
+        public async Task<Tuple<List<Response>, TokenCollection>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
         {
             TokenCollection tokens = new TokenCollection();
             List<Response> responses = new List<Response>();
+
+            tokens.Add(initialTokens);
 
             // For each request.
             for (int i = 0; i < Stages.Count; ++i)
@@ -81,6 +83,21 @@ namespace HttpTokenize
                 sequence.Add(stage.Copy());
             }
             return sequence;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("RequestSequence\n");
+            foreach (Stage stage in Stages)
+            {
+                sb.Append("\t" + stage.Request.Url.ToString() + "\n");
+                foreach (ISubstitution sub in stage.Substitutions)
+                {
+                    sb.Append("\t\t" + sub.ToString() + "\n");
+                }
+            }
+            return sb.ToString();
         }
 
         public IEnumerator<Stage> GetEnumerator()
