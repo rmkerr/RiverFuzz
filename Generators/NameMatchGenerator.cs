@@ -11,7 +11,7 @@ namespace Generators
     {
         public NameMatchGenerator()
         {
-
         }
+
     }
 }

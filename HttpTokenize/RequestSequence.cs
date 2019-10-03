@@ -22,6 +22,13 @@ namespace HttpTokenize
             Request = request;
             Substitutions = new List<ISubstitution>();
         }
+
+        public Stage Copy()
+        {
+            Stage stage = new Stage(Request);
+            stage.Substitutions.AddRange(Substitutions);
+            return stage;
+        }
     }
 
     //
@@ -64,6 +71,16 @@ namespace HttpTokenize
         public void Add(Stage stage)
         {
             Stages.Add(stage);
+        }
+
+        public RequestSequence Copy()
+        {
+            RequestSequence sequence = new RequestSequence();
+            foreach (Stage stage in Stages)
+            {
+                sequence.Add(stage.Copy());
+            }
+            return sequence;
         }
 
         public IEnumerator<Stage> GetEnumerator()
