@@ -1,4 +1,5 @@
-﻿using HttpTokenize.Tokenizers;
+﻿using HttpTokenize.Substitutions;
+using HttpTokenize.Tokenizers;
 using HttpTokenize.Tokens;
 using System;
 using System.Collections;
@@ -23,68 +24,7 @@ namespace HttpTokenize
         }
     }
 
-    public interface ISubstitution
-    {
-        public void MakeSubstitution(TokenCollection previous, Request next);
-
-        // TODO: Rework this. It's odd that we don't initialize with a token, but
-        // we compare to one here.
-        public bool ReplacesToken(IToken token);
-    }
-
-    public class SubstituteConstant : ISubstitution
-    {
-        private readonly IToken target;
-        private readonly string value;
-        public SubstituteConstant(IToken token, string constant)
-        {
-            target = token;
-            value = constant;
-        }
-        public void MakeSubstitution(TokenCollection previous, Request next)
-        {
-            if (next != null)
-            {
-                target.ReplaceValue(next, value);
-            }
-        }
-
-        public bool ReplacesToken(IToken token)
-        {
-            return token.GetType() == target.GetType() && token.Name == target.Name;
-        }
-    }
-
-    public class SubstituteNamedToken : ISubstitution
-    {
-        private readonly IToken target;
-        private readonly string sourceName;
-        private readonly Types sourceType;
-        public SubstituteNamedToken (IToken token, string name, Types type)
-        {
-            target = token;
-            sourceName = name;
-            sourceType = type;
-        }
-        public void MakeSubstitution(TokenCollection previous, Request next)
-        {
-            // Get token from previous sequence and replace new value with old one.
-            IToken? replacement = previous.GetByName(sourceName);
-
-            if (replacement == null)
-            {
-                throw new Exception($"Unable to find token by name '{sourceName}'.");
-            }
-
-            target.ReplaceValue(next, replacement.Value);
-        }
-
-        public bool ReplacesToken(IToken token)
-        {
-            return token.GetType() == target.GetType() && token.Name == target.Name;
-        }
-    }
-
+    //
     public class RequestSequence : IEnumerable<Stage>
     {
         readonly List<Stage> Stages;
@@ -114,6 +54,7 @@ namespace HttpTokenize
                 Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
                 responses.Add(response);
 
+                // Parse the response and add tokens to the results.
                 TokenCollection results = response.GetResults(responseTokenizers);
                 tokens.Add(results);
             }

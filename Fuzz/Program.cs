@@ -1,13 +1,13 @@
 ﻿using System;
 using HttpTokenize;
 using HttpTokenize.Tokens;
-using HttpTokenize.Tokenizers
-;
+using HttpTokenize.Tokenizers;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
 using HttpTokenize.Bucketers;
+using HttpTokenize.Substitutions;
 
 namespace Fuzz
 {
@@ -63,44 +63,15 @@ namespace Fuzz
 
             List<Response> results = await sequence.Execute(client, responseTokenizers);
 
-            // Parse and iterate through all response tokens from the login.
-            TokenCollection requestResults = parsedResponse.GetResults(responseTokenizers);
-
-            Random rand = new Random(0);
-
-            Request initializeCartUpdated = initializeCart.Clone();
-            TokenCollection requirements = initializeCartUpdated.GetRequirements(request_tokenizers);
-            requirements.GetByName("BearerToken")?.ReplaceValue(initializeCartUpdated, requestResults.GetByName("BearerToken").Value);
-            requirements.GetByName("BasketId")?.ReplaceValue(initializeCartUpdated, requestResults.GetByName("bid").Value);
-            requirements.GetByName("quantity")?.ReplaceValue(initializeCartUpdated, rand.Next(-5, 5).ToString());
-
-            // Send another request.
-            response = await client.SendAsync(initializeCartUpdated.GenerateRequest());
-            parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-
             IBucketer bucketer = new TokenNameBucketer();
-
-            // Copy over the results to a new request.
-            for (int i = 0; i < 10; ++i)
-            {
-                Request addToCartUpdated = addToCart.Clone();
-                requirements = addToCartUpdated.GetRequirements(request_tokenizers);
-                requirements.GetByName("BearerToken")?.ReplaceValue(addToCartUpdated, requestResults.GetByName("BearerToken").Value);
-                requirements.GetByName("quantity")?.ReplaceValue(addToCartUpdated, rand.Next(-50, 50).ToString());
-
-                // Send another request.
-                response = await client.SendAsync(addToCartUpdated.GenerateRequest());
-                parsedResponse = new Response(response.StatusCode, await response.Content.ReadAsStringAsync());
-
-                bucketer.Responses.Add(parsedResponse);
-            }
+            bucketer.Responses.AddRange(results);
 
             List<List<Response>> bucketed = bucketer.Bucketize();
             Console.WriteLine($"{bucketed.Count} buckets.");
             foreach(List<Response> bucket in bucketed)
             {
                 Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
-            }*/
+            }
         }
     }
 }
