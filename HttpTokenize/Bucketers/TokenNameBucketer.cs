@@ -8,41 +8,35 @@ namespace HttpTokenize.Bucketers
 {
     public class TokenNameBucketer : IBucketer
     {
+        private Dictionary<string, List<Response>> Sorted = new Dictionary<string, List<Response>>();
         public TokenNameBucketer()
         {
-            Responses = new List<Response>();
         }
-        public List<Response> Responses { get; }
+
+        public bool Add(Response response, TokenCollection tokens)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (IToken token in tokens)
+            {
+                sb.Append(token.Name);
+            }
+
+            if (!Sorted.ContainsKey(sb.ToString()))
+            {
+                Sorted.Add(sb.ToString(), new List<Response>());
+                Sorted[sb.ToString()].Add(response);
+                return true;
+            }
+            Sorted[sb.ToString()].Add(response);
+            return false;
+        }
 
         public List<List<Response>> Bucketize()
         {
-            // TODO: Make this less terrible/more performant.
-            // Currently it takes the names of all the parameters,
-            // turns them into a big string and hashes that string...
-
-            Dictionary<string, List<Response>> sorted = new Dictionary<string, List<Response>>();
-            JsonTokenizer tokenizer = new JsonTokenizer();
-
-            foreach (Response response in Responses)
-            {
-                TokenCollection collection = tokenizer.ExtractTokens(response);
-                StringBuilder sb = new StringBuilder();
-                foreach (IToken token in collection)
-                {
-                    sb.Append(token.Name);
-                }
-
-                if (!sorted.ContainsKey(sb.ToString()))
-                {
-                    sorted.Add(sb.ToString(), new List<Response>());
-                }
-                sorted[sb.ToString()].Add(response);
-            }
-
             List<List<Response>> ret = new List<List<Response>>();
-            foreach (string key in sorted.Keys)
+            foreach (string key in Sorted.Keys)
             {
-                ret.Add(sorted[key]);
+                ret.Add(Sorted[key]);
             }
 
             return ret;

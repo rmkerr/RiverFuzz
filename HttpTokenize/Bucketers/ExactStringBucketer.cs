@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HttpTokenize.Bucketers
 {
-    public class ExactStringBucketer : IBucketer
+/*    public class ExactStringBucketer : IBucketer
     {
         public ExactStringBucketer()
         {
@@ -32,5 +32,5 @@ namespace HttpTokenize.Bucketers
 
             return ret;
         }
-    }
+    }*/
 }

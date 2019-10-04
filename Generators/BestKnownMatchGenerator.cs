@@ -18,6 +18,7 @@ namespace Generators
         // TODO: This seems inefficient.
         public IEnumerable<RequestSequence> Generate(List<Request> endpoints, RequestSequence sequence, TokenCollection sequenceResults, List<IRequestTokenizer> tokenizers)
         {
+            Random rnd = new Random();
             //Console.WriteLine($"Beginning generation.");
             foreach (Request candidate in endpoints)
             {
@@ -26,18 +27,19 @@ namespace Generators
                 Stage candidateStage = new Stage(candidate);
                 foreach (IToken token in requirements)
                 {
-                    IToken? tokenMatch = sequenceResults.GetByName(token.Name);
-                    if (tokenMatch != null)
+                    List<IToken> tokenMatch = sequenceResults.GetByName(token.Name);
+                    if (tokenMatch.Count != 0)
                     {
-                        candidateStage.Substitutions.Add(new SubstituteNamedToken(token, tokenMatch.Name, token.SupportedTypes));
-                        //Console.WriteLine($"{token.Name} matched.");
+                        int selection = rnd.Next(0, tokenMatch.Count);
+                        candidateStage.Substitutions.Add(new SubstituteNamedToken(token, tokenMatch[selection].Name, token.SupportedTypes));
+                        //Console.WriteLine($"{token.Name} matched by {tokenMatch[selection]}.");
                     }
                     else
                     {
                         tokenMatch = sequenceResults.GetByType(token.SupportedTypes);
-                        if (tokenMatch != null)
+                        if (tokenMatch.Count != 0)
                         {
-                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, tokenMatch.Name, token.SupportedTypes));
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, tokenMatch[rnd.Next(0, tokenMatch.Count)].Name, token.SupportedTypes));
                             //Console.WriteLine($"{token.Name} matched.");
                         }
                         else

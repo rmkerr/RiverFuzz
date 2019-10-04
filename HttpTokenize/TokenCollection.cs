@@ -45,44 +45,45 @@ namespace HttpTokenize.Tokens
             }
         }
 
-        public IToken? ContainsExactMatch(IToken token)
+        public List<IToken> ContainsExactMatch(IToken token)
         {
+            List<IToken> matches = new List<IToken>();
             foreach (IToken match in tokens)
             {
                 // Exact match only. TODO: Consider making more flexible.
                 if (token.Name == match.Name && (token.SupportedTypes & match.SupportedTypes) != Types.None)
                 {
-                    return match;
+                    matches.Add(match);
                 }
             }
-            return null;
+            return matches;
         }
 
-        // TODO: Consider returning list.
-        public IToken? GetByName(string name)
+        public List<IToken> GetByName(string name)
         {
+            List<IToken> matches = new List<IToken>();
             foreach (IToken match in tokens)
             {
                 // Exact match only. TODO: Consider making more flexible.
                 if (String.Equals(match.Name, name, StringComparison.OrdinalIgnoreCase))
                 {
-                    return match;
+                    matches.Add(match);
                 }
             }
-            return null;
+            return matches;
         }
 
-        // TODO: Consider returning list.
-        public IToken? GetByType(Types type)
+        public List<IToken> GetByType(Types type)
         {
+            List<IToken> matches = new List<IToken>();
             foreach (IToken match in tokens)
             {
                 if ((match.SupportedTypes & type) != Types.None)
                 {
-                    return match;
+                    matches.Add(match);
                 }
             }
-            return null;
+            return matches;
         }
 
         IEnumerator<IToken> IEnumerable<IToken>.GetEnumerator()

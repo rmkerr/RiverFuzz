@@ -19,14 +19,15 @@ namespace HttpTokenize.Substitutions
         public void MakeSubstitution(TokenCollection previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.
-            IToken? replacement = previous.GetByName(sourceName);
+            List<IToken> replacement = previous.GetByName(sourceName);
 
-            if (replacement == null)
+            if (replacement.Count == 0)
             {
                 throw new Exception($"Unable to find token by name '{sourceName}'.");
             }
 
-            target.ReplaceValue(next, replacement.Value);
+            // TODO: Always replaces the first token. Reconsider.
+            target.ReplaceValue(next, replacement[0].Value);
         }
 
         public bool ReplacesToken(IToken token)

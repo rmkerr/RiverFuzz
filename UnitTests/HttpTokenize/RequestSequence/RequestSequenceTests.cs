@@ -21,15 +21,15 @@ namespace UnitTests.HttpTokenize.RequestSequence
             IRequestTokenizer tokenizer = new JsonTokenizer();
             TokenCollection tokens = tokenizer.ExtractTokens(request);
 
-            IToken? email = tokens.GetByName("email");
-            Assert.NotNull(email);
+            List<IToken> email = tokens.GetByName("email");
+            Assert.Single(email);
 
-            ISubstitution substitution = new SubstituteConstant(email, "new.email@zmail.com");
+            ISubstitution substitution = new SubstituteConstant(email[0], "new.email@zmail.com");
             substitution.MakeSubstitution(null, request);
 
             tokens = tokenizer.ExtractTokens(request);
             email = tokens.GetByName("email");
-            Assert.Equal("new.email@zmail.com", email?.Value);
+            Assert.Equal("new.email@zmail.com", email[0].Value);
         }
     }
 }

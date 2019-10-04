@@ -37,11 +37,11 @@ namespace UnitTests
             BearerTokenizer tokenizer = new BearerTokenizer();
             TokenCollection tokens = tokenizer.ExtractTokens(initializeCart);
 
-            IToken? match = tokens.GetByName("BearerToken");
+            List<IToken> match = tokens.GetByName("BearerToken");
 
-            Assert.NotNull(match);
+            Assert.Single(match);
 
-            match?.ReplaceValue(initializeCart, "testresult");
+            match[0].ReplaceValue(initializeCart, "testresult");
 
             Assert.Equal("Bearer testresult", initializeCart.Headers["Authorization"]);
         }

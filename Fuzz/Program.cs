@@ -39,54 +39,74 @@ namespace Fuzz
 
             string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
             Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
-            TokenCollection loginTokens = loginUser.GetRequirements(request_tokenizers);
-            Stage login = new Stage(loginUser);
 
             string initializeCartJson = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
             Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
-            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
-            TokenCollection initializeTokens = initializeCart.GetRequirements(request_tokenizers);
-            Stage initialize = new Stage(initializeCart);
+            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
 
             string addToCartJson = "{\"quantity\":2}";
             Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
-            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**");
-            TokenCollection addTokens = addToCart.GetRequirements(request_tokenizers);
-            Stage addItem = new Stage(addToCart);
+            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
 
             List<Request> endpoints = new List<Request>();
             endpoints.Add(loginUser);
             endpoints.Add(initializeCart);
             endpoints.Add(addToCart);
 
-            RequestSequence sequence = new RequestSequence();
-
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("Email", "asdf@asdf.com", Types.String));
-            startingData.Add(new JsonToken("Password", "123456", Types.String));
+            startingData.Add(new JsonToken("email", "asdf@asdf.com", Types.String));
+            startingData.Add(new JsonToken("password", "123456", Types.String));
 
             BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
             IBucketer bucketer = new TokenNameBucketer();
 
-            for (int generation = 0; generation < 3; generation++)
+            // Start with an initial population of one empty request sequence.
+            List<RequestSequence> population = new List<RequestSequence>();
+            population.Add(new RequestSequence());
+            
+            // In each generation, we will:
+            // 1: Generate a new set of viable sequences by mutating the existing population.
+            // 2: Execute each viable sequence and caputure results.
+            // 3: Bucket the results.
+            // 4: Cull duplicates.
+            // 5: Repeat with the new population.
+            for (int generation = 0; generation < 10; generation++)
             {
-                Console.WriteLine("\n----------------------------------------------------");
+                Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
-                int candidateNumber = 0;
-                foreach (RequestSequence candidate in generator.Generate(endpoints, sequence, startingData, request_tokenizers))
-                {
-                    Console.WriteLine($"Candidate {++candidateNumber}");
-                    Console.WriteLine(candidate.ToString());
+                Console.WriteLine("----------------------------------------------------------------------------------");
 
-                    Tuple<List<Response>, TokenCollection> results = await candidate.Execute(client, responseTokenizers, startingData);
-                    bucketer.Responses.AddRange(results.Item1);
-                    startingData.Add(results.Item2);
+                int popCount = population.Count; // Store since we will be growing list.
+                for (int seed = 0; seed < popCount; ++seed)
+                {
+                    int candidateNumber = 0;
+                    TokenCollection seedTokens = new TokenCollection(startingData);
+                    if (population[seed].GetResults() != null)
+                    {
+                        seedTokens.Add(population[seed].GetResults());
+                    }
+                    foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens, request_tokenizers))
+                    {
+                        Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
+                        Console.WriteLine(candidate.ToString());
+
+                        List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
+
+                        if (bucketer.Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)))
+                        {
+                            // TODO: if bucketer thinks is interesting.
+                            population.Add(candidate);
+                        }
+                    }
                 }
 
                 List<List<Response>> bucketed = bucketer.Bucketize();
+                //population.Clear();
+
                 Console.WriteLine($"\n{bucketed.Count} buckets.");
                 foreach (List<Response> bucket in bucketed)
                 {
+                    //population.Add(bucket[0]); // TODO: Prefer shorter paths.
                     Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
                 }
             }

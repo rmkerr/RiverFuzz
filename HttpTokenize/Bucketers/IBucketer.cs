@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpTokenize.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,8 @@ namespace HttpTokenize
 {
     public interface IBucketer
     {
-        public List<Response> Responses { get; }
+        // Returns true if this results in a new bucket.
+        public bool Add(Response response, TokenCollection tokens);
         public List<List<Response>> Bucketize();
     }
 }

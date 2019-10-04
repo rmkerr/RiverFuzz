@@ -35,13 +35,20 @@ namespace HttpTokenize
     public class RequestSequence : IEnumerable<Stage>
     {
         readonly List<Stage> Stages;
+        private TokenCollection? Results;
         public RequestSequence()
         {
             Stages = new List<Stage>();
+            Results = null;
+        }
+
+        public TokenCollection? GetResults()
+        {
+            return Results;
         }
 
         // TODO: More informative return information. Get rid of the stupid tuple.
-        public async Task<Tuple<List<Response>, TokenCollection>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
+        public async Task<List<Response>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
         {
             TokenCollection tokens = new TokenCollection();
             List<Response> responses = new List<Response>();
@@ -75,12 +82,14 @@ namespace HttpTokenize
                     responses.Add(response);
                 }
             }
-            return new Tuple<List<Response>, TokenCollection>(responses, tokens);
+            Results = tokens;
+            return responses;
         }
 
         public void Add(Stage stage)
         {
             Stages.Add(stage);
+            Results = null;
         }
 
         public RequestSequence Copy()
@@ -89,6 +98,10 @@ namespace HttpTokenize
             foreach (Stage stage in Stages)
             {
                 sequence.Add(stage.Copy());
+            }
+            if (Results != null)
+            {
+                sequence.Results = new TokenCollection(Results);
             }
             return sequence;
         }
