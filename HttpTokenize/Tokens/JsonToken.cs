@@ -36,7 +36,7 @@ namespace HttpTokenize.Tokens
             }
         }
 
-        public void ReplaceName(Request request, string value)
+        public void ReplaceName(Request request, string name)
         {
             string content = request.Content;
             try
@@ -45,7 +45,7 @@ namespace HttpTokenize.Tokens
                 JToken token = json_content.SelectToken($"..{Name}");
                 JContainer parent = token.Parent;
 
-                parent.Replace(new JProperty(value, token));
+                parent.Replace(new JProperty(name, token));
 
                 request.Content = json_content.ToString();
             }

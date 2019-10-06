@@ -24,7 +24,7 @@ namespace Fuzz
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromSeconds(1);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -37,6 +37,7 @@ namespace Fuzz
             request_tokenizers.Add(new JsonTokenizer());
             request_tokenizers.Add(new QueryTokenizer());
             request_tokenizers.Add(new BearerTokenizer());
+            request_tokenizers.Add(new KnownUrlArgumentTokenizer());
 
             List<Request> endpoints = InitializeEndpoints();
 
@@ -60,7 +61,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 10; generation++)
+            for (int generation = 0; generation < 45; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -108,25 +109,7 @@ namespace Fuzz
 
         public static List<Request> InitializeEndpoints()
         {
-            /*            //string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
-                        //Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
-                        Request loginUser = TextCaptureParse.LoadSingleRequestFromFile(@"C:\Users\Richa\Documents\RiverFuzzResources\login.txt", @"http://localhost");
-
-                        string initializeCartJson = "{\"ProductId\":24,\"BasketId\":20,\"quantity\":1}";
-                        Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
-                        initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
-
-                        string addToCartJson = "{\"quantity\":2}";
-                        Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
-                        addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
-
-                        List<Request> endpoints = new List<Request>();
-                        endpoints.Add(loginUser);
-                        endpoints.Add(initializeCart);
-                        endpoints.Add(addToCart);*/
-
             return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\", @"http://localhost");
-
         }
     }
 }

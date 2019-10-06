@@ -9,11 +9,11 @@ namespace HttpTokenize.Tokens
         private int Index;
 
         // Replace the nth segment in a path.
-        public PathToken(int index, string value, Types supportedTypes)
+        public PathToken(int index, string name, string value, Types supportedTypes)
         {
             Index = index;
             SupportedTypes = supportedTypes;
-            Name = $"PathToken({index})";
+            Name = name;
             Value = value;
         }
 
@@ -35,7 +35,7 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceToken(Request request, IToken replacement)
         {
-            throw new NotImplementedException();
+            ReplaceValue(request, replacement.Value);
         }
 
         public void ReplaceValue(Request request, string value)
@@ -51,19 +51,15 @@ namespace HttpTokenize.Tokens
                 builder.Append('/');
                 if (i == Index)
                 {
-                    builder.Append(replacement.Value);
+                    builder.Append(value);
                 }
                 else
                 {
                     builder.Append(segments[i]);
-                    builder.Append("=");
-                    builder.Append(parameters[segments[i]]);
-                }
-                if (i < segments.Length - 1)
-                {
-                    builder.Append("&");
                 }
             }
+
+            builder.Append(url.GetComponents(UriComponents.Query, UriFormat.UriEscaped));
         }
     }
 }
