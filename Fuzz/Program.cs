@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using HttpTokenize.Bucketers;
 using HttpTokenize.Substitutions;
 using Generators;
+using CaptureParse;
 
 namespace Fuzz
 {
@@ -37,25 +38,14 @@ namespace Fuzz
             request_tokenizers.Add(new QueryTokenizer());
             request_tokenizers.Add(new BearerTokenizer());
 
-            string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
-            Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
-
-            string initializeCartJson = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
-            Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
-            initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
-
-            string addToCartJson = "{\"quantity\":2}";
-            Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
-            addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
-
-            List<Request> endpoints = new List<Request>();
-            endpoints.Add(loginUser);
-            endpoints.Add(initializeCart);
-            endpoints.Add(addToCart);
+            List<Request> endpoints = InitializeEndpoints();
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("email", "asdf@asdf.com", Types.String));
-            startingData.Add(new JsonToken("password", "123456", Types.String));
+            startingData.Add(new JsonToken("const(email)", "asdf@asdf.com", Types.String));
+            startingData.Add(new JsonToken("const(password)", "123456", Types.String));
+            startingData.Add(new JsonToken("Constant(-1)", "-1", Types.Integer));
+            startingData.Add(new JsonToken("Constant(0)", "0", Types.Integer));
+            startingData.Add(new JsonToken("Constant(1)", "1", Types.Integer));
 
             BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
             IBucketer bucketer = new TokenNameBucketer();
@@ -79,19 +69,24 @@ namespace Fuzz
                 int popCount = population.Count; // Store since we will be growing list.
                 for (int seed = 0; seed < popCount; ++seed)
                 {
+                    // Combine the starting dictionary and the results of this request sequence.
                     int candidateNumber = 0;
                     TokenCollection seedTokens = new TokenCollection(startingData);
                     if (population[seed].GetResults() != null)
                     {
                         seedTokens.Add(population[seed].GetResults());
                     }
+
+                    // Generate viable request sequences.
                     foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens, request_tokenizers))
                     {
                         Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
                         Console.WriteLine(candidate.ToString());
 
+                        // Execute the request sequence.
                         List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
 
+                        // If the response results in a new bucket of responses, add it to the population.
                         if (bucketer.Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)))
                         {
                             // TODO: if bucketer thinks is interesting.
@@ -101,7 +96,6 @@ namespace Fuzz
                 }
 
                 List<List<Response>> bucketed = bucketer.Bucketize();
-                //population.Clear();
 
                 Console.WriteLine($"\n{bucketed.Count} buckets.");
                 foreach (List<Response> bucket in bucketed)
@@ -110,6 +104,29 @@ namespace Fuzz
                     Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
                 }
             }
+        }
+
+        public static List<Request> InitializeEndpoints()
+        {
+            /*            //string loginUserJson = "{ \"email\":\"asdf@asdf.com\",\"password\":\"123456\"}";
+                        //Request loginUser = new Request(new Uri(@"http://localhost/rest/user/login/"), HttpMethod.Post, loginUserJson);
+                        Request loginUser = TextCaptureParse.LoadSingleRequestFromFile(@"C:\Users\Richa\Documents\RiverFuzzResources\login.txt", @"http://localhost");
+
+                        string initializeCartJson = "{\"ProductId\":24,\"BasketId\":20,\"quantity\":1}";
+                        Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post, initializeCartJson);
+                        initializeCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
+
+                        string addToCartJson = "{\"quantity\":2}";
+                        Request addToCart = new Request(new Uri(@"http://localhost/api/BasketItems/16/"), HttpMethod.Put, addToCartJson);
+                        addToCart.Headers.Add("Authorization", "Bearer **DUMMYVAL**"); // Real tokens are v long.
+
+                        List<Request> endpoints = new List<Request>();
+                        endpoints.Add(loginUser);
+                        endpoints.Add(initializeCart);
+                        endpoints.Add(addToCart);*/
+
+            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\", @"http://localhost");
+
         }
     }
 }
