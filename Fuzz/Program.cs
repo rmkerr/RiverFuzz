@@ -17,9 +17,6 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
-            // string addUserJson = "{\"email\":\"asdf@asdf.com\",\"password\":\"123456\",\"passwordRepeat\":\"123456\",\"securityQuestion\":{\"id\":2,\"question\":\"Your eldest siblings middle name?\",\"createdAt\":\"2019-09-27T06:18:54.480Z\",\"updatedAt\":\"2019-09-27T06:18:54.480Z\"},\"securityAnswer\":\"asdf\"}";
-            // Request addUserRequest = new Request(new Uri(@"http://localhost/api/Users/"), HttpMethod.Post, addUserJson);
-
             // Set up HttpClient. TODO: Break requirement that we set content type json
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
@@ -110,7 +107,7 @@ namespace Fuzz
 
         public static List<Request> InitializeEndpoints()
         {
-            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\", @"http://localhost");
+            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop", @"http://localhost");
         }
     }
 }

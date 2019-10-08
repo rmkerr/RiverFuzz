@@ -7,6 +7,7 @@ using HttpTokenize.Tokens;
 using Newtonsoft.Json;
 using System.IO;
 using HttpTokenize.Tokenizers;
+using System.Net.Http.Headers;
 
 namespace HttpTokenize
 {
@@ -32,7 +33,10 @@ namespace HttpTokenize
         {
             HttpRequestMessage request = new HttpRequestMessage(Method, Url);
             request.Content = new StringContent(Content);
-            request.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+            if (Headers.ContainsKey("Content-Type"))
+            {
+                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(Headers["Content-Type"]);
+            }
 
             if (Headers.ContainsKey("Authorization"))
             {
