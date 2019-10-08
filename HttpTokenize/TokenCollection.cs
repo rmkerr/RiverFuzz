@@ -86,6 +86,11 @@ namespace HttpTokenize.Tokens
             return matches;
         }
 
+        public int Count()
+        {
+            return tokens.Count;
+        }
+
         IEnumerator<IToken> IEnumerable<IToken>.GetEnumerator()
         {
             return ((IEnumerable<IToken>)tokens).GetEnumerator();

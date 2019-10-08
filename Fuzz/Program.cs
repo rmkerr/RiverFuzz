@@ -21,7 +21,7 @@ namespace Fuzz
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(1);
+            client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -35,12 +35,13 @@ namespace Fuzz
             request_tokenizers.Add(new QueryTokenizer());
             request_tokenizers.Add(new BearerTokenizer());
             request_tokenizers.Add(new KnownUrlArgumentTokenizer());
+            request_tokenizers.Add(new HtmlFormTokenizer());
 
             List<Request> endpoints = InitializeEndpoints();
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("const(email)", "asdf@asdf.com", Types.String));
-            startingData.Add(new JsonToken("const(password)", "123456", Types.String));
+            startingData.Add(new JsonToken("username", "c3624750", Types.String));
+            startingData.Add(new JsonToken("password", "c3624750", Types.String));
             startingData.Add(new JsonToken("Constant(-1)", "-1", Types.Integer));
             startingData.Add(new JsonToken("Constant(0)", "0", Types.Integer));
             startingData.Add(new JsonToken("Constant(1)", "1", Types.Integer));
@@ -58,7 +59,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 200; generation++)
+            for (int generation = 0; generation < 3; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -100,14 +101,14 @@ namespace Fuzz
                 foreach (List<Response> bucket in bucketed)
                 {
                     //population.Add(bucket[0]); // TODO: Prefer shorter paths.
-                    Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content}");
+                    Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content.Substring(0,10)}");
                 }
             }
         }
 
         public static List<Request> InitializeEndpoints()
         {
-            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop", @"http://localhost");
+            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Drupal", @"http://riverfuzz-drupal.azurewebsites.net");
         }
     }
 }
