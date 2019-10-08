@@ -61,7 +61,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 45; generation++)
+            for (int generation = 0; generation < 200; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -88,7 +88,8 @@ namespace Fuzz
                         List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
 
                         // If the response results in a new bucket of responses, add it to the population.
-                        if (bucketer.Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)))
+                        if (bucketer.Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
+                            results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                         {
                             // TODO: if bucketer thinks is interesting.
                             population.Add(candidate);
