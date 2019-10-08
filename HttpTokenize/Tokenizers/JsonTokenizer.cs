@@ -11,12 +11,20 @@ namespace HttpTokenize.Tokenizers
     {
         public TokenCollection ExtractTokens(Request request)
         {
-            return JsonToTokens(request.Content);
+            if (!request.Headers.ContainsKey("Content-Type") || request.Headers["Content-Type"].Contains("json"))
+            {
+                return JsonToTokens(request.Content);
+            }
+            return new TokenCollection();
         }
 
         public TokenCollection ExtractTokens(Response response)
         {
-            return JsonToTokens(response.Content);
+            if (!response.Headers.ContainsKey("Content-Type") || response.Headers["Content-Type"].Contains("json"))
+            {
+                return JsonToTokens(response.Content);
+            }
+            return new TokenCollection();
         }
 
         private TokenCollection JsonToTokens(string json)
