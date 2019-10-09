@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using HttpTokenize.Tokens;
+using HtmlAgilityPack;
+using System.Linq;
 
 namespace HttpTokenize.Tokenizers
 {
@@ -30,7 +32,28 @@ namespace HttpTokenize.Tokenizers
 
         public TokenCollection ExtractTokens(Response response)
         {
-            throw new NotImplementedException();
+            TokenCollection tokens = new TokenCollection();
+            if (response.Headers.ContainsKey("Content-Type") &&
+                response.Headers["Content-Type"].Contains("text/html"))
+            {
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(response.Content);
+
+                List<HtmlNode> nodes = doc.DocumentNode
+                     .SelectNodes("//input[@type=\"hidden\"]").ToList();
+
+                foreach (HtmlNode node in nodes)
+                {
+                    string value = node.GetAttributeValue("value", "");
+                    if (value != "")
+                    {
+                        HtmlFormToken token = new HtmlFormToken(node.GetAttributeValue("name", "likely-csrf"), value, TypeGuesser.GuessTypes(value));
+                        tokens.Add(token);
+                    }
+                }
+
+            }
+            return tokens;
         }
     }
 }

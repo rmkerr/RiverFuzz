@@ -70,6 +70,10 @@ namespace HttpTokenize
                 {
                     HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
                     Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
+                    if (rawResponse.Content.Headers.Contains("Content-Type"))
+                    {
+                        response.Headers.Add("Content-Type", rawResponse.Content.Headers.ContentType.ToString());
+                    }
                     responses.Add(response);
 
                     // Parse the response and add tokens to the results.
@@ -78,7 +82,7 @@ namespace HttpTokenize
                 }
                 catch
                 {
-                    Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "Timeout.");
+                    Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
                     responses.Add(response);
                 }
             }

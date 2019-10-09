@@ -13,17 +13,21 @@ namespace HttpTokenize.Tokenizers
         public TokenCollection ExtractTokens(Request request)
         {
             TokenCollection tokens = new TokenCollection();
-            try
+
+            if (!request.Headers.ContainsKey("Content-Type") || request.Headers["Content-Type"].Contains("json"))
             {
-                if (request.Headers.ContainsKey("Authorization"))
+                try
                 {
-                    string bearerToken = request.Headers["Authorization"].Split(' ', 2)[1];
-                    tokens.Add(new BearerToken(bearerToken));
+                    if (request.Headers.ContainsKey("Authorization"))
+                    {
+                        string bearerToken = request.Headers["Authorization"].Split(' ', 2)[1];
+                        tokens.Add(new BearerToken(bearerToken));
+                    }
                 }
-            }
-            catch
-            {
-                // TODO: better error handling.
+                catch
+                {
+                    // TODO: better error handling.
+                }
             }
             return tokens;
         }
@@ -32,27 +36,30 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
 
-            try
+            if (!response.Headers.ContainsKey("Content-Type") || response.Headers["Content-Type"].Contains("json"))
             {
-                Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-                JsonTextReader reader = new JsonTextReader(new StringReader(response.Content));
-                while (reader.Read())
+                try
                 {
-                    if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
+                    Regex rx = new Regex(@"^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                    JsonTextReader reader = new JsonTextReader(new StringReader(response.Content));
+                    while (reader.Read())
                     {
-                        string name = reader.Value.ToString();
-                        reader.Read();
-                        if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
+                        if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                         {
-                            tokens.Add(new BearerToken(reader.Value.ToString()));
+                            string name = reader.Value.ToString();
+                            reader.Read();
+                            if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
+                            {
+                                tokens.Add(new BearerToken(reader.Value.ToString()));
+                            }
                         }
                     }
                 }
-            }
-            catch
-            {
-                Console.WriteLine("JSON parsing failure.");
+                catch
+                {
+                    Console.WriteLine("JSON parsing failure.");
+                }
             }
 
             return tokens;

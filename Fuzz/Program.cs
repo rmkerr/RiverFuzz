@@ -28,6 +28,7 @@ namespace Fuzz
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
+            responseTokenizers.Add(new HtmlFormTokenizer());
 
             // Load all request tokenizers.
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
@@ -40,8 +41,8 @@ namespace Fuzz
             List<Request> endpoints = InitializeEndpoints();
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("username", "c3624750", Types.String));
-            startingData.Add(new JsonToken("password", "c3624750", Types.String));
+            startingData.Add(new JsonToken("name", "c3624750", Types.String));
+            startingData.Add(new JsonToken("pass", "c3624750", Types.String));
             startingData.Add(new JsonToken("Constant(-1)", "-1", Types.Integer));
             startingData.Add(new JsonToken("Constant(0)", "0", Types.Integer));
             startingData.Add(new JsonToken("Constant(1)", "1", Types.Integer));
@@ -59,7 +60,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 3; generation++)
+            for (int generation = 0; generation < 10; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -101,7 +102,8 @@ namespace Fuzz
                 foreach (List<Response> bucket in bucketed)
                 {
                     //population.Add(bucket[0]); // TODO: Prefer shorter paths.
-                    Console.WriteLine($"{bucket[0].Status} : {bucket[0].Content.Substring(0,10)}");
+                    string summary = bucket[0].Content.Substring(0, Math.Min(50, bucket[0].Content.Length));
+                    Console.WriteLine($"{bucket[0].Status} : {summary}");
                 }
             }
         }
