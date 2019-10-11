@@ -58,16 +58,16 @@ namespace HttpTokenize
             // For each request.
             for (int i = 0; i < Stages.Count; ++i)
             {
-                // Apply all substitutions.
-                Request request = Stages[i].Request.Clone();
-                foreach (ISubstitution substitution in Stages[i].Substitutions)
-                {
-                    substitution.MakeSubstitution(tokens, request);
-                }
-
                 // Make the request.
                 try
                 {
+                    // Apply all substitutions.
+                    Request request = Stages[i].Request.Clone();
+                    foreach (ISubstitution substitution in Stages[i].Substitutions)
+                    {
+                        substitution.MakeSubstitution(tokens, request);
+                    }
+
                     HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
                     Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
                     if (rawResponse.Content.Headers.Contains("Content-Type"))
@@ -80,9 +80,19 @@ namespace HttpTokenize
                     TokenCollection results = response.GetResults(responseTokenizers);
                     tokens.Add(results);
                 }
-                catch
+                catch (TimeoutException ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
+                    responses.Add(response);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
+                    responses.Add(response);
+                }
+                catch (Exception ex)
+                {
+                    Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, ex.Message);
                     responses.Add(response);
                 }
             }
@@ -94,6 +104,11 @@ namespace HttpTokenize
         {
             Stages.Add(stage);
             Results = null;
+        }
+
+        public Stage Get(int index)
+        {
+            return Stages[index];
         }
 
         public RequestSequence Copy()
@@ -116,11 +131,11 @@ namespace HttpTokenize
             sb.Append("RequestSequence\n");
             foreach (Stage stage in Stages)
             {
-                sb.Append("\t" + stage.Request.Url.ToString() + "\n");
                 foreach (ISubstitution sub in stage.Substitutions)
                 {
                     sb.Append("\t\t" + sub.ToString() + "\n");
                 }
+                sb.Append("\t" + stage.Request.Method.ToString() + " " + stage.Request.Url.ToString() + "\n");
             }
             return sb.ToString();
         }

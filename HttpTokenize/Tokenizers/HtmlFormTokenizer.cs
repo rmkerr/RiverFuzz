@@ -39,16 +39,18 @@ namespace HttpTokenize.Tokenizers
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(response.Content);
 
-                List<HtmlNode> nodes = doc.DocumentNode
-                     .SelectNodes("//input[@type=\"hidden\"]").ToList();
+                var nodes = doc.DocumentNode.SelectNodes("//input[@type=\"hidden\"]");
 
-                foreach (HtmlNode node in nodes)
+                if (nodes != null)
                 {
-                    string value = node.GetAttributeValue("value", "");
-                    if (value != "")
+                    foreach (HtmlNode node in nodes)
                     {
-                        HtmlFormToken token = new HtmlFormToken(node.GetAttributeValue("name", "likely-csrf"), value, TypeGuesser.GuessTypes(value));
-                        tokens.Add(token);
+                        string value = node.GetAttributeValue("value", "");
+                        if (value != "")
+                        {
+                            HtmlFormToken token = new HtmlFormToken(node.GetAttributeValue("name", "likely-csrf"), value, TypeGuesser.GuessTypes(value));
+                            tokens.Add(token);
+                        }
                     }
                 }
 

@@ -16,15 +16,15 @@ namespace Generators
         }
 
         // TODO: This seems inefficient.
-        public IEnumerable<RequestSequence> Generate(List<Request> endpoints, RequestSequence sequence, TokenCollection sequenceResults, List<IRequestTokenizer> tokenizers)
+        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, TokenCollection sequenceResults, List<IRequestTokenizer> tokenizers)
         {
             Random rnd = new Random();
             //Console.WriteLine($"Beginning generation.");
-            foreach (Request candidate in endpoints)
+            foreach (RequestResponsePair endpoint in endpoints)
             {
                 bool match = true;
-                TokenCollection requirements = candidate.GetRequirements(tokenizers);
-                Stage candidateStage = new Stage(candidate);
+                TokenCollection requirements = endpoint.InputTokens;
+                Stage candidateStage = new Stage(endpoint.Request);
                 foreach (IToken token in requirements)
                 {
                     List<IToken> tokenMatch = sequenceResults.GetByName(token.Name);

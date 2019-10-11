@@ -19,9 +19,9 @@ namespace Fuzz
         {
             // Set up HttpClient. TODO: Break requirement that we set content type json
             HttpClientHandler handler = new HttpClientHandler();
-            handler.UseCookies = false;
+            // handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromSeconds(1);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -31,24 +31,38 @@ namespace Fuzz
             responseTokenizers.Add(new HtmlFormTokenizer());
 
             // Load all request tokenizers.
-            List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
-            request_tokenizers.Add(new JsonTokenizer());
-            request_tokenizers.Add(new QueryTokenizer());
-            request_tokenizers.Add(new BearerTokenizer());
-            request_tokenizers.Add(new KnownUrlArgumentTokenizer());
-            request_tokenizers.Add(new HtmlFormTokenizer());
+            List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
+            requestTokenizers.Add(new JsonTokenizer());
+            requestTokenizers.Add(new QueryTokenizer());
+            requestTokenizers.Add(new BearerTokenizer());
+            requestTokenizers.Add(new KnownUrlArgumentTokenizer());
+            requestTokenizers.Add(new HtmlFormTokenizer());
 
-            List<Request> endpoints = InitializeEndpoints();
+            List<RequestResponsePair> endpoints = InitializeEndpoints();
+            foreach (RequestResponsePair endpoint in endpoints)
+            {
+                endpoint.Tokenize(requestTokenizers, responseTokenizers);
+            }
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("name", "c3624750", Types.String));
-            startingData.Add(new JsonToken("pass", "c3624750", Types.String));
+            startingData.Add(new JsonToken("username", "asdfg@asdfg.com", Types.String));
+            startingData.Add(new JsonToken("username", "admin", Types.String));
+            startingData.Add(new JsonToken("password", "asdfg", Types.String));
+            startingData.Add(new JsonToken("Constant(null)", "\0", Types.String));
             startingData.Add(new JsonToken("Constant(-1)", "-1", Types.Integer));
             startingData.Add(new JsonToken("Constant(0)", "0", Types.Integer));
             startingData.Add(new JsonToken("Constant(1)", "1", Types.Integer));
+            startingData.Add(new JsonToken("Constant(Int.Max)", int.MaxValue.ToString(), Types.Integer));
+            startingData.Add(new JsonToken("Constant(Int.Min)", int.MinValue.ToString(), Types.Integer));
 
             BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
-            IBucketer bucketer = new TokenNameBucketer();
+
+            Dictionary<string, IBucketer> bucketers = new Dictionary<string, IBucketer>();
+
+            foreach (RequestResponsePair endpoint in endpoints)
+            {
+                bucketers.Add(endpoint.Request.ToString(), new TokenNameBucketer());
+            }
 
             // Start with an initial population of one empty request sequence.
             List<RequestSequence> population = new List<RequestSequence>();
@@ -60,7 +74,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 10; generation++)
+            for (int generation = 0; generation < 50; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -78,7 +92,7 @@ namespace Fuzz
                     }
 
                     // Generate viable request sequences.
-                    foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens, request_tokenizers))
+                    foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens, requestTokenizers))
                     {
                         Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
                         Console.WriteLine(candidate.ToString());
@@ -87,7 +101,7 @@ namespace Fuzz
                         List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
 
                         // If the response results in a new bucket of responses, add it to the population.
-                        if (bucketer.Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
+                        if (bucketers[candidate.Get(results.Count - 1).Request.Method.ToString() + " " +  candidate.Get(results.Count - 1).Request.Url.AbsoluteUri].Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
                             results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                         {
                             // TODO: if bucketer thinks is interesting.
@@ -96,21 +110,27 @@ namespace Fuzz
                     }
                 }
 
-                List<List<Response>> bucketed = bucketer.Bucketize();
-
-                Console.WriteLine($"\n{bucketed.Count} buckets.");
-                foreach (List<Response> bucket in bucketed)
+                foreach (RequestResponsePair endpoint in endpoints)
                 {
-                    //population.Add(bucket[0]); // TODO: Prefer shorter paths.
-                    string summary = bucket[0].Content.Substring(0, Math.Min(50, bucket[0].Content.Length));
-                    Console.WriteLine($"{bucket[0].Status} : {summary}");
+                    IBucketer bucketer = bucketers[endpoint.Request.ToString()];
+                    List<List<Response>> bucketed = bucketer.Bucketize();
+
+                    Console.WriteLine($"\nEndpoint {endpoint.Request.ToString()}");
+                    Console.WriteLine($"\t{bucketed.Count} buckets.");
+                    foreach (List<Response> bucket in bucketed)
+                    {
+                        //population.Add(bucket[0]); // TODO: Prefer shorter paths.
+                        string summary = bucket[0].Content.Substring(0, Math.Min(50, bucket[0].Content.Length));
+                        Console.WriteLine($"\t{bucket[0].Status} : {summary}");
+                    }
                 }
             }
         }
 
-        public static List<Request> InitializeEndpoints()
+        public static List<RequestResponsePair> InitializeEndpoints()
         {
-            return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Drupal", @"http://riverfuzz-drupal.azurewebsites.net");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
+            //return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop", @"http://localhost");
         }
     }
 }

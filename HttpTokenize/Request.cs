@@ -57,6 +57,11 @@ namespace HttpTokenize
             return tokens;
         }
 
+        public override string ToString()
+        {
+            return Method.ToString() + " " + Url.ToString();
+        }
+
         public Uri Url { get; set; }
         public HttpMethod Method { get; set; }
         public string? Content { get; set; }

@@ -15,41 +15,7 @@ namespace CaptureParse
             {
                 using (StreamReader sr = new StreamReader(path))
                 {
-                    string line = sr.ReadLine();
-                    Console.WriteLine(line);
-                    string[] contents = line.Split(' ');
-
-                    if (contents.Length != 3)
-                    {
-                        throw new InvalidOperationException("Invalid HTTP request line.");
-                    }
-
-                    HttpMethod method = new HttpMethod(contents[0]);
-
-                    Uri url = new Uri(host + contents[1]);
-
-                    line = sr.ReadLine();
-                    Dictionary<string, string> headers = new Dictionary<string, string>();
-                    while (line != "")
-                    {
-                        string[] header = line.Split(": ", 2);
-                        headers.Add(header[0], header[1]);
-                        line = sr.ReadLine();
-                    }
-
-                    string content = "";
-                    if (!sr.EndOfStream)
-                    {
-                        content = sr.ReadToEnd();
-                    }
-
-                    // TODO: Null content vs emty string content.
-                    request = new Request(url, method, content);
-
-                    foreach (string key in headers.Keys)
-                    {
-                        request.Headers.Add(key, headers[key]);
-                    }
+                    return TextParser.ParseRequest(sr.ReadToEnd(), host);
                 }
             }
             catch (IOException e)
