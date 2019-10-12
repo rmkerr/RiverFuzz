@@ -21,31 +21,6 @@ namespace HttpTokenize
         public string Value { get; }
         public Types SupportedTypes { get; }
 
-        public void CopyIntoRequest(Request request)
-        {
-            Uri url = request.Url;
-            NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
-            parameters[Name] = Value;
-
-            StringBuilder builder = new StringBuilder();
-            builder.Append(url.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped));
-            builder.Append("?");
-
-            string[] keys = parameters.AllKeys;
-            for(int i = 0; i < keys.Length; i++)
-            {
-                builder.Append(keys[i]);
-                builder.Append("=");
-                builder.Append(parameters[keys[i]]);
-                if (i < keys.Length - 1)
-                {
-                    builder.Append("&");
-                }
-            }
-
-            request.Url = new Uri(builder.ToString());
-        }
-
         public void ReplaceValue(Request request, string value)
         {
             QueryToken token = new QueryToken(Name, value, Types.Integer | Types.String);

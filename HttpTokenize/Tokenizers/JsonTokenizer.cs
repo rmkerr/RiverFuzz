@@ -39,18 +39,20 @@ namespace HttpTokenize.Tokenizers
                     if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                     {
                         string name = reader.Value.ToString();
+                        string path = reader.Path;
+                        Console.WriteLine(path);
                         reader.Read();
                         if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.String));
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.String));
                         }
                         else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Integer));
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.Integer));
                         }
                         else if (reader.TokenType == Newtonsoft.Json.JsonToken.Boolean)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), Types.Boolean));
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.Boolean));
                         }
                     }
                 }

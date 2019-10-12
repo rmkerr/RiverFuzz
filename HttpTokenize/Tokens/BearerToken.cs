@@ -18,11 +18,6 @@ namespace HttpTokenize.Tokens
             SupportedTypes = Types.BearerToken;
         }
 
-        public void CopyIntoRequest(Request request)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReplaceName(Request request, string value)
         {
             throw new NotImplementedException();

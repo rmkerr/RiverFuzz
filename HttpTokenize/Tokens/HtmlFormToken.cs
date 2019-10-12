@@ -20,11 +20,6 @@ namespace HttpTokenize.Tokens
 
         public Types SupportedTypes { get; }
 
-        public void CopyIntoRequest(Request request)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReplaceName(Request request, string name)
         {
             throw new NotImplementedException();

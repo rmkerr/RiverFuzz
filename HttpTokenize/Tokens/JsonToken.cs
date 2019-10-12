@@ -9,32 +9,18 @@ namespace HttpTokenize.Tokens
 {
     public class JsonToken : IToken
     {
-        public JsonToken(string name, string value, Types supported)
+        public JsonToken(string name, string value, string path, Types supported)
         {
             Name = name;
             Value = value;
+            Path = path;
             SupportedTypes = supported;
         }
 
         public string Name { get; }
         public string Value { get; }
+        public string Path { get; }
         public Types SupportedTypes { get; }
-
-        public void CopyIntoRequest(Request request)
-        {
-            string content = request.Content;
-            try
-            {
-                JObject json_content = JObject.Parse(content);
-
-                json_content.Add(Name, JValue.CreateString(Value));
-                request.Content = json_content.ToString();
-            }
-            catch
-            {
-                // TODO: Not JSON
-            }
-        }
 
         public void ReplaceName(Request request, string name)
         {

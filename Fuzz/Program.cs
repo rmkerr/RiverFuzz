@@ -38,30 +38,26 @@ namespace Fuzz
             requestTokenizers.Add(new KnownUrlArgumentTokenizer());
             requestTokenizers.Add(new HtmlFormTokenizer());
 
-            List<RequestResponsePair> endpoints = InitializeEndpoints();
-            foreach (RequestResponsePair endpoint in endpoints)
-            {
-                endpoint.Tokenize(requestTokenizers, responseTokenizers);
-            }
-
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("username", "asdfg@asdfg.com", Types.String));
-            startingData.Add(new JsonToken("username", "admin", Types.String));
-            startingData.Add(new JsonToken("password", "asdfg", Types.String));
-            startingData.Add(new JsonToken("Constant(null)", "\0", Types.String));
-            startingData.Add(new JsonToken("Constant(-1)", "-1", Types.Integer));
-            startingData.Add(new JsonToken("Constant(0)", "0", Types.Integer));
-            startingData.Add(new JsonToken("Constant(1)", "1", Types.Integer));
-            startingData.Add(new JsonToken("Constant(Int.Max)", int.MaxValue.ToString(), Types.Integer));
-            startingData.Add(new JsonToken("Constant(Int.Min)", int.MinValue.ToString(), Types.Integer));
+            startingData.Add(new JsonToken("username", "asdfg@asdfg.com", "", Types.String));
+            startingData.Add(new JsonToken("username", "admin", "", Types.String));
+            startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
+            startingData.Add(new JsonToken("Constant(null)", "\0", "", Types.String));
+            startingData.Add(new JsonToken("Constant(-1)", "-1", "", Types.Integer));
+            startingData.Add(new JsonToken("Constant(0)", "0", "", Types.Integer));
+            startingData.Add(new JsonToken("Constant(1)", "1", "", Types.Integer));
+            startingData.Add(new JsonToken("Constant(Int.Max)", "", int.MaxValue.ToString(), Types.Integer));
+            startingData.Add(new JsonToken("Constant(Int.Min)", "", int.MinValue.ToString(), Types.Integer));
 
             BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
 
             Dictionary<string, IBucketer> bucketers = new Dictionary<string, IBucketer>();
 
+            List<RequestResponsePair> endpoints = InitializeEndpoints();
             foreach (RequestResponsePair endpoint in endpoints)
             {
                 bucketers.Add(endpoint.Request.ToString(), new TokenNameBucketer());
+                endpoint.Tokenize(requestTokenizers, responseTokenizers);
             }
 
             // Start with an initial population of one empty request sequence.
@@ -74,7 +70,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 50; generation++)
+            for (int generation = 0; generation < 200; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
