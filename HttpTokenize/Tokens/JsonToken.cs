@@ -73,7 +73,7 @@ namespace HttpTokenize.Tokens
             try
             {
                 JObject json_content = JObject.Parse(content);
-                JToken token = json_content.SelectToken($"..{Name}");
+                JToken token = json_content.SelectToken(Path);
                 token.Replace(JValue.CreateString(value));
 
                 request.Content = json_content.ToString();

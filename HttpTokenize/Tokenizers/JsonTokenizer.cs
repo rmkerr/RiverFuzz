@@ -40,7 +40,7 @@ namespace HttpTokenize.Tokenizers
                     {
                         string name = reader.Value.ToString();
                         string path = reader.Path;
-                        Console.WriteLine(path);
+                        // Console.WriteLine(path);
                         reader.Read();
                         if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
                         {

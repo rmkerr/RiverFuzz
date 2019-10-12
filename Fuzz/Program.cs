@@ -19,7 +19,7 @@ namespace Fuzz
         {
             // Set up HttpClient. TODO: Break requirement that we set content type json
             HttpClientHandler handler = new HttpClientHandler();
-            // handler.UseCookies = false;
+            handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(1);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -97,7 +97,7 @@ namespace Fuzz
                         List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
 
                         // If the response results in a new bucket of responses, add it to the population.
-                        if (bucketers[candidate.Get(results.Count - 1).Request.Method.ToString() + " " +  candidate.Get(results.Count - 1).Request.Url.AbsoluteUri].Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
+                        if (bucketers[candidate.Get(results.Count - 1).Request.ToString()].Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
                             results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                         {
                             // TODO: if bucketer thinks is interesting.
