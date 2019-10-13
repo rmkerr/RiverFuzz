@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Generators
 {
-    public class BestKnownMatchGenerator
+    public class BestKnownMatchGenerator : IGenerator
     {
         private Random Rand;
         public BestKnownMatchGenerator()
@@ -16,10 +16,8 @@ namespace Generators
             Rand = new Random();
         }
 
-        // TODO: This seems inefficient.
         public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
-            
             foreach (RequestResponsePair endpoint in endpoints)
             {
                 bool foundMatch = true;
@@ -56,6 +54,7 @@ namespace Generators
             }
         }
 
+        // TODO: Combine this with the one below, since it's basically copied and pasted.
         private bool GetRandomNameMatch(List<TokenCollection> source, string name, out IToken? selection, out int sourceCollection)
         {
             List<Tuple<int, IToken>> matches = new List<Tuple<int, IToken>>();

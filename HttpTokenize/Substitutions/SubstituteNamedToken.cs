@@ -18,6 +18,11 @@ namespace HttpTokenize.Substitutions
             sourceType = type;
             sourceResponse = responseIndex;
         }
+        public IToken GetTarget()
+        {
+            return target;
+        }
+
         public void MakeSubstitution(List<TokenCollection> previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.

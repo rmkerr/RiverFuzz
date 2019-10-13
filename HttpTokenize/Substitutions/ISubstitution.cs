@@ -12,5 +12,6 @@ namespace HttpTokenize.Substitutions
         // TODO: Rework this. It's odd that we don't initialize with a token, but
         // we compare to one here.
         public bool ReplacesToken(IToken token);
+        public IToken GetTarget();
     }
 }

@@ -49,7 +49,11 @@ namespace Fuzz
             startingData.Add(new JsonToken("Constant(Int.Max)", "", int.MaxValue.ToString(), Types.Integer));
             startingData.Add(new JsonToken("Constant(Int.Min)", "", int.MinValue.ToString(), Types.Integer));
 
-            BestKnownMatchGenerator generator = new BestKnownMatchGenerator();
+            List<IGenerator> generators = new List<IGenerator>();
+            generators.Add(new BestKnownMatchGenerator());
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 1));
+
+            Random rand = new Random(); // Used to select generator;
 
             Dictionary<string, IBucketer> bucketers = new Dictionary<string, IBucketer>();
 
@@ -94,6 +98,7 @@ namespace Fuzz
 
                     // Generate candidate request sequences.
                     int candidateNumber = 0;
+                    IGenerator generator = generators[rand.Next(0, generators.Count)];
                     foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens))
                     {
                         Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");

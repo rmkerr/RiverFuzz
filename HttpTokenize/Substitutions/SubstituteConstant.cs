@@ -14,6 +14,12 @@ namespace HttpTokenize.Substitutions
             target = token;
             value = constant;
         }
+
+        public IToken GetTarget()
+        {
+            return target;
+        }
+
         public void MakeSubstitution(List<TokenCollection> previous, Request next)
         {
             if (next != null)
@@ -25,6 +31,11 @@ namespace HttpTokenize.Substitutions
         public bool ReplacesToken(IToken token)
         {
             return token.GetType() == target.GetType() && token.Name == target.Name;
+        }
+
+        public override string ToString()
+        {
+            return $"SubstituteConstant Target: {target.Name} Value: {value}";
         }
     }
 }
