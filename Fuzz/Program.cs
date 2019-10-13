@@ -79,16 +79,22 @@ namespace Fuzz
                 int popCount = population.Count; // Store since we will be growing list.
                 for (int seed = 0; seed < popCount; ++seed)
                 {
+
                     // Combine the starting dictionary and the results of this request sequence.
-                    int candidateNumber = 0;
-                    TokenCollection seedTokens = new TokenCollection(startingData);
-                    if (population[seed].GetResults() != null)
+                    List<TokenCollection> seedTokens;
+                    if (population[seed].GetResults() == null)
                     {
-                        seedTokens.Add(population[seed].GetResults());
+                        seedTokens = new List<TokenCollection>();
+                        seedTokens.Add(new TokenCollection(startingData));
+                    }
+                    else
+                    {
+                        seedTokens = population[seed].GetResults();
                     }
 
-                    // Generate viable request sequences.
-                    foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens, requestTokenizers))
+                    // Generate candidate request sequences.
+                    int candidateNumber = 0;
+                    foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens))
                     {
                         Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
                         Console.WriteLine(candidate.ToString());

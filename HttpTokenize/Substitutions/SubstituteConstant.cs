@@ -14,7 +14,7 @@ namespace HttpTokenize.Substitutions
             target = token;
             value = constant;
         }
-        public void MakeSubstitution(TokenCollection previous, Request next)
+        public void MakeSubstitution(List<TokenCollection> previous, Request next)
         {
             if (next != null)
             {

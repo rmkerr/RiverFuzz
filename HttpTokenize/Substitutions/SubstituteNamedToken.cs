@@ -10,16 +10,18 @@ namespace HttpTokenize.Substitutions
         private readonly IToken target;
         private readonly string sourceName;
         private readonly Types sourceType;
-        public SubstituteNamedToken(IToken token, string name, Types type)
+        private readonly int sourceResponse;
+        public SubstituteNamedToken(IToken token, string name, int responseIndex, Types type)
         {
             target = token;
             sourceName = name;
             sourceType = type;
+            sourceResponse = responseIndex;
         }
-        public void MakeSubstitution(TokenCollection previous, Request next)
+        public void MakeSubstitution(List<TokenCollection> previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.
-            List<IToken> replacement = previous.GetByName(sourceName);
+            List<IToken> replacement = previous[sourceResponse].GetByName(sourceName);
 
             if (replacement.Count == 0)
             {
@@ -37,7 +39,7 @@ namespace HttpTokenize.Substitutions
 
         public override string ToString()
         {
-            return $"SubstituteNamedToken Target: {target.Name} Source: {sourceName}";
+            return $"SubstituteNamedToken Target: {target.Name} Source: Request {sourceResponse} {sourceName}";
         }
     }
 }

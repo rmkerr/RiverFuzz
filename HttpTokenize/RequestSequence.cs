@@ -35,14 +35,14 @@ namespace HttpTokenize
     public class RequestSequence : IEnumerable<Stage>
     {
         readonly List<Stage> Stages;
-        private TokenCollection? Results;
+        private List<TokenCollection>? Results;
         public RequestSequence()
         {
             Stages = new List<Stage>();
             Results = null;
         }
 
-        public TokenCollection? GetResults()
+        public List<TokenCollection> GetResults()
         {
             return Results;
         }
@@ -50,10 +50,10 @@ namespace HttpTokenize
         // TODO: More informative return information. Get rid of the stupid tuple.
         public async Task<List<Response>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
         {
-            TokenCollection tokens = new TokenCollection();
             List<Response> responses = new List<Response>();
+            Results = new List<TokenCollection>();
 
-            tokens.Add(initialTokens);
+            Results.Add(initialTokens);
 
             // For each request.
             for (int i = 0; i < Stages.Count; ++i)
@@ -65,7 +65,7 @@ namespace HttpTokenize
                     Request request = Stages[i].Request.Clone();
                     foreach (ISubstitution substitution in Stages[i].Substitutions)
                     {
-                        substitution.MakeSubstitution(tokens, request);
+                        substitution.MakeSubstitution(Results, request);
                     }
 
                     HttpResponseMessage rawResponse = await client.SendAsync(request.GenerateRequest());
@@ -77,8 +77,7 @@ namespace HttpTokenize
                     responses.Add(response);
 
                     // Parse the response and add tokens to the results.
-                    TokenCollection results = response.GetResults(responseTokenizers);
-                    tokens.Add(results);
+                    Results.Add(response.GetResults(responseTokenizers));
                 }
                 catch (TimeoutException ex)
                 {
@@ -96,7 +95,7 @@ namespace HttpTokenize
                     responses.Add(response);
                 }
             }
-            Results = tokens;
+
             return responses;
         }
 
@@ -111,16 +110,17 @@ namespace HttpTokenize
             return Stages[index];
         }
 
+        public int Count()
+        {
+            return Stages.Count;
+        }
+
         public RequestSequence Copy()
         {
             RequestSequence sequence = new RequestSequence();
             foreach (Stage stage in Stages)
             {
                 sequence.Add(stage.Copy());
-            }
-            if (Results != null)
-            {
-                sequence.Results = new TokenCollection(Results);
             }
             return sequence;
         }
