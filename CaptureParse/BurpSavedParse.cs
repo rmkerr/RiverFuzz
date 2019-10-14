@@ -26,7 +26,7 @@ namespace CaptureParse
                 byte[] data = Convert.FromBase64String(requestEncoded.Value);
                 string decodedString = Encoding.UTF8.GetString(data);
 
-                Request request = TextParser.ParseRequest(decodedString, host);
+                Request request = TextParseHelper.ParseRequest(decodedString, host);
 
                 return new RequestResponsePair(request, null);
             }

@@ -15,7 +15,7 @@ namespace CaptureParse
             {
                 using (StreamReader sr = new StreamReader(path))
                 {
-                    return TextParser.ParseRequest(sr.ReadToEnd(), host);
+                    return TextParseHelper.ParseRequest(sr.ReadToEnd(), host);
                 }
             }
             catch (IOException e)

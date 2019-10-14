@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CaptureParse
 {
-    internal class TextParser
+    internal class TextParseHelper
     {
         public static Request ParseRequest(string requestString, string host)
         {

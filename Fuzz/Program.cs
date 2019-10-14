@@ -74,7 +74,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 200; generation++)
+            for (int generation = 0; generation < 50; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -111,8 +111,7 @@ namespace Fuzz
                         if (bucketers[candidate.Get(results.Count - 1).Request.ToString()].Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
                             results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                         {
-                            // TODO: if bucketer thinks is interesting.
-                            population.Add(candidate);
+                            population.Add(candidate); // TODO: Prefer shorter paths.
                         }
                     }
                 }
@@ -126,8 +125,7 @@ namespace Fuzz
                     Console.WriteLine($"\t{bucketed.Count} buckets.");
                     foreach (List<Response> bucket in bucketed)
                     {
-                        //population.Add(bucket[0]); // TODO: Prefer shorter paths.
-                        string summary = bucket[0].Content.Substring(0, Math.Min(50, bucket[0].Content.Length));
+                        string summary = bucket[0].Content.Substring(0, Math.Min(80, bucket[0].Content.Length));
                         Console.WriteLine($"\t{bucket[0].Status} : {summary}");
                     }
                 }
@@ -137,7 +135,6 @@ namespace Fuzz
         public static List<RequestResponsePair> InitializeEndpoints()
         {
             return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
-            //return TextCaptureParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop", @"http://localhost");
         }
     }
 }
