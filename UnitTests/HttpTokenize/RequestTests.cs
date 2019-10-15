@@ -18,7 +18,6 @@ namespace UnitTests
 
             List<IRequestTokenizer> request_tokenizers = new List<IRequestTokenizer>();
             request_tokenizers.Add(new JsonTokenizer());
-            request_tokenizers.Add(new QueryTokenizer());
 
             TokenCollection requirements = addItemToCart.GetRequirements(request_tokenizers);
 

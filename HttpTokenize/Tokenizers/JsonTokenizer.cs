@@ -44,7 +44,9 @@ namespace HttpTokenize.Tokenizers
                         reader.Read();
                         if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.String));
+                            string value = reader.Value.ToString();
+                            Types supported = Types.String | TypeGuesser.GuessTypes(value);
+                            tokens.Add(new Tokens.JsonToken(name, value, path, supported));
                         }
                         else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
                         {

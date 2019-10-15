@@ -22,7 +22,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void JsonToken_SingleDepthReplaceValue_ReplacesName()
+        public void JsonToken_SingleDepthReplaceValue_ReplacesValue()
         {
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "{\r\n  \"testname\": \"testval\"\r\n}";
