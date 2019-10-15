@@ -55,6 +55,7 @@ namespace HttpTokenize.Tokens
             }
 
             builder.Append(url.GetComponents(UriComponents.Query, UriFormat.UriEscaped));
+            request.Url = new Uri(builder.ToString());
         }
     }
 }

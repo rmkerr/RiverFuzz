@@ -43,15 +43,15 @@ namespace Fuzz
             startingData.Add(new JsonToken("username", "admin", "", Types.String));
             startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
             startingData.Add(new JsonToken("Constant(null)", "\0", "", Types.String));
-            startingData.Add(new JsonToken("Constant(-1)", "-1", "", Types.Integer));
+/*            startingData.Add(new JsonToken("Constant(-1)", "-1", "", Types.Integer));
             startingData.Add(new JsonToken("Constant(0)", "0", "", Types.Integer));
             startingData.Add(new JsonToken("Constant(1)", "1", "", Types.Integer));
             startingData.Add(new JsonToken("Constant(Int.Max)", "", int.MaxValue.ToString(), Types.Integer));
-            startingData.Add(new JsonToken("Constant(Int.Min)", "", int.MinValue.ToString(), Types.Integer));
+            startingData.Add(new JsonToken("Constant(Int.Min)", "", int.MinValue.ToString(), Types.Integer));*/
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
 
             Random rand = new Random(); // Used to select generator;
 
@@ -74,7 +74,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 50; generation++)
+            for (int generation = 0; generation < 100; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -106,6 +106,9 @@ namespace Fuzz
 
                         // Execute the request sequence.
                         List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
+
+                        string resultSummary = results[results.Count - 1].Content.Substring(0, Math.Min(80, results[results.Count - 1].Content.Length));
+                        Console.WriteLine($"Result: {results[results.Count - 1].Status} : {resultSummary}");
 
                         // If the response results in a new bucket of responses, add it to the population.
                         if (bucketers[candidate.Get(results.Count - 1).Request.ToString()].Add(results[results.Count-1], results[results.Count - 1].GetResults(responseTokenizers)) &&
