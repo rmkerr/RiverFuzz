@@ -21,8 +21,6 @@ namespace CaptureParse
 
                 XElement requestEncoded = parsed.Descendants("request").First();
 
-                Console.WriteLine(requestEncoded.Value);
-
                 byte[] data = Convert.FromBase64String(requestEncoded.Value);
                 string decodedString = Encoding.UTF8.GetString(data);
 

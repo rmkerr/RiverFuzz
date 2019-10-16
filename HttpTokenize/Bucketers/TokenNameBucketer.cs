@@ -15,10 +15,18 @@ namespace HttpTokenize.Bucketers
 
         public bool Add(Response response, TokenCollection tokens)
         {
-            StringBuilder sb = new StringBuilder();
+            SortedSet<string> tokenNames = new SortedSet<string>();
+
             foreach (IToken token in tokens)
             {
-                sb.Append(token.Name);
+                tokenNames.Add(token.Name);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(response.Status.ToString());
+            foreach (string name in tokenNames)
+            {
+                sb.Append(name);
             }
 
             if (!Sorted.ContainsKey(sb.ToString()))
