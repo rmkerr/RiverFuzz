@@ -15,6 +15,7 @@ namespace UnitTests.HttpTokenize
         [InlineData("0", Types.Integer | Types.Boolean)]
         [InlineData("1", Types.Integer | Types.Boolean)]
         [InlineData("True", Types.Boolean)]
+        [InlineData("false", Types.Boolean)]
         [InlineData("Test string", Types.String)]
         void TypeGuesser_SimpleData_TypeInferredCorrectly(string val, Types expected)
         {
