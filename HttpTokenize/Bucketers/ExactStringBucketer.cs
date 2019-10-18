@@ -1,36 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HttpTokenize.Tokens;
 
 namespace HttpTokenize.Bucketers
 {
-/*    public class ExactStringBucketer : IBucketer
+    public class ExactStringBucketer : IBucketer
     {
         public ExactStringBucketer()
         {
-            Responses = new List<Response>();
         }
-        public List<Response> Responses { get; }
+
+        private Dictionary<string, List<Response>> Sorted = new Dictionary<string, List<Response>>();
+
+        public bool Add(Response response, TokenCollection tokens)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(response.Status.ToString());
+            sb.Append(response.Content);
+
+            if (!Sorted.ContainsKey(sb.ToString()))
+            {
+                Sorted.Add(sb.ToString(), new List<Response>());
+                Sorted[sb.ToString()].Add(response);
+                return true;
+            }
+            Sorted[sb.ToString()].Add(response);
+            return false;
+        }
 
         public List<List<Response>> Bucketize()
         {
-            Dictionary<string, List<Response>> sorted = new Dictionary<string, List<Response>>();
-            foreach (Response response in Responses)
-            {
-                if (!sorted.ContainsKey(response.Content))
-                {
-                    sorted.Add(response.Content, new List<Response>());
-                }
-                sorted[response.Content].Add(response);
-            }
-
             List<List<Response>> ret = new List<List<Response>>();
-            foreach (string key in sorted.Keys)
+            foreach (string key in Sorted.Keys)
             {
-                ret.Add(sorted[key]);
+                ret.Add(Sorted[key]);
             }
 
             return ret;
         }
-    }*/
+    }
 }

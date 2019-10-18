@@ -25,6 +25,7 @@ namespace Fuzz
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
+            // TODO: Fix multiple headers with the same name, add CookieTokenizer
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
@@ -37,6 +38,7 @@ namespace Fuzz
             requestTokenizers.Add(new BearerTokenizer());
             requestTokenizers.Add(new KnownUrlArgumentTokenizer());
             requestTokenizers.Add(new HtmlFormTokenizer());
+            requestTokenizers.Add(new CookieTokenizer());
 
             TokenCollection startingData = new TokenCollection();
             startingData.Add(new JsonToken("username", "asdfg@asdfg.com", "", Types.String));
@@ -44,8 +46,8 @@ namespace Fuzz
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 1));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 4));
+            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 1));
+            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 1));
 
             Dictionary<string, IBucketer> bucketers = new Dictionary<string, IBucketer>();
 
@@ -55,6 +57,8 @@ namespace Fuzz
                 bucketers.Add(endpoint.Request.ToString(), new TokenNameBucketer());
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
             }
+
+            bucketers[@"GET http://localhost/rest/user/whoami"] = new ExactStringBucketer();
 
             // Start with an initial population of one empty request sequence.
             List<RequestSequence> population = new List<RequestSequence>();
