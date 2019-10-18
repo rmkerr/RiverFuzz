@@ -40,7 +40,7 @@ namespace HttpTokenize.Tokens
             StringBuilder builder = new StringBuilder();
             builder.Append(url.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped));
 
-            string[] segments = url.AbsolutePath.Split('/');
+            string[] segments = url.AbsolutePath.Trim('/').Split('/');
             for (int i = 0; i < segments.Length; i++)
             {
                 builder.Append('/');

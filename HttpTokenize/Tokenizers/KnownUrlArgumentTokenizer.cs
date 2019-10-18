@@ -13,7 +13,7 @@ namespace HttpTokenize.Tokenizers
             TokenCollection tokens = new TokenCollection();
 
 
-            string[] segments = request.Url.AbsolutePath.Split('/');
+            string[] segments = request.Url.AbsolutePath.Trim('/').Split('/');
             for (int i = 0; i < segments.Length; ++i)
             {
                 string segment = HttpUtility.UrlDecode(segments[i]);
