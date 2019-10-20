@@ -19,12 +19,14 @@ namespace HttpTokenize
             Url = url;
             Content = content;
             Headers = new Dictionary<string, string>();
+            original = this;
         }
 
         public Request Clone()
         {
             Request clone = new Request(Url, Method, Content);
             clone.Headers = new Dictionary<string, string>(Headers);
+            clone.original = this;
 
             return clone;
         }
@@ -42,6 +44,11 @@ namespace HttpTokenize
             {
                 string[] values = Headers["Authorization"].Split(' ');
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(values[0], values[1]);
+            }
+
+            if (Headers.ContainsKey("Cookie"))
+            {
+                request.Headers.Add("Cookie", Headers["Cookie"]);
             }
 
             return request;
@@ -66,5 +73,10 @@ namespace HttpTokenize
         public HttpMethod Method { get; set; }
         public string? Content { get; set; }
         public Dictionary<string, string> Headers { get; set; }
+        public Request OriginalEndpoint { get { return original; } }
+
+        // Used to track the source endpoint that this request is a 
+        // variation of. Useful when bucketing.
+        internal Request original;
     }
 }

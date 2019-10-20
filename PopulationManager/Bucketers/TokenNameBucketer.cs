@@ -1,10 +1,11 @@
-﻿using HttpTokenize.Tokenizers;
+﻿using HttpTokenize;
+using HttpTokenize.Tokenizers;
 using HttpTokenize.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HttpTokenize.Bucketers
+namespace PopulationManager.Bucketers
 {
     public class TokenNameBucketer : IBucketer
     {

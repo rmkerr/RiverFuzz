@@ -4,12 +4,10 @@ using HttpTokenize.Tokens;
 using HttpTokenize.Tokenizers;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 using System.Collections.Generic;
-using HttpTokenize.Bucketers;
-using HttpTokenize.Substitutions;
 using Generators;
 using CaptureParse;
+using PopulationManager.Bucketers;
 
 namespace Fuzz
 {
@@ -46,19 +44,21 @@ namespace Fuzz
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 1));
-            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 1));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
+            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
-            Dictionary<string, IBucketer> bucketers = new Dictionary<string, IBucketer>();
+            Dictionary<Request, IBucketer> bucketers = new Dictionary<Request, IBucketer>();
 
             List<RequestResponsePair> endpoints = InitializeEndpoints();
             foreach (RequestResponsePair endpoint in endpoints)
             {
-                bucketers.Add(endpoint.Request.ToString(), new TokenNameBucketer());
+                bucketers.Add(endpoint.Request.OriginalEndpoint, new TokenNameBucketer());
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
             }
 
-            bucketers[@"GET http://localhost/rest/user/whoami"] = new ExactStringBucketer();
+            // TODO: Implement per-endpoint bucketing.
+            //bucketers[@"GET http://localhost/rest/user/whoami"] = new ExactStringBucketer();
 
             // Start with an initial population of one empty request sequence.
             List<RequestSequence> population = new List<RequestSequence>();
@@ -70,7 +70,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 50; generation++)
+            for (int generation = 0; generation < 100; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -108,7 +108,7 @@ namespace Fuzz
                             Console.WriteLine($"Result: {results[results.Count - 1].Status} : {resultSummary}");
 
                             // If the response results in a new bucket of responses, add it to the population.
-                            if (bucketers[candidate.Get(results.Count - 1).Request.ToString()].Add(results[results.Count - 1], results[results.Count - 1].GetResults(responseTokenizers)) &&
+                            if (bucketers[candidate.Get(results.Count - 1).Request.OriginalEndpoint].Add(results[results.Count - 1], results[results.Count - 1].GetResults(responseTokenizers)) &&
                                 results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                             {
                                 population.Add(candidate); // TODO: Prefer shorter paths.
@@ -119,7 +119,7 @@ namespace Fuzz
 
                 foreach (RequestResponsePair endpoint in endpoints)
                 {
-                    IBucketer bucketer = bucketers[endpoint.Request.ToString()];
+                    IBucketer bucketer = bucketers[endpoint.Request.OriginalEndpoint];
                     List<List<Response>> bucketed = bucketer.Bucketize();
 
                     Console.WriteLine($"\nEndpoint {endpoint.Request.ToString()}");

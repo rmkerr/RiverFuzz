@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HttpTokenize;
 using HttpTokenize.Tokens;
 
-namespace HttpTokenize.Bucketers
+namespace PopulationManager.Bucketers
 {
     public class ExactStringBucketer : IBucketer
     {

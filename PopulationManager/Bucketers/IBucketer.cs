@@ -1,9 +1,10 @@
-﻿using HttpTokenize.Tokens;
+﻿using HttpTokenize;
+using HttpTokenize.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HttpTokenize
+namespace PopulationManager.Bucketers
 {
     public interface IBucketer
     {
