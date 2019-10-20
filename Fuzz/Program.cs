@@ -15,7 +15,7 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
-            // Set up HttpClient. TODO: Break requirement that we set content type json
+            // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
@@ -23,7 +23,6 @@ namespace Fuzz
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
-            // TODO: Fix multiple headers with the same name, add CookieTokenizer
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
@@ -56,9 +55,6 @@ namespace Fuzz
                 bucketers.Add(endpoint.Request.OriginalEndpoint, new TokenNameBucketer());
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
             }
-
-            // TODO: Implement per-endpoint bucketing.
-            //bucketers[@"GET http://localhost/rest/user/whoami"] = new ExactStringBucketer();
 
             // Start with an initial population of one empty request sequence.
             List<RequestSequence> population = new List<RequestSequence>();
@@ -111,7 +107,7 @@ namespace Fuzz
                             if (bucketers[candidate.Get(results.Count - 1).Request.OriginalEndpoint].Add(results[results.Count - 1], results[results.Count - 1].GetResults(responseTokenizers)) &&
                                 results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                             {
-                                population.Add(candidate); // TODO: Prefer shorter paths.
+                                population.Add(candidate);
                             }
                         }
                     }

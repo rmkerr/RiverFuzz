@@ -33,7 +33,6 @@ namespace HttpTokenize.Substitutions
                 throw new Exception($"Unable to find token by name '{sourceName}'.");
             }
 
-            // TODO: Always replaces the first token. Reconsider.
             target.ReplaceValue(next, replacement[0].Value);
         }
 

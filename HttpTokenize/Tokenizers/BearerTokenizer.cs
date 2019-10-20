@@ -26,7 +26,6 @@ namespace HttpTokenize.Tokenizers
                 }
                 catch
                 {
-                    // TODO: better error handling.
                 }
             }
             return tokens;
