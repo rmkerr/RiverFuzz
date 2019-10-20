@@ -1,4 +1,5 @@
 ﻿using HttpTokenize;
+using HttpTokenize.RequestSequence;
 using HttpTokenize.Substitutions;
 using HttpTokenize.Tokenizers;
 using HttpTokenize.Tokens;
@@ -16,7 +17,7 @@ namespace Generators
             Rand = new Random();
         }
 
-        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
+        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, TokenCollection initialTokens)
         {
             foreach (RequestResponsePair endpoint in endpoints)
             {
@@ -31,11 +32,11 @@ namespace Generators
                     // Name only is usually a good bet, but sometimes gets stuck if there is a false positive.
                     bool useNameOnly = Rand.Next(0, 1) > 0;
 
-                    if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
+                    if (useNameOnly && GetRandomNameMatch(sequence, token.Name, out matchToken, out matchIndex))
                     {
                         candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
                     }
-                    else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
+                    else if (GetRandomTypeMatch(sequence, token.SupportedTypes, out matchToken, out matchIndex))
                     {
                         candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
                     }
@@ -55,13 +56,19 @@ namespace Generators
         }
 
         // TODO: Combine this with the one below, since it's basically copied and pasted.
-        private bool GetRandomNameMatch(List<TokenCollection> source, string name, out IToken? selection, out int sourceCollection)
+        private bool GetRandomNameMatch(RequestSequence source, string name, out IToken? selection, out int sourceCollection)
         {
             List<Tuple<int, IToken>> matches = new List<Tuple<int, IToken>>();
 
-            for (int sourceIndex = 0; sourceIndex < source.Count; ++sourceIndex)
+            List<IToken> searchResults = source.InitialTokens.GetByName(name);
+            foreach (IToken token in searchResults)
             {
-                List<IToken> searchResults = source[sourceIndex].GetByName(name);
+                matches.Add(new Tuple<int, IToken>(0, token));
+            }
+
+            for (int sourceIndex = 1; sourceIndex <= source.Responses.Count; ++sourceIndex)
+            {
+                searchResults = source.Responses[sourceIndex].Results.GetByName(name);
                 foreach (IToken token in searchResults)
                 {
                     matches.Add(new Tuple<int, IToken>(sourceIndex, token));
@@ -85,13 +92,13 @@ namespace Generators
             }
         }
 
-        private bool GetRandomTypeMatch(List<TokenCollection> source, Types supported, out IToken? selection, out int sourceCollection)
+        private bool GetRandomTypeMatch(RequestSequence source, Types supported, out IToken? selection, out int sourceCollection)
         {
             List<Tuple<int, IToken>> matches = new List<Tuple<int, IToken>>();
 
             for (int sourceIndex = 0; sourceIndex < source.Count; ++sourceIndex)
             {
-                List<IToken> searchResults = source[sourceIndex].GetByType(supported);
+                List<IToken> searchResults = source[sourceIndex].Results.GetByType(supported);
                 foreach (IToken token in searchResults)
                 {
                     matches.Add(new Tuple<int, IToken>(sourceIndex, token));

@@ -23,12 +23,12 @@ namespace HttpTokenize.Substitutions
             return target;
         }
 
-        public void MakeSubstitution(List<TokenCollection> previous, Request next)
+        public void MakeSubstitution(List<Response> previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.
-            List<IToken> replacement = previous[sourceResponse].GetByName(sourceName);
+            List<IToken>? replacement = previous[sourceResponse].Results?.GetByName(sourceName);
 
-            if (replacement.Count == 0)
+            if (replacement == null || replacement.Count == 0)
             {
                 throw new Exception($"Unable to find token by name '{sourceName}'.");
             }

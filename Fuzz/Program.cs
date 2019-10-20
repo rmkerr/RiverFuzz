@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Generators;
 using CaptureParse;
 using PopulationManager.Bucketers;
+using HttpTokenize.RequestSequence;
 
 namespace Fuzz
 {
@@ -58,7 +59,7 @@ namespace Fuzz
 
             // Start with an initial population of one empty request sequence.
             List<RequestSequence> population = new List<RequestSequence>();
-            population.Add(new RequestSequence());
+            population.Add(new RequestSequence(startingData));
             
             // In each generation, we will:
             // 1: Generate a new set of viable sequences by mutating the existing population.
@@ -75,36 +76,23 @@ namespace Fuzz
                 int popCount = population.Count; // Store since we will be growing list.
                 for (int seed = 0; seed < popCount; ++seed)
                 {
-
-                    // Combine the starting dictionary and the results of this request sequence.
-                    List<TokenCollection> seedTokens;
-                    if (population[seed].GetResults() == null)
-                    {
-                        seedTokens = new List<TokenCollection>();
-                        seedTokens.Add(new TokenCollection(startingData));
-                    }
-                    else
-                    {
-                        seedTokens = population[seed].GetResults();
-                    }
-
                     // Generate candidate request sequences.
                     int candidateNumber = 0;
                     foreach (IGenerator generator in generators)
                     {
-                        foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], seedTokens))
+                        foreach (RequestSequence candidate in generator.Generate(endpoints, population[seed], startingData))
                         {
                             Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
                             Console.WriteLine(candidate.ToString());
 
                             // Execute the request sequence.
-                            List<Response> results = await candidate.Execute(client, responseTokenizers, startingData);
+                            List<Response> results = await candidate.Execute(client, responseTokenizers);
 
                             string resultSummary = results[results.Count - 1].Content.Substring(0, Math.Min(80, results[results.Count - 1].Content.Length));
                             Console.WriteLine($"Result: {results[results.Count - 1].Status} : {resultSummary}");
 
                             // If the response results in a new bucket of responses, add it to the population.
-                            if (bucketers[candidate.Get(results.Count - 1).Request.OriginalEndpoint].Add(results[results.Count - 1], results[results.Count - 1].GetResults(responseTokenizers)) &&
+                            if (bucketers[candidate.Get(results.Count - 1).Request.OriginalEndpoint].Add(results[results.Count - 1], results[results.Count - 1].Tokenize(responseTokenizers)) &&
                                 results[results.Count - 1].Status == System.Net.HttpStatusCode.OK)
                             {
                                 population.Add(candidate);

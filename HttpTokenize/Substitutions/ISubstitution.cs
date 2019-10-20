@@ -7,7 +7,7 @@ namespace HttpTokenize.Substitutions
 {
     public interface ISubstitution
     {
-        public void MakeSubstitution(List<TokenCollection> previous, Request next);
+        public void MakeSubstitution(List<Response> previous, Request next);
 
         // TODO: Rework this. It's odd that we don't initialize with a token, but
         // we compare to one here.

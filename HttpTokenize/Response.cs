@@ -17,18 +17,27 @@ namespace HttpTokenize
             Headers = new Dictionary<string, string>();
         }
 
-        public TokenCollection GetResults(List<IResponseTokenizer> tokenizers)
+        public TokenCollection Tokenize(List<IResponseTokenizer> tokenizers)
         {
-            TokenCollection tokens = new TokenCollection();
+            results = new TokenCollection();
             foreach (IResponseTokenizer tokenizer in tokenizers)
             {
-                tokens.Add(tokenizer.ExtractTokens(this));
+                results.Add(tokenizer.ExtractTokens(this));
             }
-            return tokens;
+            return results;
         }
 
         public HttpStatusCode Status { get; }
         public string Content { get; }
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; }
+        public TokenCollection? Results
+        {
+            get
+            {
+                return results;
+            }
+        }
+
+        internal TokenCollection? results;
     }
 }

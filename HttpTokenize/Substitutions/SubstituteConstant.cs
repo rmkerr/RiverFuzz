@@ -20,7 +20,7 @@ namespace HttpTokenize.Substitutions
             return target;
         }
 
-        public void MakeSubstitution(List<TokenCollection> previous, Request next)
+        public void MakeSubstitution(List<Response> previous, Request next)
         {
             if (next != null)
             {

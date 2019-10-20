@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HttpTokenize;
+using HttpTokenize.RequestSequence;
 using HttpTokenize.Substitutions;
 using HttpTokenize.Tokens;
 
@@ -20,7 +21,7 @@ namespace Generators
             rand = new Random();
         }
 
-        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
+        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, TokenCollection initialTokens)
         {
             for (int i = 0; i < MaxSubstitutions; ++i)
             {
