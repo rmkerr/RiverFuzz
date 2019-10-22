@@ -5,20 +5,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PopulationManager.Bucketers
+namespace Population.Bucketers
 {
     public class TokenNameBucketer : IBucketer
     {
-        private Dictionary<string, List<Response>> Sorted = new Dictionary<string, List<Response>>();
+        private Dictionary<string, List<RequestSequence>> Sorted = new Dictionary<string, List<RequestSequence>>();
         public TokenNameBucketer()
         {
         }
 
-        public bool Add(Response response, TokenCollection tokens)
+        public bool Add(RequestSequence sequence)
         {
+            List<Response> responses = sequence.GetResponses();
+            Response response = responses[responses.Count - 1];
+
+            List<TokenCollection> allResults = sequence.GetResults();
+            TokenCollection results = allResults[allResults.Count - 1];
+
             SortedSet<string> tokenNames = new SortedSet<string>();
 
-            foreach (IToken token in tokens)
+            foreach (IToken token in results)
             {
                 tokenNames.Add(token.Name);
             }
@@ -32,17 +38,17 @@ namespace PopulationManager.Bucketers
 
             if (!Sorted.ContainsKey(sb.ToString()))
             {
-                Sorted.Add(sb.ToString(), new List<Response>());
-                Sorted[sb.ToString()].Add(response);
+                Sorted.Add(sb.ToString(), new List<RequestSequence>());
+                Sorted[sb.ToString()].Add(sequence);
                 return true;
             }
-            Sorted[sb.ToString()].Add(response);
+            Sorted[sb.ToString()].Add(sequence);
             return false;
         }
 
-        public List<List<Response>> Bucketize()
+        public List<List<RequestSequence>> Bucketize()
         {
-            List<List<Response>> ret = new List<List<Response>>();
+            List<List<RequestSequence>> ret = new List<List<RequestSequence>>();
             foreach (string key in Sorted.Keys)
             {
                 ret.Add(Sorted[key]);

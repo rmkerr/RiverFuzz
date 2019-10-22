@@ -30,5 +30,10 @@ namespace HttpTokenize
         public HttpStatusCode Status { get; }
         public string Content { get; }
         public Dictionary<string, string> Headers { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Status} : {Content.Substring(0,Math.Min(Content.Length, 120))}";
+        }
     }
 }

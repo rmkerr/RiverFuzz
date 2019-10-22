@@ -11,7 +11,7 @@
     <ProjectReference Include="..\CaptureParse\CaptureParse.csproj" />
     <ProjectReference Include="..\Generators\Generators.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
-    <ProjectReference Include="..\PopulationManager\PopulationManager.csproj" />
+    <ProjectReference Include="..\PopulationManager\Population.csproj" />
   </ItemGroup>
 
 </Project>

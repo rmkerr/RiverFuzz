@@ -4,7 +4,7 @@ using System.Text;
 using HttpTokenize;
 using HttpTokenize.Tokens;
 
-namespace PopulationManager.Bucketers
+namespace Population.Bucketers
 {
     public class ExactStringBucketer : IBucketer
     {
@@ -12,27 +12,30 @@ namespace PopulationManager.Bucketers
         {
         }
 
-        private Dictionary<string, List<Response>> Sorted = new Dictionary<string, List<Response>>();
+        private Dictionary<string, List<RequestSequence>> Sorted = new Dictionary<string, List<RequestSequence>>();
 
-        public bool Add(Response response, TokenCollection tokens)
+        public bool Add(RequestSequence sequence)
         {
+            List<Response> responses = sequence.GetResponses();
+            Response response = responses[responses.Count - 1];
+
             StringBuilder sb = new StringBuilder();
             sb.Append(response.Status.ToString());
             sb.Append(response.Content);
 
             if (!Sorted.ContainsKey(sb.ToString()))
             {
-                Sorted.Add(sb.ToString(), new List<Response>());
-                Sorted[sb.ToString()].Add(response);
+                Sorted.Add(sb.ToString(), new List<RequestSequence>());
+                Sorted[sb.ToString()].Add(sequence);
                 return true;
             }
-            Sorted[sb.ToString()].Add(response);
+            Sorted[sb.ToString()].Add(sequence);
             return false;
         }
 
-        public List<List<Response>> Bucketize()
+        public List<List<RequestSequence>> Bucketize()
         {
-            List<List<Response>> ret = new List<List<Response>>();
+            List<List<RequestSequence>> ret = new List<List<RequestSequence>>();
             foreach (string key in Sorted.Keys)
             {
                 ret.Add(Sorted[key]);

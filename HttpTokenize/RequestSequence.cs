@@ -36,21 +36,47 @@ namespace HttpTokenize
     {
         readonly List<Stage> Stages;
         private List<TokenCollection>? Results;
+        private List<Response>? Responses;
+
         public RequestSequence()
         {
             Stages = new List<Stage>();
             Results = null;
+            Responses = null;
         }
 
-        public List<TokenCollection> GetResults()
+        public List<TokenCollection>? GetResults()
         {
             return Results;
+        }
+
+        public TokenCollection? GetLastResult()
+        {
+            if (Results == null || Results.Count == 0)
+            {
+                return null;
+            }
+            return Results[Results.Count - 1];
+        }
+
+        public Response? GetLastResponse()
+        {
+            if (Responses == null || Responses.Count == 0)
+            {
+                return null;
+            }
+            return Responses[Responses.Count - 1];
+        }
+
+        public List<Response>? GetResponses()
+        {
+            return Responses;
         }
 
         // TODO: More informative return information. Get rid of the stupid tuple.
         public async Task<List<Response>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
         {
-            List<Response> responses = new List<Response>();
+            Responses = new List<Response>();
             Results = new List<TokenCollection>();
 
             Results.Add(initialTokens);
@@ -74,7 +100,7 @@ namespace HttpTokenize
                     {
                         response.Headers.Add("Content-Type", rawResponse.Content.Headers.ContentType.ToString());
                     }
-                    responses.Add(response);
+                    Responses.Add(response);
 
                     // Parse the response and add tokens to the results.
                     Results.Add(response.GetResults(responseTokenizers));
@@ -82,21 +108,21 @@ namespace HttpTokenize
                 catch (TimeoutException ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
-                    responses.Add(response);
+                    Responses.Add(response);
                 }
                 catch (TaskCanceledException ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
-                    responses.Add(response);
+                    Responses.Add(response);
                 }
                 catch (Exception ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, ex.Message);
-                    responses.Add(response);
+                    Responses.Add(response);
                 }
             }
 
-            return responses;
+            return Responses;
         }
 
         public void Add(Stage stage)
