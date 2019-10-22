@@ -43,6 +43,10 @@ namespace Population
         public void MinimizePopulation()
         {
             Population = new List<RequestSequence>();
+
+            // We always need the option of starting from an empty sequence.
+            Population.Add(new RequestSequence());
+
             foreach (IBucketer bucketer in Bucketers.Values)
             {
                 foreach (List<RequestSequence> bucket in bucketer.Bucketize())
