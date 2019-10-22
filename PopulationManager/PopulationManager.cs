@@ -30,13 +30,13 @@ namespace Population
         public void AddEndpoint(RequestResponsePair endpoint, IBucketer bucketer)
         {
             Endpoints.Add(endpoint);
-            Bucketers.Add(endpoint.Request, bucketer);
+            Bucketers.Add(endpoint.Request.OriginalEndpoint, bucketer);
         }
 
-        public void AddResponse(RequestSequence sequence, TokenCollection tokens)
+        public void AddResponse(RequestSequence sequence)
         {
             Request finalRequest = sequence.Get(sequence.Count() - 1).Request;
-            Bucketers[finalRequest].Add(sequence);
+            Bucketers[finalRequest.OriginalEndpoint].Add(sequence);
 
         }
 
@@ -53,14 +53,23 @@ namespace Population
                 {
                     if (bucket.Count > 0)
                     {
-                        Response finalRespone = bucket[0].GetLastResponse();
-                        if (finalRespone.Status == System.Net.HttpStatusCode.OK)
+                        Response response = bucket[0].GetLastResponse();
+                        if ((int)response.Status >= 200 && (int)response.Status < 300)
                         {
-                            Population.Add(bucket[0]);
+                            RequestSequence shortest = bucket[0];
+                            foreach (RequestSequence candidate in bucket)
+                            {
+                                if (candidate.Count() < shortest.Count())
+                                {
+                                    shortest = candidate;
+                                }
+                            }
+                            Population.Add(shortest);
                         }
                     }
                 }
             }
+        
         }
 
         public string Summary()

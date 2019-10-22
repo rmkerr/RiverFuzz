@@ -103,7 +103,7 @@ namespace Fuzz
                             Console.WriteLine($"Result: {lastResponse.Status} : {resultSummary}");
 
                             // Add a response to the population. If it looks interesting, we will look at it later.
-                            population.AddResponse(candidate, candidate.GetLastResult());
+                            population.AddResponse(candidate);
                         }
                     }
                 }

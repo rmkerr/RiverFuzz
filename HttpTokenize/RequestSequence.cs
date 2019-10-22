@@ -109,16 +109,19 @@ namespace HttpTokenize
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
                     Responses.Add(response);
+                    break;
                 }
                 catch (TaskCanceledException ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
                     Responses.Add(response);
+                    break;
                 }
                 catch (Exception ex)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, ex.Message);
                     Responses.Add(response);
+                    break;
                 }
             }
 
