@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using HttpTokenize;
 using HttpTokenize.Tokens;
@@ -54,7 +55,7 @@ namespace Population
                     if (bucket.Count > 0)
                     {
                         Response response = bucket[0].GetLastResponse();
-                        if ((int)response.Status >= 200 && (int)response.Status < 300)
+                        if (response.Status != HttpStatusCode.RequestTimeout)
                         {
                             RequestSequence shortest = bucket[0];
                             foreach (RequestSequence candidate in bucket)

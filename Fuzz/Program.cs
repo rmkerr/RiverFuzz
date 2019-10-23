@@ -20,7 +20,7 @@ namespace Fuzz
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(1);
+            client.Timeout = TimeSpan.FromSeconds(2);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -46,7 +46,7 @@ namespace Fuzz
             generators.Add(new BestKnownMatchGenerator());
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
-            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
             PopulationManager population = new PopulationManager();
             foreach (RequestResponsePair endpoint in InitializeEndpoints())
