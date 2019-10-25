@@ -35,5 +35,31 @@ namespace UnitTests.HttpTokenize.Tokens
 
             Assert.Equal(@"http://test.com/part1/replacement", request.Url.ToString());
         }
+
+        [Fact]
+        public void PathToken_SimplePath_LastSegmentRemoved()
+        {
+            Request request = new Request(new Uri(@"http://test.com/part1/part2"), HttpMethod.Get);
+            request.Content = "";
+
+            PathToken token = new PathToken(1, "name", "none", Types.String);
+
+            token.Remove(request);
+
+            Assert.Equal(@"http://test.com/part1", request.Url.ToString());
+        }
+
+        [Fact]
+        public void PathToken_SimplePath_FirstSegmentRemoved()
+        {
+            Request request = new Request(new Uri(@"http://test.com/part1/part2"), HttpMethod.Get);
+            request.Content = "";
+
+            PathToken token = new PathToken(0, "name", "none", Types.String);
+
+            token.Remove(request);
+
+            Assert.Equal(@"http://test.com/part2", request.Url.ToString());
+        }
     }
 }

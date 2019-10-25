@@ -23,6 +23,11 @@ namespace HttpTokenize.Tokens
 
         public Types SupportedTypes { get; }
 
+        public void Remove(Request request)
+        {
+            ReplacementHelper(request, string.Empty, true);
+        }
+
         public void ReplaceName(Request request, string value)
         {
             throw new NotImplementedException();
@@ -35,6 +40,11 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceValue(Request request, string value)
         {
+            ReplacementHelper(request, value, false);
+        }
+
+        private void ReplacementHelper(Request request, string value, bool remove)
+        {
             Uri url = request.Url;
 
             StringBuilder builder = new StringBuilder();
@@ -46,7 +56,14 @@ namespace HttpTokenize.Tokens
                 builder.Append('/');
                 if (i == Index)
                 {
-                    builder.Append(value);
+                    if (remove)
+                    {
+                        builder.Length--;
+                    }
+                    else
+                    {
+                        builder.Append(value);
+                    }
                 }
                 else
                 {

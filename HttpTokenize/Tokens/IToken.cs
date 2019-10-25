@@ -32,5 +32,6 @@ namespace HttpTokenize.Tokens
         public void ReplaceValue(Request request, string value);
         public void ReplaceName(Request request, string name);
         public void ReplaceToken(Request request, IToken replacement);
+        public void Remove(Request request);
     }
 }

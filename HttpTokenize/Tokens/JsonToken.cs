@@ -22,6 +22,24 @@ namespace HttpTokenize.Tokens
         public string Path { get; }
         public Types SupportedTypes { get; }
 
+        public void Remove(Request request)
+        {
+            string content = request.Content;
+            try
+            {
+                JObject json_content = JObject.Parse(content);
+                JToken token = json_content.SelectToken(Path);
+                token.Parent.Remove();
+                //token.Remove();
+
+                request.Content = json_content.ToString();
+            }
+            catch
+            {
+                // TODO: Not JSON
+            }
+        }
+
         public void ReplaceName(Request request, string name)
         {
             string content = request.Content;

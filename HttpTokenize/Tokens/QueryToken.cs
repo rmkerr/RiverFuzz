@@ -71,5 +71,31 @@ namespace HttpTokenize
         {
             return $"QueryToken: {Name}={Value}";
         }
+
+        public void Remove(Request request)
+        {
+            Uri url = request.Url;
+            NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
+            parameters[Name] = Value;
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(url.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped));
+            builder.Append("?");
+
+            string[] keys = parameters.AllKeys;
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] != Name)
+                {
+                    builder.Append(keys[i]);
+                    builder.Append("=");
+                    builder.Append(parameters[keys[i]]);
+                    if (i < keys.Length - 1)
+                    {
+                        builder.Append("&");
+                    }
+                }
+            }
+        }
     }
 }

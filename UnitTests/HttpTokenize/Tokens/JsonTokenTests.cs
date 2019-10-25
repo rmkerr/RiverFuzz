@@ -33,5 +33,18 @@ namespace UnitTests
 
             Assert.Equal("{\r\n  \"testname\": \"newvalue\"\r\n}", request.Content);
         }
+
+        [Fact]
+        public void JsonToken_SingleDepthRemove_RemovesToken()
+        {
+            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
+            request.Content = "{\r\n  \"testname\": \"testval\"\r\n}";
+
+            JsonToken token = new JsonToken("testname", "testval", "testname", Types.String);
+
+            token.Remove(request);
+
+            Assert.Equal("{}", request.Content);
+        }
     }
 }

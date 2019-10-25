@@ -32,5 +32,10 @@ namespace HttpTokenize.Tokens
         {
             request.Headers["Authorization"] = "Bearer " + value;
         }
+
+        public void Remove(Request request)
+        {
+            request.Headers.Remove("Authorization");
+        }
     }
 }
