@@ -24,13 +24,13 @@ namespace Generators
         {
             for (int i = 0; i < MaxSubstitutions; ++i)
             {
-                if (sequence.Count() == 0)
+                if (sequence.StageCount() == 0)
                 {
                     continue;
                 }
 
                 RequestSequence newSequence = sequence.Copy();
-                int selectedStage = rand.Next(0, newSequence.Count());
+                int selectedStage = rand.Next(0, newSequence.StageCount());
 
                 Stage stage = newSequence.Get(selectedStage);
 

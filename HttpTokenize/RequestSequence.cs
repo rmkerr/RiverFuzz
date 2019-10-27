@@ -105,13 +105,13 @@ namespace HttpTokenize
                     // Parse the response and add tokens to the results.
                     Results.Add(response.GetResults(responseTokenizers));
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
                     Responses.Add(response);
                     break;
                 }
-                catch (TaskCanceledException ex)
+                catch (TaskCanceledException)
                 {
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, "//Timeout.");
                     Responses.Add(response);
@@ -139,9 +139,19 @@ namespace HttpTokenize
             return Stages[index];
         }
 
-        public int Count()
+        public int StageCount()
         {
             return Stages.Count;
+        }
+
+        public int SubstitutionCount()
+        {
+            int subs = 0;
+            foreach (Stage stage in Stages)
+            {
+                subs += stage.Substitutions.Count;
+            }
+            return subs;
         }
 
         public RequestSequence Copy()

@@ -36,9 +36,8 @@ namespace Population
 
         public void AddResponse(RequestSequence sequence)
         {
-            Request finalRequest = sequence.Get(sequence.Count() - 1).Request;
+            Request finalRequest = sequence.Get(sequence.StageCount() - 1).Request;
             Bucketers[finalRequest.OriginalEndpoint].Add(sequence);
-
         }
 
         public void MinimizePopulation()
@@ -58,10 +57,14 @@ namespace Population
                         if (response.Status != HttpStatusCode.RequestTimeout)
                         {
                             RequestSequence shortest = bucket[0];
+                            Console.WriteLine($"Selected initial request with {shortest.StageCount()} stages and {shortest.SubstitutionCount()} substitutions.");
                             foreach (RequestSequence candidate in bucket)
                             {
-                                if (candidate.Count() < shortest.Count())
+                                if (candidate.StageCount() < shortest.StageCount() ||
+                                   (candidate.StageCount() == shortest.StageCount() &&
+                                    candidate.SubstitutionCount() < shortest.SubstitutionCount()))
                                 {
+                                    Console.WriteLine($"Selected replacement request with {candidate.StageCount()} stages and {candidate.SubstitutionCount()} substitutions.");
                                     shortest = candidate;
                                 }
                             }

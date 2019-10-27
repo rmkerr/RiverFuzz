@@ -9,6 +9,7 @@ using Generators;
 using CaptureParse;
 using Population.Bucketers;
 using Population;
+using Database;
 
 namespace Fuzz
 {
@@ -16,6 +17,9 @@ namespace Fuzz
     {
         static async Task Main(string[] args)
         {
+            // Set up a database connection to store the results.
+            DatabaseHelper databaseHelper = new DatabaseHelper(Environment.CurrentDirectory + @"\results.sqlite");
+
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
@@ -53,6 +57,7 @@ namespace Fuzz
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
                 population.AddEndpoint(endpoint, new TokenNameBucketer());
+                databaseHelper.AddEndpoint(Database.Models.RequestModel.FromRequest(endpoint.Request));
             }
 
             // Start with an initial population of one empty request sequence.
