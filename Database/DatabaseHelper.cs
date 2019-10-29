@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Database.Models;
+using DatabaseModels.Models;
 using System;
 using System.Data.SQLite;
 using System.IO;
@@ -32,6 +33,24 @@ namespace Database
             }
         }
 
+        public void AddResponse(ResponseModel response)
+        {
+            if (!File.Exists(DbFile))
+            {
+                CreateDatabase();
+            }
+
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                response.id = connection.Query<int>(
+                    @"INSERT INTO response_test
+                    ( status, headers, content ) VALUES 
+                    ( @status, @headers, @content );
+                    select last_insert_rowid()", response).First();
+            }
+        }
+
         private SQLiteConnection GetConnection()
         {
             return new SQLiteConnection("Data Source=" + DbFile);
@@ -42,11 +61,22 @@ namespace Database
             using (var connection = GetConnection())
             {
                 connection.Open();
+
+                // Known endpoints.
                 connection.Execute(
                     @"CREATE TABLE known_endpoints (
                         id      INTEGER PRIMARY KEY AUTOINCREMENT,
                         url     TEXT    NOT NULL,
                         method  TEXT    NOT NULL,
+                        headers TEXT,
+                        content TEXT
+                    );");
+
+                // Response test table.
+                connection.Execute(
+                    @"CREATE TABLE response_test (
+                        id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                        status  TEXT    NOT NULL,
                         headers TEXT,
                         content TEXT
                     );");
