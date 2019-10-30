@@ -69,7 +69,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 10; generation++)
+            for (int generation = 0; generation < 4; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -125,7 +125,7 @@ namespace Fuzz
                 Response? finalResponse = sequence.GetLastResponse();
                 if (finalResponse != null)
                 {
-                    databaseHelper.AddResponse(DatabaseModels.Models.ResponseModel.FromResponse(finalResponse));
+                    databaseHelper.AddRequestSequence(sequence);
                 }
             }
         }

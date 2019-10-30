@@ -12,6 +12,8 @@ namespace Database.Models
         public string method { get; set; }
         public string? headers { get; set; }
         public string? content { get; set; }
+        public int? sequence_id { get; set; }
+        public int? sequence_position { get; set; }
 
         public static RequestModel FromRequest(Request endpoint)
         {

@@ -13,6 +13,8 @@ namespace DatabaseModels.Models
         public string? headers { get; set; }
         public string? content { get; set; }
         public RequestModel? endpoint { get; set; }
+        public int? sequence_id { get; set; }
+        public int? sequence_position { get; set; }
 
         public static ResponseModel FromResponse(Response response)
         {
