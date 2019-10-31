@@ -19,6 +19,7 @@ namespace Fuzz
         {
             // Set up a database connection to store the results.
             DatabaseHelper databaseHelper = new DatabaseHelper(Environment.CurrentDirectory + @"\results.sqlite");
+            databaseHelper.DeleteDatabase();
 
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
@@ -69,7 +70,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 4; generation++)
+            for (int generation = 0; generation < 5; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");

@@ -2,6 +2,7 @@
 using Database.Models;
 using DatabaseModels.Models;
 using HttpTokenize;
+using HttpTokenize.Substitutions;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -15,7 +16,7 @@ namespace Database
         public DatabaseHelper(string dbFile)
         {
             DbFile = dbFile;
-        }   
+        }
 
         public void AddEndpoint(RequestModel endpoint)
         {
@@ -28,7 +29,7 @@ namespace Database
             {
                 connection.Open();
                 endpoint.id = connection.Query<int>(
-                    @"INSERT INTO known_endpoints 
+                    @"INSERT INTO endpoints 
                     ( url, method, headers, content ) VALUES 
                     ( @url, @method, @headers, @content );
                     select last_insert_rowid()", endpoint).First();
@@ -46,7 +47,7 @@ namespace Database
             {
                 connection.Open();
                 endpoint.id = connection.Query<int>(
-                    @"INSERT INTO executed_requests 
+                    @"INSERT INTO requests 
                     ( url, method, headers, content, sequence_id, sequence_position ) VALUES 
                     ( @url, @method, @headers, @content, @sequence_id, @sequence_position );
                     select last_insert_rowid()", endpoint).First();
@@ -64,10 +65,28 @@ namespace Database
             {
                 connection.Open();
                 response.id = connection.Query<int>(
-                    @"INSERT INTO response_test
+                    @"INSERT INTO responses
                     ( status, headers, content, sequence_id, sequence_position ) VALUES 
                     ( @status, @headers, @content, @sequence_id, @sequence_position );
                     select last_insert_rowid()", response).First();
+            }
+        }
+
+        public void AddSubstitution(SubstitutionModel model)
+        {
+            if (!File.Exists(DbFile))
+            {
+                CreateDatabase();
+            }
+
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                model.id = connection.Query<int>(
+                    @"INSERT INTO substitutions
+                    ( type, summary, sequence_id, sequence_position ) VALUES 
+                    ( @type, @summary, @sequence_id, @sequence_position );
+                    select last_insert_rowid()", model).First();
             }
         }
 
@@ -87,7 +106,7 @@ namespace Database
                 connection.Open();
 
                 model.id = connection.Query<int>(
-                    @"INSERT INTO executed_sequences
+                    @"INSERT INTO sequences
                     ( request_count, substitution_count ) VALUES 
                     ( @request_count, @substitution_count );
                     select last_insert_rowid()", model).First();
@@ -106,9 +125,17 @@ namespace Database
 
                     Response response = results[i];
                     ResponseModel responseModel = ResponseModel.FromResponse(response);
-                    requestModel.sequence_id = model.id;
-                    requestModel.sequence_position = i;
+                    responseModel.sequence_id = model.id;
+                    responseModel.sequence_position = i;
                     AddResponse(responseModel);
+
+                    foreach (ISubstitution sub in sequence.Get(i).Substitutions)
+                    {
+                        SubstitutionModel subModel = SubstitutionModel.FromSubstitution(sub);
+                        subModel.sequence_id = model.id;
+                        subModel.sequence_position = i;
+                        AddSubstitution(subModel);
+                    }
                 }
             }
             else
@@ -130,7 +157,7 @@ namespace Database
 
                 // Executed sequences
                 connection.Execute(
-                    @"CREATE TABLE executed_sequences (
+                    @"CREATE TABLE sequences (
                         id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
                         request_count       INTEGER     NOT NULL,
                         substitution_count  INTEGER     NOT_NULL
@@ -138,7 +165,7 @@ namespace Database
 
                 // All executed requests.
                 connection.Execute(
-                    @"CREATE TABLE executed_requests (
+                    @"CREATE TABLE requests (
                         id      INTEGER PRIMARY KEY AUTOINCREMENT,
                         url     TEXT    NOT NULL,
                         method  TEXT    NOT NULL,
@@ -149,9 +176,20 @@ namespace Database
                         FOREIGN KEY(sequence_id) REFERENCES executed_sequences(id)
                     );");
 
+                // Substitutions.
+                connection.Execute(
+                    @"CREATE TABLE substitutions (
+                        id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                        type                TEXT    NOT NULL,
+                        summary             TEXT    NOT NULL,
+                        sequence_position   INTEGER,
+                        sequence_id         INTEGER,
+                        FOREIGN KEY(sequence_id) REFERENCES executed_sequences(id)
+                    );");
+
                 // Known endpoints.
                 connection.Execute(
-                    @"CREATE TABLE known_endpoints (
+                    @"CREATE TABLE endpoints (
                         id      INTEGER PRIMARY KEY AUTOINCREMENT,
                         url     TEXT    NOT NULL,
                         method  TEXT    NOT NULL,
@@ -161,7 +199,7 @@ namespace Database
 
                 // Response test table.
                 connection.Execute(
-                    @"CREATE TABLE response_test (
+                    @"CREATE TABLE responses (
                         id      INTEGER PRIMARY KEY AUTOINCREMENT,
                         status  TEXT    NOT NULL,
                         headers TEXT,
@@ -171,6 +209,11 @@ namespace Database
                         FOREIGN KEY(sequence_id) REFERENCES executed_sequences(id)
                     );");
             }
+        }
+
+        public void DeleteDatabase()
+        {
+            File.Delete(DbFile);
         }
 
         private string DbFile;
