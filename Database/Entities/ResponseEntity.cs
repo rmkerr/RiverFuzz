@@ -1,24 +1,23 @@
-﻿using Database.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using HttpTokenize;
 
-namespace DatabaseModels.Models
+namespace Database.Entities
 {
-    public class ResponseModel
+    public class ResponseEntity
     {
         public int? id { get; set; }
         public string status { get; set; }
         public string? headers { get; set; }
         public string? content { get; set; }
-        public RequestModel? endpoint { get; set; }
+        public RequestEntity? endpoint { get; set; }
         public int? sequence_id { get; set; }
         public int? sequence_position { get; set; }
 
-        public static ResponseModel FromResponse(Response response)
+        public static ResponseEntity FromResponse(Response response)
         {
-            ResponseModel model = new ResponseModel();
+            ResponseEntity model = new ResponseEntity();
             model.status = response.Status.ToString();
 
             StringBuilder sb = new StringBuilder();

@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CaptureParse\CaptureParse.csproj" />
-    <ProjectReference Include="..\Database\DatabaseModels.csproj" />
+    <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\Generators\Generators.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
     <ProjectReference Include="..\PopulationManager\Population.csproj" />

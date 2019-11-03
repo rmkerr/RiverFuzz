@@ -1,13 +1,14 @@
-﻿using Dapper;
-using Database.Models;
-using DatabaseModels.Models;
-using HttpTokenize;
+﻿using HttpTokenize;
 using HttpTokenize.Substitutions;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+
+using Dapper;
+using Database.Entities;
+using System.Threading.Tasks;
 
 namespace Database
 {
@@ -18,7 +19,7 @@ namespace Database
             DbFile = dbFile;
         }
 
-        public void AddEndpoint(RequestModel endpoint)
+        public void AddEndpoint(RequestEntity endpoint)
         {
             if (!File.Exists(DbFile))
             {
@@ -36,7 +37,19 @@ namespace Database
             }
         }
 
-        public void AddExecutedRequest(RequestModel endpoint)
+        public async Task<List<RequestEntity>> AllEndpoints()
+        {
+          //
+
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints");
+                return result.ToList();
+            }
+        }
+
+        public void AddExecutedRequest(RequestEntity endpoint)
         {
             if (!File.Exists(DbFile))
             {
@@ -54,7 +67,7 @@ namespace Database
             }
         }
 
-        public void AddResponse(ResponseModel response)
+        public void AddResponse(ResponseEntity response)
         {
             if (!File.Exists(DbFile))
             {
@@ -72,7 +85,7 @@ namespace Database
             }
         }
 
-        public void AddSubstitution(SubstitutionModel model)
+        public void AddSubstitution(SubstitutionEntity model)
         {
             if (!File.Exists(DbFile))
             {
@@ -97,7 +110,7 @@ namespace Database
                 CreateDatabase();
             }
 
-            RequestSequenceModel model = new RequestSequenceModel();
+            RequestSequenceEntity model = new RequestSequenceEntity();
             model.request_count = sequence.StageCount();
             model.substitution_count = sequence.SubstitutionCount();
 
@@ -118,20 +131,20 @@ namespace Database
                 for (int i = 0; i < sequence.StageCount(); ++i)
                 {
                     Request request = sequence.Get(i).Request;
-                    RequestModel requestModel = RequestModel.FromRequest(request);
+                    RequestEntity requestModel = RequestEntity.FromRequest(request);
                     requestModel.sequence_id = model.id;
                     requestModel.sequence_position = i;
                     AddExecutedRequest(requestModel);
 
                     Response response = results[i];
-                    ResponseModel responseModel = ResponseModel.FromResponse(response);
+                    ResponseEntity responseModel = ResponseEntity.FromResponse(response);
                     responseModel.sequence_id = model.id;
                     responseModel.sequence_position = i;
                     AddResponse(responseModel);
 
                     foreach (ISubstitution sub in sequence.Get(i).Substitutions)
                     {
-                        SubstitutionModel subModel = SubstitutionModel.FromSubstitution(sub);
+                        SubstitutionEntity subModel = SubstitutionEntity.FromSubstitution(sub);
                         subModel.sequence_id = model.id;
                         subModel.sequence_position = i;
                         AddSubstitution(subModel);

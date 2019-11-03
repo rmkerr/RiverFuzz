@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DatabaseModels.Models
+namespace Database.Entities
 {
-    public class RequestSequenceModel
+    public class RequestSequenceEntity
     {
         public int? id { get; set; }
         public int request_count { get; set; }

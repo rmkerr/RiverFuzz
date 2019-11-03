@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Database.Models
+namespace Database.Entities
 {
-    public class RequestModel
+    public class RequestEntity
     {
         public int? id { get; set; }
         public string url { get; set; }
@@ -15,9 +15,9 @@ namespace Database.Models
         public int? sequence_id { get; set; }
         public int? sequence_position { get; set; }
 
-        public static RequestModel FromRequest(Request endpoint)
+        public static RequestEntity FromRequest(Request endpoint)
         {
-            RequestModel model = new RequestModel();
+            RequestEntity model = new RequestEntity();
             model.url = endpoint.Url.AbsoluteUri;
             model.method = endpoint.Method.ToString();
 

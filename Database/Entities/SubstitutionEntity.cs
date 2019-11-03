@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DatabaseModels.Models
+namespace Database.Entities
 {
-    public class SubstitutionModel
+    public class SubstitutionEntity
     {
         public int? id { get; set; }
         public string type { get; set; }
@@ -13,9 +13,9 @@ namespace DatabaseModels.Models
         public int? sequence_id { get; set; }
         public int? sequence_position { get; set; }
 
-        public static SubstitutionModel FromSubstitution(ISubstitution sub)
+        public static SubstitutionEntity FromSubstitution(ISubstitution sub)
         {
-            SubstitutionModel model = new SubstitutionModel();
+            SubstitutionEntity model = new SubstitutionEntity();
             model.type = sub.GetType().Name;
             model.summary = model.ToString();
 

@@ -18,7 +18,7 @@ namespace Fuzz
         static async Task Main(string[] args)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper(Environment.CurrentDirectory + @"\results.sqlite");
+            DatabaseHelper databaseHelper = new DatabaseHelper(@"C:\Users\Richa\Documents\RiverFuzzResources\Database\results.sqlite");
             databaseHelper.DeleteDatabase();
 
             // Set up HttpClient.
@@ -58,7 +58,7 @@ namespace Fuzz
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
                 population.AddEndpoint(endpoint, new TokenNameBucketer());
-                databaseHelper.AddEndpoint(Database.Models.RequestModel.FromRequest(endpoint.Request));
+                databaseHelper.AddEndpoint(Database.Entities.RequestEntity.FromRequest(endpoint.Request));
             }
 
             // Start with an initial population of one empty request sequence.
@@ -70,7 +70,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 5; generation++)
+            for (int generation = 0; generation < 3; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -129,6 +129,8 @@ namespace Fuzz
                     databaseHelper.AddRequestSequence(sequence);
                 }
             }
+
+            
         }
 
         public static List<RequestResponsePair> InitializeEndpoints()
