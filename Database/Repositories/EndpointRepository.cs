@@ -25,7 +25,7 @@ namespace Database.Repositories
         {
             get
             {
-                return new SQLiteConnection(config_.GetConnectionString("MyConnectionString"));
+                return new SQLiteConnection(config_.GetConnectionString("DefaultConnection"));
             }
         }
 

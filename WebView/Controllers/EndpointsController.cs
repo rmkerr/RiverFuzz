@@ -11,8 +11,6 @@ using Microsoft.Extensions.Logging;
 
 namespace WebView.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class EndpointsController : Controller
     {
         private readonly ILogger<EndpointsController> _logger;
@@ -42,17 +40,26 @@ namespace WebView.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("Endpoints/API/ById/{id}")]
         public async Task<ActionResult<RequestEntity>> GetByID(int id)
         {
             return await _endpointRepository.GetByID(id);
         }
 
         [HttpGet]
-        [Route("all")]
+        [Route("Endpoints/API/All")]
         public async Task<ActionResult<List<RequestEntity>>> GetAll()
         {
             return await _endpointRepository.GetAll();
+        }
+
+        [HttpGet]
+        [Route("Endpoints/All")]
+        public async Task<IActionResult> GetAllVisual()
+        {
+            List<RequestEntity> endpoints = await _endpointRepository.GetAll();
+            ViewBag.Endpoints = endpoints;
+            return View();
         }
     }
 }

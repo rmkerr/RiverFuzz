@@ -1,0 +1,27 @@
+﻿@using Database.Entities;
+
+@{
+    ViewData["Title"] = "Known Endpoints";
+}
+
+<div class="accordion" id="accordionExample">
+    @foreach (RequestEntity entity in ViewBag.Endpoints)
+    {
+        <div class="card">
+            <div class="card-header" id="accordion-heading-@entity.id">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion-collapse-@entity.id" ; aria-expanded="true" aria-controls="accordion-collapse-@entity.id">
+                        @entity.method - @entity.url
+                    </button>
+                </h2>
+            </div>
+            <div id="accordion-collapse-@entity.id" class="collapse hide" aria-labelledby="accordion-heading-@entity.id" data-parent="#accordionExample">
+                <div class="card-body">
+                    <p class="card-text">@entity.headers</p>
+                    <p class="card-text">@entity.content</p>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
