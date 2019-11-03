@@ -4,19 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Database;
+using Database.Entities;
+using Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using WebView.Models;
 
 namespace WebView.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class EndpointsController : Controller
     {
         private readonly ILogger<EndpointsController> _logger;
+        private readonly IEndpointRepository _endpointRepository;
 
-        public EndpointsController(ILogger<EndpointsController> logger)
+        public EndpointsController(ILogger<EndpointsController> logger, IEndpointRepository endpointRepo)
         {
             _logger = logger;
+            _endpointRepository = endpointRepo;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -34,6 +39,20 @@ namespace WebView.Controllers
             }
 
             return sb.ToString();
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<RequestEntity>> GetByID(int id)
+        {
+            return await _endpointRepository.GetByID(id);
+        }
+
+        [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult<List<RequestEntity>>> GetAll()
+        {
+            return await _endpointRepository.GetAll();
         }
     }
 }
