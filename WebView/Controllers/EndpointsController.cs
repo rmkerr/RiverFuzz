@@ -14,9 +14,9 @@ namespace WebView.Controllers
     public class EndpointsController : Controller
     {
         private readonly ILogger<EndpointsController> _logger;
-        private readonly IEndpointRepository _endpointRepository;
+        private readonly IFuzzerRepository _endpointRepository;
 
-        public EndpointsController(ILogger<EndpointsController> logger, IEndpointRepository endpointRepo)
+        public EndpointsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
@@ -43,21 +43,21 @@ namespace WebView.Controllers
         [Route("Endpoints/API/ById/{id}")]
         public async Task<ActionResult<RequestEntity>> GetByID(int id)
         {
-            return await _endpointRepository.GetByID(id);
+            return await _endpointRepository.GetEndpointById(id);
         }
 
         [HttpGet]
         [Route("Endpoints/API/All")]
         public async Task<ActionResult<List<RequestEntity>>> GetAll()
         {
-            return await _endpointRepository.GetAll();
+            return await _endpointRepository.GetAllEndpoints();
         }
 
         [HttpGet]
         [Route("Endpoints/All")]
         public async Task<IActionResult> GetAllVisual()
         {
-            List<RequestEntity> endpoints = await _endpointRepository.GetAll();
+            List<RequestEntity> endpoints = await _endpointRepository.GetAllEndpoints();
             ViewBag.Endpoints = endpoints;
             return View();
         }
