@@ -16,5 +16,9 @@ namespace Database.Repositories
         Task<RequestEntity> GetExecutedRequestById(int id);
         Task<RequestEntity> GetExecutedRequestBySequence(int id);
         Task<List<RequestEntity>> GetAllExecutedRequest();
+
+        // Request Sequences
+        Task<RequestSequenceEntity> GetRequestSequenceById(int id);
+        Task<List<RequestSequenceEntity>> GetAllRequestSequences();
     }
 }

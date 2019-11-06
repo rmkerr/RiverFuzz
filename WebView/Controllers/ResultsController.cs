@@ -11,33 +11,47 @@ using System.Threading.Tasks;
 
 namespace WebView.Controllers
 {
-    public class ExecutedRequestsController : Controller
+    public class ResultsController : Controller
     {
         private readonly ILogger<EndpointsController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
 
-        public ExecutedRequestsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo)
+        public ResultsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
         }
 
         [HttpGet]
-        [Route("ExecutedRequests/API/ById/{id}")]
+        [Route("Results/API/Requests/ById/{id}")]
         public async Task<ActionResult<RequestEntity>> GetExecutedRequestById(int id)
         {
             return await _endpointRepository.GetExecutedRequestById(id);
         }
 
         [HttpGet]
-        [Route("ExecutedRequests/API/All")]
-        public async Task<ActionResult<List<RequestEntity>>> GetAll()
+        [Route("Results/API/Requests/All")]
+        public async Task<ActionResult<List<RequestEntity>>> GetAllRequests()
         {
             return await _endpointRepository.GetAllExecutedRequest();
         }
 
         [HttpGet]
-        [Route("ExecutedRequests/All")]
+        [Route("Results/API/Sequences/All")]
+        public async Task<ActionResult<List<RequestSequenceEntity>>> GetAllRequestSequences()
+        {
+            return await _endpointRepository.GetAllRequestSequences();
+        }
+
+        [HttpGet]
+        [Route("Results/API/Sequences/ById/{id}")]
+        public async Task<ActionResult<RequestSequenceEntity>> GetRequestSequenceById(int id)
+        {
+            return await _endpointRepository.GetRequestSequenceById(id);
+        }
+
+        [HttpGet]
+        [Route("Results/All")]
         public async Task<IActionResult> GetAllVisual()
         {
             List<RequestEntity> endpoints = await _endpointRepository.GetAllExecutedRequest();

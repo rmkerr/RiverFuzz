@@ -49,6 +49,28 @@ namespace Database.Repositories
             }
         }
 
+        public async Task<List<RequestSequenceEntity>> GetAllRequestSequences()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequences";
+                conn.Open();
+                var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery);
+                return result.ToList();
+            }
+        }
+
+        public async Task<RequestSequenceEntity> GetRequestSequenceById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequences WHERE id = @ID";
+                conn.Open();
+                var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
+                return result.FirstOrDefault();
+            }
+        }
+
         public async Task<RequestEntity> GetEndpointById(int id)
         {
             using (IDbConnection conn = Connection)
