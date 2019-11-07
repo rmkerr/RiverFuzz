@@ -44,6 +44,27 @@ namespace WebView.Controllers
         }
 
         [HttpGet]
+        [Route("Results/API/Substitutions/ById/{id}")]
+        public async Task<ActionResult<SubstitutionEntity>> GetSubstitutionsById(int id)
+        {
+            return await _endpointRepository.GetSubstitutionById(id);
+        }
+
+        [HttpGet]
+        [Route("Results/API/Substitutions/BySequence/{id}")]
+        public async Task<ActionResult<List<SubstitutionEntity>>> GetSubstitutionsBySequence(int id)
+        {
+            return await _endpointRepository.GetSubstitutionsBySequence(id);
+        }
+
+        [HttpGet]
+        [Route("Results/API/Substitutions/All")]
+        public async Task<ActionResult<List<SubstitutionEntity>>> GetAllSubstitutions()
+        {
+            return await _endpointRepository.GetAllSubstitutions();
+        }
+
+        [HttpGet]
         [Route("Results/API/Sequences/All")]
         public async Task<ActionResult<List<RequestSequenceEntity>>> GetAllRequestSequences()
         {

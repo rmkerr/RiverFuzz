@@ -103,5 +103,38 @@ namespace Database.Repositories
                 return result.ToList();
             }
         }
+
+        public async Task<SubstitutionEntity> GetSubstitutionById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM substitutions WHERE id = @ID";
+                conn.Open();
+                var result = await conn.QueryAsync<SubstitutionEntity>(sQuery, new { ID = id });
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<SubstitutionEntity>> GetAllSubstitutions()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM substitutions";
+                conn.Open();
+                var result = await conn.QueryAsync<SubstitutionEntity>(sQuery);
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<SubstitutionEntity>> GetSubstitutionsBySequence(int seqId)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM substitutions WHERE sequence_id = @seqId";
+                conn.Open();
+                var result = await conn.QueryAsync<SubstitutionEntity>(sQuery, new { seqId = seqId });
+                return result.ToList();
+            }
+        }
     }
 }

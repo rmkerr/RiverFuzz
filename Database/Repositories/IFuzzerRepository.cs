@@ -20,5 +20,10 @@ namespace Database.Repositories
         // Request Sequences
         Task<RequestSequenceEntity> GetRequestSequenceById(int id);
         Task<List<RequestSequenceEntity>> GetAllRequestSequences();
+
+        // Substitutions
+        Task<SubstitutionEntity> GetSubstitutionById(int id);
+        Task<List<SubstitutionEntity>> GetAllSubstitutions();
+        Task<List<SubstitutionEntity>> GetSubstitutionsBySequence(int id);
     }
 }
