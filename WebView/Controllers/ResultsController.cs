@@ -30,6 +30,13 @@ namespace WebView.Controllers
         }
 
         [HttpGet]
+        [Route("Results/API/Requests/BySequence/{id}")]
+        public async Task<ActionResult<List<RequestEntity>>> GetExecutedRequestsBySequence(int id)
+        {
+            return await _endpointRepository.GetExecutedRequestBySequence(id);
+        }
+
+        [HttpGet]
         [Route("Results/API/Requests/All")]
         public async Task<ActionResult<List<RequestEntity>>> GetAllRequests()
         {

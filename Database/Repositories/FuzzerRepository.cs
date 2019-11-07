@@ -93,14 +93,14 @@ namespace Database.Repositories
             }
         }
 
-        public async Task<RequestEntity> GetExecutedRequestBySequence(int seqId)
+        public async Task<List<RequestEntity>> GetExecutedRequestBySequence(int seqId)
         {
             using (IDbConnection conn = Connection)
             {
-                string sQuery = "SELECT * FROM requests WHERE sequenceid = @seqId";
+                string sQuery = "SELECT * FROM requests WHERE sequence_id = @seqId";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestEntity>(sQuery, new { seqId = seqId });
-                return result.FirstOrDefault();
+                return result.ToList();
             }
         }
     }
