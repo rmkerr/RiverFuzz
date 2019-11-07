@@ -26,7 +26,7 @@ namespace HttpTokenize
         {
             Request clone = new Request(Url, Method, Content);
             clone.Headers = new Dictionary<string, string>(Headers);
-            clone.original = this;
+            clone.original = original;
 
             return clone;
         }

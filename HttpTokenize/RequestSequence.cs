@@ -25,7 +25,7 @@ namespace HttpTokenize
 
         public Stage Copy()
         {
-            Stage stage = new Stage(Request);
+            Stage stage = new Stage(Request.Clone());
             stage.Substitutions.AddRange(Substitutions);
             return stage;
         }
