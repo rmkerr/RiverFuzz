@@ -88,7 +88,7 @@ namespace HttpTokenize
                 try
                 {
                     // Apply all substitutions.
-                    Request request = Stages[i].Request.Clone();
+                    Request request = Stages[i].Request;
                     foreach (ISubstitution substitution in Stages[i].Substitutions)
                     {
                         substitution.MakeSubstitution(Results, request);

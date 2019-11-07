@@ -17,7 +17,7 @@ namespace Database.Entities
         {
             SubstitutionEntity model = new SubstitutionEntity();
             model.type = sub.GetType().Name;
-            model.summary = model.ToString();
+            model.summary = sub.ToString();
 
             return model;
         }

@@ -18,38 +18,41 @@ namespace Generators
 
         public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
-            foreach (RequestResponsePair endpoint in endpoints)
+            if (sequence.GetLastResponse() == null || (int)sequence.GetLastResponse().Status < 300)
             {
-                bool foundMatch = true;
-                TokenCollection requirements = endpoint.InputTokens;
-                Stage candidateStage = new Stage(endpoint.Request);
-                foreach (IToken token in requirements)
+                foreach (RequestResponsePair endpoint in endpoints)
                 {
-                    int matchIndex = 0;
-                    IToken? matchToken = null;
+                    bool foundMatch = true;
+                    TokenCollection requirements = endpoint.InputTokens;
+                    Stage candidateStage = new Stage(endpoint.Request);
+                    foreach (IToken token in requirements)
+                    {
+                        int matchIndex = 0;
+                        IToken? matchToken = null;
 
-                    // Name only is usually a good bet, but sometimes gets stuck if there is a false positive.
-                    bool useNameOnly = Rand.Next(0, 1) > 0;
+                        // Name only is usually a good bet, but sometimes gets stuck if there is a false positive.
+                        bool useNameOnly = Rand.Next(0, 1) > 0;
 
-                    if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
-                    {
-                        candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                        if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
+                        {
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                        }
+                        else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
+                        {
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                        }
+                        else
+                        {
+                            foundMatch = false;
+                            break;
+                        }
                     }
-                    else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
+                    if (foundMatch)
                     {
-                        candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                        RequestSequence newSequence = sequence.Copy();
+                        newSequence.Add(candidateStage);
+                        yield return newSequence;
                     }
-                    else
-                    {
-                        foundMatch = false;
-                        break;
-                    }
-                }
-                if (foundMatch)
-                {
-                    RequestSequence newSequence = sequence.Copy();
-                    newSequence.Add(candidateStage);
-                    yield return newSequence;
                 }
             }
         }
