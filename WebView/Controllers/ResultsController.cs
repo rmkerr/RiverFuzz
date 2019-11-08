@@ -79,11 +79,11 @@ namespace WebView.Controllers
         }
 
         [HttpGet]
-        [Route("Results/All")]
-        public async Task<IActionResult> GetAllVisual()
+        [Route("Results/BySequence/{id}")]
+        public async Task<IActionResult> GetAllVisual(int id)
         {
-            List<RequestEntity> endpoints = await _endpointRepository.GetAllExecutedRequest();
-            ViewBag.Endpoints = endpoints;
+            List<RequestEntity> results = await _endpointRepository.GetExecutedRequestBySequence(id);
+            ViewBag.Requests = results;
             return View();
         }
     }
