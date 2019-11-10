@@ -1,0 +1,20 @@
+﻿@using Database.Entities;
+@{ 
+    RequestEntity request = ViewData["Request"] as RequestEntity;
+}
+
+<div class="card">
+    <div class="card-header" id="accordion-heading-@request.id">
+        <h2 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion-collapse-@request.id" ; aria-expanded="true" aria-controls="accordion-collapse-@request.id">
+                @request.sequence_position - @request.method - @request.url
+            </button>
+        </h2>
+    </div>
+    <div id="accordion-collapse-@request.id" class="collapse hide" aria-labelledby="accordion-heading-@request.id">
+        <div class="card-body">
+            <p class="card-text">@request.headers</p>
+            <p class="card-text">@request.content</p>
+        </div>
+    </div>
+</div>

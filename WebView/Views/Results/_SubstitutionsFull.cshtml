@@ -1,0 +1,24 @@
+﻿@using Database.Entities;
+@{
+    int? sequence_position = ViewData["SequencePosition"] as int?;
+    int? sequence_id = ViewData["SequenceId"] as int?;
+    List<SubstitutionEntity> substitutions = ViewData["Substitutions"] as List<SubstitutionEntity>;
+}
+
+<div class="card">
+    <div class="card-header" id="accordion-heading-response-@sequence_id-@sequence_position">
+        <h2 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion-collapse-response-@sequence_id-@sequence_position" ; aria-expanded="true" aria-controls="accordion-collapse-response-@sequence_id-@sequence_position">
+                @sequence_id - @sequence_position
+            </button>
+        </h2>
+    </div>
+    <div id="accordion-collapse-response-@sequence_id-@sequence_position" class="collapse hide" aria-labelledby="accordion-heading-response-@sequence_id-@sequence_position">
+        <div class="card-body">
+            @foreach (SubstitutionEntity entity in substitutions)
+            {
+                <p class="card-text">@entity.summary</p>
+            }
+        </div>
+    </div>
+</div>

@@ -5,23 +5,31 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+<h2>Requests</h2>
 <div class="accordion" id="accordionExample">
-    @foreach (RequestEntity entity in ViewBag.Requests)
-    {
-        <div class="card">
-            <div class="card-header" id="accordion-heading-@entity.id">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordion-collapse-@entity.id" ; aria-expanded="true" aria-controls="accordion-collapse-@entity.id">
-                        @entity.method - @entity.url
-                    </button>
-                </h2>
-            </div>
-            <div id="accordion-collapse-@entity.id" class="collapse hide" aria-labelledby="accordion-heading-@entity.id" data-parent="#accordionExample">
-                <div class="card-body">
-                    <p class="card-text">@entity.headers</p>
-                    <p class="card-text">@entity.content</p>
-                </div>
-            </div>
-        </div>
+    @{
+        List<RequestEntity> requests = ViewData["Requests"] as List<RequestEntity>;
+        foreach (RequestEntity entity in requests)
+        {
+            @await Html.PartialAsync("_RequestFull",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "Request", entity }
+                });
+        }
+    }
+</div>
+<h2>Responses</h2>
+<div class="accordion" id="accordionExample">
+    @{
+        List<ResponseEntity> responses = ViewData["Responses"] as List<ResponseEntity>;
+        foreach (ResponseEntity entity in responses)
+        {
+            @await Html.PartialAsync("_ResponseFull",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "Response", entity }
+                });
+        }
     }
 </div>

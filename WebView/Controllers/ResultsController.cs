@@ -33,14 +33,14 @@ namespace WebView.Controllers
         [Route("Results/API/Requests/BySequence/{id}")]
         public async Task<ActionResult<List<RequestEntity>>> GetExecutedRequestsBySequence(int id)
         {
-            return await _endpointRepository.GetExecutedRequestBySequence(id);
+            return await _endpointRepository.GetExecutedRequestsBySequence(id);
         }
 
         [HttpGet]
         [Route("Results/API/Requests/All")]
         public async Task<ActionResult<List<RequestEntity>>> GetAllRequests()
         {
-            return await _endpointRepository.GetAllExecutedRequest();
+            return await _endpointRepository.GetAllExecutedRequests();
         }
 
         [HttpGet]
@@ -82,8 +82,12 @@ namespace WebView.Controllers
         [Route("Results/BySequence/{id}")]
         public async Task<IActionResult> GetAllVisual(int id)
         {
-            List<RequestEntity> results = await _endpointRepository.GetExecutedRequestBySequence(id);
-            ViewBag.Requests = results;
+            List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
+            List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
+            List<ResponseEntity> responses = await _endpointRepository.GetResponsesBySequence(id);
+            ViewData["Requests"] = requests;
+            ViewData["Substitutions"] = substitutions;
+            ViewData["Responses"] = responses;
             return View();
         }
     }

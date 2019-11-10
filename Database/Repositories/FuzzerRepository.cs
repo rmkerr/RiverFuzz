@@ -39,7 +39,7 @@ namespace Database.Repositories
             }
         }
 
-        public async Task<List<RequestEntity>> GetAllExecutedRequest()
+        public async Task<List<RequestEntity>> GetAllExecutedRequests()
         {
             using (IDbConnection connection = Connection)
             {
@@ -93,7 +93,7 @@ namespace Database.Repositories
             }
         }
 
-        public async Task<List<RequestEntity>> GetExecutedRequestBySequence(int seqId)
+        public async Task<List<RequestEntity>> GetExecutedRequestsBySequence(int seqId)
         {
             using (IDbConnection conn = Connection)
             {
@@ -133,6 +133,38 @@ namespace Database.Repositories
                 string sQuery = "SELECT * FROM substitutions WHERE sequence_id = @seqId";
                 conn.Open();
                 var result = await conn.QueryAsync<SubstitutionEntity>(sQuery, new { seqId = seqId });
+                return result.ToList();
+            }
+        }
+
+        public async Task<ResponseEntity> GetResponseById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM responses WHERE id = @id";
+                conn.Open();
+                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { id });
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<ResponseEntity>> GetResponsesBySequence(int seqId)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM responses WHERE sequence_id = @seqId";
+                conn.Open();
+                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { seqId });
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<ResponseEntity>> GetAllResponses()
+        {
+            using (IDbConnection connection = Connection)
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<ResponseEntity>(@"SELECT * FROM responses");
                 return result.ToList();
             }
         }
