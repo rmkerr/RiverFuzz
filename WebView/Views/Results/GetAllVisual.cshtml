@@ -33,3 +33,15 @@
         }
     }
 </div>
+<h2>Substitutions</h2>
+<div class="accordion" id="accordionExample">
+    @{
+        List<SubstitutionEntity> Substitutions = ViewData["Substitutions"] as List<SubstitutionEntity>;
+            @await Html.PartialAsync("_SubstitutionsFull",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "Substitution", Substitutions }
+                });
+
+    }
+</div>
