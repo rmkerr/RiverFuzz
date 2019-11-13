@@ -12,7 +12,7 @@
         foreach (RequestEntity entity in requests)
         {
             @await Html.PartialAsync("_RequestFull",
-                new ViewDataDictionary(ViewData)
+         new ViewDataDictionary(ViewData)
                 {
                     { "Request", entity }
                 });
@@ -26,7 +26,7 @@
         foreach (ResponseEntity entity in responses)
         {
             @await Html.PartialAsync("_ResponseFull",
-                new ViewDataDictionary(ViewData)
+         new ViewDataDictionary(ViewData)
                 {
                     { "Response", entity }
                 });
@@ -36,12 +36,14 @@
 <h2>Substitutions</h2>
 <div class="accordion" id="accordionExample">
     @{
-        List<SubstitutionEntity> Substitutions = ViewData["Substitutions"] as List<SubstitutionEntity>;
+        List<List<SubstitutionEntity>> Substitutions = ViewData["Substitutions"] as List<List<SubstitutionEntity>>;
+        foreach (List<SubstitutionEntity> stage in Substitutions)
+        {
             @await Html.PartialAsync("_SubstitutionsFull",
                 new ViewDataDictionary(ViewData)
                 {
-                    { "Substitution", Substitutions }
+                    { "Substitution", stage }
                 });
-
+        }
     }
 </div>
