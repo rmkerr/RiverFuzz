@@ -82,14 +82,14 @@ namespace WebView.Controllers
         [Route("Results/BySequence/{id}")]
         public async Task<IActionResult> GetAllVisual(int id)
         {
-            RequestSequenceEntity sequenceEntities = await _endpointRepository.GetRequestSequenceById(id);
+            RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);
             List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
             List<ResponseEntity> responses = await _endpointRepository.GetResponsesBySequence(id);
             List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
 
             // Split substitutions.
             List<List<SubstitutionEntity>> substitutionsGrouped = new List<List<SubstitutionEntity>>();
-            for (int i = 0; i < sequenceEntities.request_count; ++i)
+            for (int i = 0; i < sequence.request_count; ++i)
             {
                 substitutionsGrouped.Add(substitutions.Where(x => x.sequence_position == i).ToList());
             }
@@ -97,6 +97,7 @@ namespace WebView.Controllers
             ViewData["Requests"] = requests;
             ViewData["Substitutions"] = substitutionsGrouped;
             ViewData["Responses"] = responses;
+            ViewData["Sequence"] = sequence;
             return View();
         }
     }

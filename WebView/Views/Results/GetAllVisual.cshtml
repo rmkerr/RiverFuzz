@@ -5,45 +5,39 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<h2>Requests</h2>
-<div class="accordion" id="accordionExample">
-    @{
-        List<RequestEntity> requests = ViewData["Requests"] as List<RequestEntity>;
-        foreach (RequestEntity entity in requests)
-        {
-            @await Html.PartialAsync("_RequestFull",
-         new ViewDataDictionary(ViewData)
-                {
-                    { "Request", entity }
-                });
-        }
-    }
-</div>
-<h2>Responses</h2>
 <div class="accordion" id="accordionExample">
     @{
         List<ResponseEntity> responses = ViewData["Responses"] as List<ResponseEntity>;
-        foreach (ResponseEntity entity in responses)
+        List<List<SubstitutionEntity>> substitutions = ViewData["Substitutions"] as List<List<SubstitutionEntity>>;
+        List<RequestEntity> requests = ViewData["Requests"] as List<RequestEntity>;
+        RequestSequenceEntity sequence = ViewData["Sequence"] as RequestSequenceEntity;
+        for (int i = 0; i < sequence.request_count; ++i)
         {
-            @await Html.PartialAsync("_ResponseFull",
-         new ViewDataDictionary(ViewData)
-                {
-                    { "Response", entity }
-                });
-        }
-    }
-</div>
-<h2>Substitutions</h2>
-<div class="accordion" id="accordionExample">
-    @{
-        List<List<SubstitutionEntity>> Substitutions = ViewData["Substitutions"] as List<List<SubstitutionEntity>>;
-        foreach (List<SubstitutionEntity> stage in Substitutions)
-        {
-            @await Html.PartialAsync("_SubstitutionsFull",
-                new ViewDataDictionary(ViewData)
-                {
-                    { "Substitution", stage }
-                });
+            if (i < substitutions.Count)
+            {
+                @await Html.PartialAsync("_SubstitutionsFull",
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "Substitution", substitutions[i] }
+                    });
+            }
+            if (i < requests.Count)
+            {
+                @await Html.PartialAsync("_RequestFull",
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "Request", requests[i] }
+                    });
+            }
+            if (i < responses.Count)
+            {
+                @await Html.PartialAsync("_ResponseFull",
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "Response", responses[i] }
+                    });
+            }
+
         }
     }
 </div>
