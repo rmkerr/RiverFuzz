@@ -69,7 +69,7 @@ namespace Fuzz
             // 1: Generate a new set of viable sequences by mutating the existing population.
             // 2: Execute each viable sequence and caputure results.
             // 3: Bucket the results.
-            // 4: Cull duplicates.
+            // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
             for (int generation = 0; generation < 10; generation++)
             {
@@ -109,9 +109,6 @@ namespace Fuzz
 
                             // Execute the request sequence.
                             await candidate.Execute(client, responseTokenizers, startingData);
-                            Response lastResponse = candidate.GetLastResponse();
-
-                            string resultSummary = lastResponse.Content.Substring(0, Math.Min(80, lastResponse.Content.Length));
 
                             // Add a response to the population. If it looks interesting, we will look at it later.
                             population.AddResponse(candidate);
