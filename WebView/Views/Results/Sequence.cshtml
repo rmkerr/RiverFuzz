@@ -18,7 +18,8 @@
                 @await Html.PartialAsync("_SubstitutionsFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Substitution", substitutions[i] }
+                        { "Substitution", substitutions[i] },
+                        { "SequencePosition", i }
                     });
             }
             if (i < requests.Count)

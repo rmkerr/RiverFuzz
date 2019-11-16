@@ -1,0 +1,17 @@
+﻿@using Database.Entities;
+
+@{
+    ViewData["Title"] = "Summary";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="accordion" id="accordionExample">
+    @{
+        List<RequestSequenceEntity> sequences = ViewData["Sequences"] as List<RequestSequenceEntity>;
+
+        for (int i = 0; i < sequences.Count; ++i)
+        {
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@sequences[i].id">Sequence @sequences[i].id</a>
+        }
+    }
+</div>
