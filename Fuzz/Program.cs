@@ -10,6 +10,7 @@ using CaptureParse;
 using Population.Bucketers;
 using Population;
 using Database;
+using System.Diagnostics;
 
 namespace Fuzz
 {
@@ -70,15 +71,20 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Cull duplicates.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 8; generation++)
+            for (int generation = 0; generation < 10; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
                 Console.WriteLine("----------------------------------------------------------------------------------");
 
+                Stopwatch generationStopwatch = new Stopwatch();
+                generationStopwatch.Start();
+
                 int popCount = population.Population.Count; // Store since we will be growing list.
                 for (int seed = 0; seed < popCount; ++seed)
                 {
+                    Stopwatch seedStopwatch = new Stopwatch();
+                    seedStopwatch.Start();
 
                     // Combine the starting dictionary and the results of this request sequence.
                     List<TokenCollection> seedTokens;
@@ -98,27 +104,37 @@ namespace Fuzz
                     {
                         foreach (RequestSequence candidate in generator.Generate(population.Endpoints, population.Population[seed], seedTokens))
                         {
-                            Console.WriteLine($"Generation {generation}, Seed {seed}, Candidate {++candidateNumber}:");
-                            Console.WriteLine(candidate.ToString());
+                            Stopwatch candidateStopwatch = new Stopwatch();
+                            candidateStopwatch.Start();
 
                             // Execute the request sequence.
                             await candidate.Execute(client, responseTokenizers, startingData);
                             Response lastResponse = candidate.GetLastResponse();
 
                             string resultSummary = lastResponse.Content.Substring(0, Math.Min(80, lastResponse.Content.Length));
-                            Console.WriteLine($"Result: {lastResponse.Status} : {resultSummary}");
 
                             // Add a response to the population. If it looks interesting, we will look at it later.
                             population.AddResponse(candidate);
+
+                            candidateStopwatch.Stop();
+                            Console.WriteLine($"\t\tCandidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
                         }
                     }
+
+                    seedStopwatch.Stop();
+                    Console.WriteLine($"\tSeed {seed} completed in {seedStopwatch.ElapsedMilliseconds}ms");
                 }
 
+                generationStopwatch.Stop();
+                Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
+
+                generationStopwatch.Reset();
+                generationStopwatch.Start();
+
                 population.MinimizePopulation();
-                Console.WriteLine(@"-------------------------------------------------------------------------");
-                Console.WriteLine(@"                                 Summary                                 ");
-                Console.WriteLine(@"-------------------------------------------------------------------------");
-                Console.WriteLine(population.Summary());
+
+                generationStopwatch.Stop();
+                Console.WriteLine($"Population minimization completed in {generationStopwatch.ElapsedMilliseconds}ms");
             }
 
             foreach (RequestSequence sequence in population.Population)

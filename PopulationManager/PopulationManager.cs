@@ -57,14 +57,12 @@ namespace Population
                         if (response.Status != HttpStatusCode.RequestTimeout)
                         {
                             RequestSequence shortest = bucket[0];
-                            Console.WriteLine($"Selected initial request with {shortest.StageCount()} stages and {shortest.SubstitutionCount()} substitutions.");
                             foreach (RequestSequence candidate in bucket)
                             {
                                 if (candidate.StageCount() < shortest.StageCount() ||
                                    (candidate.StageCount() == shortest.StageCount() &&
                                     candidate.SubstitutionCount() < shortest.SubstitutionCount()))
                                 {
-                                    Console.WriteLine($"Selected replacement request with {candidate.StageCount()} stages and {candidate.SubstitutionCount()} substitutions.");
                                     shortest = candidate;
                                 }
                             }

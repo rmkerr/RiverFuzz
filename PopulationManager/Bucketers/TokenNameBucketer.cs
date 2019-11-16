@@ -31,9 +31,13 @@ namespace Population.Bucketers
 
             StringBuilder sb = new StringBuilder();
             sb.Append(response.Status.ToString());
-            foreach (string name in tokenNames)
+
+            if (response.Status != System.Net.HttpStatusCode.RequestTimeout)
             {
-                sb.Append(name);
+                foreach (string name in tokenNames)
+                {
+                    sb.Append(name);
+                }
             }
 
             if (!Sorted.ContainsKey(sb.ToString()))
@@ -42,6 +46,7 @@ namespace Population.Bucketers
                 Sorted[sb.ToString()].Add(sequence);
                 return true;
             }
+
             Sorted[sb.ToString()].Add(sequence);
             return false;
         }
