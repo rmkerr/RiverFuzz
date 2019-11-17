@@ -26,14 +26,16 @@ namespace HttpTokenize
             }
             return tokens;
         }
+        public override string ToString()
+        {
+            return $"{Status} : {Content.Substring(0, Math.Min(Content.Length, 120))}";
+        }
 
         public HttpStatusCode Status { get; }
         public string Content { get; }
         public Dictionary<string, string> Headers { get; set; }
 
-        public override string ToString()
-        {
-            return $"{Status} : {Content.Substring(0,Math.Min(Content.Length, 120))}";
-        }
+        // ID that uniquely identifies this response. Primarily used by database.
+        public int? Id { get; set; }
     }
 }

@@ -7,23 +7,20 @@ using System.Threading.Tasks;
 namespace WebView.Models
 {
     // TODO: Note updated or used
-    public class RequestViewModel
+    public class ResponseViewModel
     {
-        public RequestViewModel(RequestEntity entity)
+        public ResponseViewModel(ResponseEntity entity)
         {
             id = entity.id;
-            url = entity.url;
-            method = entity.method;
+            status = entity.status;
             headers = entity.headers;
             content = entity.content;
             sequence_id = entity.sequence_id;
             sequence_position = entity.sequence_position;
         }
 
-        // From entity.
         public int? id { get; set; }
-        public string url { get; set; }
-        public string method { get; set; }
+        public string status { get; set; }
         public string? headers { get; set; }
         public string? content { get; set; }
         public int? sequence_id { get; set; }

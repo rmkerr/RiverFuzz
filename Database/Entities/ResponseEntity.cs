@@ -11,7 +11,6 @@ namespace Database.Entities
         public string status { get; set; }
         public string? headers { get; set; }
         public string? content { get; set; }
-        public RequestEntity? endpoint { get; set; }
         public int? sequence_id { get; set; }
         public int? sequence_position { get; set; }
 

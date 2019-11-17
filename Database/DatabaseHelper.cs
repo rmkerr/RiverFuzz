@@ -125,6 +125,8 @@ namespace Database
                     select last_insert_rowid()", model).First();
             }
 
+            sequence.Id = model.id;
+
             List<Response>? results = sequence.GetResponses();
             if (results != null && results.Count == sequence.StageCount())
             {
@@ -135,12 +137,14 @@ namespace Database
                     requestModel.sequence_id = model.id;
                     requestModel.sequence_position = i;
                     AddExecutedRequest(requestModel);
+                    request.Id = requestModel.id;
 
                     Response response = results[i];
                     ResponseEntity responseModel = ResponseEntity.FromResponse(response);
                     responseModel.sequence_id = model.id;
                     responseModel.sequence_position = i;
                     AddResponse(responseModel);
+                    response.Id = responseModel.id;
 
                     foreach (ISubstitution sub in sequence.Get(i).Substitutions)
                     {

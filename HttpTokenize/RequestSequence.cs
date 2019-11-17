@@ -38,6 +38,9 @@ namespace HttpTokenize
         private List<TokenCollection>? Results;
         private List<Response>? Responses;
 
+        // ID that uniquely identifies this request. Primarily used by database.
+        public int? Id { get; set; }
+
         public RequestSequence()
         {
             Stages = new List<Stage>();

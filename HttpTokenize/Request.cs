@@ -78,5 +78,8 @@ namespace HttpTokenize
         // Used to track the source endpoint that this request is a 
         // variation of. Useful when bucketing.
         internal Request original;
+
+        // ID that uniquely identifies this request. Primarily used by database.
+        public int? Id { get; set; }
     }
 }

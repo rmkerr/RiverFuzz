@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebView.Models;
 
 namespace WebView.Controllers
 {
@@ -109,6 +110,39 @@ namespace WebView.Controllers
 
             ViewData["Sequences"] = sequences;
             return View();
+        }
+
+        private async Task<RequestSequenceViewModel> GetFullSequence(int id)
+        {
+            RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);
+            List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
+            List<ResponseEntity> responses = await _endpointRepository.GetResponsesBySequence(id);
+            List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
+
+            RequestSequenceViewModel sequenceViewModel = new RequestSequenceViewModel(sequence);
+
+            foreach (RequestEntity entity in requests)
+            {
+                var model = new RequestViewModel(entity);
+                model.Sequence = sequenceViewModel;
+                sequenceViewModel.Requests.Add(model);
+            }
+
+            foreach (ResponseEntity entity in responses)
+            {
+                var model = new ResponseViewModel(entity);
+                model.Sequence = sequenceViewModel;
+                sequenceViewModel.Responses.Add(model);
+            }
+
+            foreach (SubstitutionEntity entity in substitutions)
+            {
+                var model = new SubstitutionViewModel(entity);
+                model.Sequence = sequenceViewModel;
+                sequenceViewModel.Substitutions.Add(model);
+            }
+
+            return sequenceViewModel;
         }
     }
 }
