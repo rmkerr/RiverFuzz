@@ -178,7 +178,11 @@ namespace Database
                     int statusCode = (int)sequence.GetLastResponse().Status;
                     RequestSequenceLabelEntity labelEntity = new RequestSequenceLabelEntity();
                     labelEntity.sequence_id = model.id.Value;
-                    if (statusCode >= 200 && statusCode < 300)
+                    if (statusCode >= 100 && statusCode < 200)
+                    {
+                        labelEntity.name = "Informational";
+                    }
+                    else if (statusCode >= 200 && statusCode < 300)
                     {
                         labelEntity.name = "Success";
                     }
@@ -190,7 +194,7 @@ namespace Database
                     {
                         labelEntity.name = "Client Error";
                     }
-                    else if (statusCode >= 500 && statusCode < 500)
+                    else if (statusCode >= 500 && statusCode < 600)
                     {
                         labelEntity.name = "Server Error";
                     }
