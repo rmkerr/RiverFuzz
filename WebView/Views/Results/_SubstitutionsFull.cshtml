@@ -2,7 +2,7 @@
 @{
     int? sequence_position = ViewData["SequencePosition"] as int?;
     int? sequence_id = ViewData["SequenceId"] as int?;
-    List<SubstitutionEntity> substitutions = ViewData["Substitution"] as List<SubstitutionEntity>;
+    List<SubstitutionViewModel> substitutions = ViewData["Substitution"] as List<SubstitutionViewModel>;
 }
 
 <div class="card">
@@ -15,7 +15,7 @@
     </div>
     <div id="accordion-collapse-substitution-@sequence_id-@sequence_position" class="collapse hide" aria-labelledby="accordion-heading-substitution-@sequence_id-@sequence_position">
         <div class="card-body">
-            @foreach (SubstitutionEntity entity in substitutions)
+            @foreach (SubstitutionViewModel entity in substitutions)
             {
                 <p class="card-text">@entity.summary</p>
             }

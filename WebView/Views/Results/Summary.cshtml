@@ -5,13 +5,17 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<div class="accordion" id="accordionExample">
-    @{
-        List<RequestSequenceEntity> sequences = ViewData["Sequences"] as List<RequestSequenceEntity>;
+<ul>
+@{
+    List<RequestSequenceViewModel> sequences = ViewData["Sequences"] as List<RequestSequenceViewModel>;
 
-        for (int i = 0; i < sequences.Count; ++i)
-        {
-            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@sequences[i].id">Sequence @sequences[i].id</a>
-        }
+    for (int i = 0; i < sequences.Count; ++i)
+    {
+        string url = sequences[i].Requests[sequences[i].Requests.Count - 1].url;
+        string result = sequences[i].Responses[sequences[i].Responses.Count - 1].status;
+        <li>
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@sequences[i].id">@sequences[i].id - @result - @url</a>
+        </li>
     }
-</div>
+}
+</ul>

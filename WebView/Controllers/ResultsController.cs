@@ -83,22 +83,9 @@ namespace WebView.Controllers
         [Route("Results/Sequence/{id}")]
         public async Task<IActionResult> Sequence(int id)
         {
-            RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);
-            List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
-            List<ResponseEntity> responses = await _endpointRepository.GetResponsesBySequence(id);
-            List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
+            RequestSequenceViewModel requestSequence = await GetFullSequence(id);
 
-            // Split substitutions.
-            List<List<SubstitutionEntity>> substitutionsGrouped = new List<List<SubstitutionEntity>>();
-            for (int i = 0; i < sequence.request_count; ++i)
-            {
-                substitutionsGrouped.Add(substitutions.Where(x => x.sequence_position == i).ToList());
-            }
-
-            ViewData["Requests"] = requests;
-            ViewData["Substitutions"] = substitutionsGrouped;
-            ViewData["Responses"] = responses;
-            ViewData["Sequence"] = sequence;
+            ViewData["RequestSequence"] = requestSequence;
             return View();
         }
 
@@ -108,7 +95,14 @@ namespace WebView.Controllers
         {
             List<RequestSequenceEntity> sequences = await _endpointRepository.GetAllRequestSequences();
 
-            ViewData["Sequences"] = sequences;
+            // TODO: This makes many DB calls. Should just make one. Maybe add SummaryViewModel?
+            List<RequestSequenceViewModel> sequenceViewModels = new List<RequestSequenceViewModel>();
+            foreach (RequestSequenceEntity entity in sequences)
+            {
+                sequenceViewModels.Add(await GetFullSequence(entity.id.GetValueOrDefault()));
+            }
+
+            ViewData["Sequences"] = sequenceViewModels;
             return View();
         }
 
@@ -135,11 +129,21 @@ namespace WebView.Controllers
                 sequenceViewModel.Responses.Add(model);
             }
 
-            foreach (SubstitutionEntity entity in substitutions)
+            // Split substitutions.
+            List<List<SubstitutionViewModel>> substitutionsGrouped = new List<List<SubstitutionViewModel>>();
+            for (int i = 0; i < sequence.request_count; ++i)
             {
-                var model = new SubstitutionViewModel(entity);
-                model.Sequence = sequenceViewModel;
-                sequenceViewModel.Substitutions.Add(model);
+                List<SubstitutionViewModel> stage = new List<SubstitutionViewModel>();
+                foreach (SubstitutionEntity entity in substitutions)
+                {
+                    if (entity.sequence_position == i)
+                    {
+                        var model = new SubstitutionViewModel(entity);
+                        model.Sequence = sequenceViewModel;
+                        stage.Add(model);
+                    }
+                }
+                sequenceViewModel.Substitutions.Add(stage);
             }
 
             return sequenceViewModel;

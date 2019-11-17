@@ -1,41 +1,36 @@
-﻿@using Database.Entities;
-
-@{
+﻿@{
     ViewData["Title"] = "Executed Requests";
 }
 
 <h1>@ViewData["Title"]</h1>
 <div class="accordion" id="accordionExample">
     @{
-        List<ResponseEntity> responses = ViewData["Responses"] as List<ResponseEntity>;
-        List<List<SubstitutionEntity>> substitutions = ViewData["Substitutions"] as List<List<SubstitutionEntity>>;
-        List<RequestEntity> requests = ViewData["Requests"] as List<RequestEntity>;
-        RequestSequenceEntity sequence = ViewData["Sequence"] as RequestSequenceEntity;
+        RequestSequenceViewModel sequence = ViewData["RequestSequence"] as RequestSequenceViewModel;
         for (int i = 0; i < sequence.request_count; ++i)
         {
-            if (i < substitutions.Count)
+            if (i < sequence.Substitutions.Count)
             {
                 @await Html.PartialAsync("_SubstitutionsFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Substitution", substitutions[i] },
+                        { "Substitution", sequence.Substitutions[i] },
                         { "SequencePosition", i }
                     });
             }
-            if (i < requests.Count)
+            if (i < sequence.Requests.Count)
             {
                 @await Html.PartialAsync("_RequestFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Request", requests[i] }
+                        { "Request", sequence.Requests[i] }
                     });
             }
-            if (i < responses.Count)
+            if (i < sequence.Responses.Count)
             {
                 @await Html.PartialAsync("_ResponseFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Response", responses[i] }
+                        { "Response", sequence.Responses[i] }
                     });
             }
 

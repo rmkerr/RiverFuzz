@@ -16,7 +16,7 @@ namespace WebView.Models
 
             Requests = new List<RequestViewModel>();
             Responses = new List<ResponseViewModel>();
-            Substitutions = new List<SubstitutionViewModel>();
+            Substitutions = new List<List<SubstitutionViewModel>>();
         }
 
         // From entity
@@ -27,7 +27,7 @@ namespace WebView.Models
         // Not from entity
         public List<RequestViewModel> Requests { get; set; }
         public List<ResponseViewModel> Responses { get; set; }
-        public List<SubstitutionViewModel> Substitutions { get; set; }
+        public List<List<SubstitutionViewModel>> Substitutions { get; set; }
         // TODO: Add substitutions.
         // TODO: Add tags.
     }
