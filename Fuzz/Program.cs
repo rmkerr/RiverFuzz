@@ -71,7 +71,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 7; generation++)
+            for (int generation = 0; generation < 8; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -102,8 +102,13 @@ namespace Fuzz
                     int candidateNumber = 0;
                     foreach (IGenerator generator in generators)
                     {
+                        Stopwatch generatorStopwatch = new Stopwatch();
+                        generatorStopwatch.Start();
                         foreach (RequestSequence candidate in generator.Generate(population.Endpoints, population.Population[seed], seedTokens))
                         {
+                            generatorStopwatch.Stop();
+                            Console.WriteLine($"\t\tGeneration completed in {generatorStopwatch.ElapsedMilliseconds}ms");
+
                             Stopwatch candidateStopwatch = new Stopwatch();
                             candidateStopwatch.Start();
 
@@ -115,6 +120,8 @@ namespace Fuzz
 
                             candidateStopwatch.Stop();
                             Console.WriteLine($"\t\tCandidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
+
+                            generatorStopwatch.Start();
                         }
                     }
 
@@ -140,7 +147,7 @@ namespace Fuzz
                 if (finalResponse != null)
                 {
                     databaseHelper.AddRequestSequence(sequence);
-                }
+                }     
             }
 
             

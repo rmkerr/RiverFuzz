@@ -30,5 +30,10 @@ namespace Database.Repositories
         Task<SubstitutionEntity> GetSubstitutionById(int id);
         Task<List<SubstitutionEntity>> GetAllSubstitutions();
         Task<List<SubstitutionEntity>> GetSubstitutionsBySequence(int id);
+
+        // Sequence Labels
+        Task<RequestSequenceLabelEntity> GetRequestSequenceLabelById(int id);
+        Task<List<RequestSequenceLabelEntity>> GetAllRequestSequenceLabels();
+        Task<List<RequestSequenceLabelEntity>> GetRequestSequenceLabelsBySequence(int id);
     }
 }

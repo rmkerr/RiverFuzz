@@ -35,7 +35,7 @@ namespace HttpTokenize.Substitutions
 
         public override string ToString()
         {
-            return $"SubstituteConstant Target: {target.Name} Value: {value}";
+            return $"Replace the value of '{target.Name}' with the constant '{value}'.";
         }
     }
 }

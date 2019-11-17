@@ -143,7 +143,7 @@ namespace Database.Repositories
             {
                 string sQuery = "SELECT * FROM responses WHERE id = @id";
                 conn.Open();
-                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { id });
+                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { id = id });
                 return result.FirstOrDefault();
             }
         }
@@ -154,7 +154,7 @@ namespace Database.Repositories
             {
                 string sQuery = "SELECT * FROM responses WHERE sequence_id = @seqId";
                 conn.Open();
-                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { seqId });
+                var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { seqId = seqId });
                 return result.ToList();
             }
         }
@@ -165,6 +165,38 @@ namespace Database.Repositories
             {
                 connection.Open();
                 var result = await connection.QueryAsync<ResponseEntity>(@"SELECT * FROM responses");
+                return result.ToList();
+            }
+        }
+
+        public async Task<RequestSequenceLabelEntity> GetRequestSequenceLabelById(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequence_labels WHERE id = @id";
+                conn.Open();
+                var result = await conn.QueryAsync<RequestSequenceLabelEntity>(sQuery, new { id = id });
+                return result.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<RequestSequenceLabelEntity>> GetAllRequestSequenceLabels()
+        {
+            using (IDbConnection connection = Connection)
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<RequestSequenceLabelEntity>(@"SELECT * FROM sequence_labels");
+                return result.ToList();
+            }
+        }
+
+        public async Task<List<RequestSequenceLabelEntity>> GetRequestSequenceLabelsBySequence(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequence_labels WHERE sequence_id = @seqId";
+                conn.Open();
+                var result = await conn.QueryAsync<RequestSequenceLabelEntity>(sQuery, new { seqId = id });
                 return result.ToList();
             }
         }

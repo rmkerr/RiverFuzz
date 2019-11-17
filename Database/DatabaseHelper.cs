@@ -103,6 +103,24 @@ namespace Database
             }
         }
 
+        public void AddRequestSequenceLabel(RequestSequenceLabelEntity model)
+        {
+            if (!File.Exists(DbFile))
+            {
+                CreateDatabase();
+            }
+
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                model.id = connection.Query<int>(
+                    @"INSERT INTO sequence_labels
+                    ( sequence_id, name ) VALUES 
+                    ( @sequence_id, @name );
+                    select last_insert_rowid()", model).First();
+            }
+        }
+
         public void AddRequestSequence(RequestSequence sequence)
         {
             if (!File.Exists(DbFile))
@@ -153,6 +171,34 @@ namespace Database
                         subModel.sequence_position = i;
                         AddSubstitution(subModel);
                     }
+                }
+
+                if (sequence.GetLastResponse() != null)
+                {
+                    int statusCode = (int)sequence.GetLastResponse().Status;
+                    RequestSequenceLabelEntity labelEntity = new RequestSequenceLabelEntity();
+                    labelEntity.sequence_id = model.id.Value;
+                    if (statusCode >= 200 && statusCode < 300)
+                    {
+                        labelEntity.name = "Success";
+                    }
+                    else if (statusCode >= 300 && statusCode < 400)
+                    {
+                        labelEntity.name = "Redirection";
+                    }
+                    else if (statusCode >= 400 && statusCode < 500)
+                    {
+                        labelEntity.name = "Client Error";
+                    }
+                    else if (statusCode >= 500 && statusCode < 500)
+                    {
+                        labelEntity.name = "Server Error";
+                    }
+                    else
+                    {
+                        labelEntity.name = "Unknown Status";
+                    }
+                    AddRequestSequenceLabel(labelEntity);
                 }
             }
             else
@@ -224,6 +270,14 @@ namespace Database
                         sequence_position INTEGER,
                         sequence_id INTEGER,
                         FOREIGN KEY(sequence_id) REFERENCES executed_sequences(id)
+                    );");
+
+                // Sequence tag metadata
+                connection.Execute(
+                    @"CREATE TABLE sequence_labels (
+                        id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+                        sequence_id         INTEGER     NOT NULL,
+                        name                TEXT        NOT_NULL
                     );");
             }
         }

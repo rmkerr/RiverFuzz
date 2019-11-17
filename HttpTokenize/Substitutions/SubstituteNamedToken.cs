@@ -43,7 +43,7 @@ namespace HttpTokenize.Substitutions
 
         public override string ToString()
         {
-            return $"SubstituteNamedToken Target: {target.Name} Source: Request {sourceResponse} {sourceName}";
+            return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from response '{sourceResponse}'.";
         }
     }
 }

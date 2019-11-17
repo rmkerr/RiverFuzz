@@ -102,8 +102,7 @@ namespace WebView.Controllers
                 sequenceViewModels.Add(await GetFullSequence(entity.id.GetValueOrDefault()));
             }
 
-            ViewData["Sequences"] = sequenceViewModels;
-            return View();
+            return View(sequenceViewModels);
         }
 
         private async Task<RequestSequenceViewModel> GetFullSequence(int id)
@@ -112,6 +111,7 @@ namespace WebView.Controllers
             List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
             List<ResponseEntity> responses = await _endpointRepository.GetResponsesBySequence(id);
             List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
+            List<RequestSequenceLabelEntity> labels = await _endpointRepository.GetRequestSequenceLabelsBySequence(id);
 
             RequestSequenceViewModel sequenceViewModel = new RequestSequenceViewModel(sequence);
 
@@ -127,6 +127,12 @@ namespace WebView.Controllers
                 var model = new ResponseViewModel(entity);
                 model.Sequence = sequenceViewModel;
                 sequenceViewModel.Responses.Add(model);
+            }
+
+            // Add labels
+            foreach (RequestSequenceLabelEntity label in labels)
+            {
+                sequenceViewModel.Labels.Add(label.name);
             }
 
             // Split substitutions.

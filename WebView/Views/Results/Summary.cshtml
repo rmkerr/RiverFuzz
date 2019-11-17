@@ -1,4 +1,4 @@
-﻿@using Database.Entities;
+﻿@model List<RequestSequenceViewModel>
 
 @{
     ViewData["Title"] = "Summary";
@@ -6,15 +6,16 @@
 
 <h1>@ViewData["Title"]</h1>
 <ul>
-@{
-    List<RequestSequenceViewModel> sequences = ViewData["Sequences"] as List<RequestSequenceViewModel>;
-
-    for (int i = 0; i < sequences.Count; ++i)
+    @for (int i = 0; i < Model.Count; ++i)
     {
-        string url = sequences[i].Requests[sequences[i].Requests.Count - 1].url;
-        string result = sequences[i].Responses[sequences[i].Responses.Count - 1].status;
+        string url = Model[i].Requests[Model[i].Requests.Count - 1].url;
+        string result = Model[i].Responses[Model[i].Responses.Count - 1].status;
         <li>
-            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@sequences[i].id">@sequences[i].id - @result - @url</a>
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@Model[i].id">@Model[i].id - @result - @url</a>
+            @foreach (string label in Model[i].Labels)
+            {
+                <span class="badge badge-primary">@label</span>
+            }
         </li>
     }
 }
