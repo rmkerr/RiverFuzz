@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Executed Requests";
+    Layout = "_AddLabelSidebar";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -10,7 +11,7 @@
         {
             if (i < sequence.Substitutions.Count)
             {
-                @await Html.PartialAsync("_SubstitutionsFull",
+                @await Html.PartialAsync("SubstitutionsFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Substitution", sequence.Substitutions[i] },
@@ -19,7 +20,7 @@
             }
             if (i < sequence.Requests.Count)
             {
-                @await Html.PartialAsync("_RequestFull",
+                @await Html.PartialAsync("RequestFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Request", sequence.Requests[i] }
@@ -27,7 +28,7 @@
             }
             if (i < sequence.Responses.Count)
             {
-                @await Html.PartialAsync("_ResponseFull",
+                @await Html.PartialAsync("ResponseFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Response", sequence.Responses[i] }
