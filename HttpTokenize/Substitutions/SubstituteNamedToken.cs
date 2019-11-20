@@ -43,7 +43,11 @@ namespace HttpTokenize.Substitutions
 
         public override string ToString()
         {
-            return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from response '{sourceResponse}'.";
+            if (sourceResponse == 0)
+            {
+                return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from seed tokens.";
+            }
+            return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from response #{sourceResponse}.";
         }
     }
 }

@@ -2,21 +2,44 @@
 
 @{
     ViewData["Title"] = "Summary";
+
+    Dictionary<string, string> colorMapping = new Dictionary<string, string>
+    {
+        {"Informational", "badge-info"},
+        {"Success", "badge-success"},
+        {"Redirection", "badge-info"},
+        {"Client Error", "badge-warning"},
+        {"Server Error", "badge-danger"},
+        {"Unknown Status", "badge-warning"},
+    };
 }
 
 <h1>@ViewData["Title"]</h1>
-<ul>
-    @for (int i = 0; i < Model.Count; ++i)
-    {
-        string url = Model[i].Requests[Model[i].Requests.Count - 1].url;
-        string result = Model[i].Responses[Model[i].Responses.Count - 1].status;
-        <li>
-            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@Model[i].id">@Model[i].id - @result - @url</a>
-            @foreach (string label in Model[i].Labels)
-            {
-                <span class="badge badge-primary">@label</span>
-            }
-        </li>
-    }
-}
-</ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Status</th>
+            <th scope="col">Url</th>
+            <th scope="col">Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; ++i)
+        {
+            string url = Model[i].Requests[Model[i].Requests.Count - 1].url;
+            string result = Model[i].Responses[Model[i].Responses.Count - 1].status;
+            <tr>
+                <th scope="row"><a asp-controller="Results" asp-action="Sequence" asp-route-id="@Model[i].id">@Model[i].id</a></th>
+                <td>@result</td>
+                <td>@url</td>
+                <td>
+                    @foreach (string label in Model[i].Labels)
+                    {
+                        <span class="badge @colorMapping.GetValueOrDefault(label,"badge-primary")">@label</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
