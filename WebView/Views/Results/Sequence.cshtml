@@ -7,10 +7,15 @@
 @section Sidebar
 {
     <h3>Labels:</h3>
-    @foreach (string label in Model.Labels)
+    @foreach (RequestSequenceLabelViewModel label in Model.Labels)
     {
-        <span class="badge @SubstitutionViewModel.ColorMappings.GetValueOrDefault(label,"badge-primary")">@label</span>
+        <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
     }
+    @{ 
+        RequestSequenceLabelViewModel model = new RequestSequenceLabelViewModel();
+        model.sequence_id = Model.id.GetValueOrDefault(0);
+    }
+    @await Html.PartialAsync("_RequestSequenceLabelPicker", model)
 }
 
 <div class="accordion" id="accordionExample">

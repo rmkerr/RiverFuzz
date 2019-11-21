@@ -24,9 +24,9 @@
                 <td>@result</td>
                 <td>@url</td>
                 <td>
-                    @foreach (string label in Model[i].Labels)
+                    @foreach (RequestSequenceLabelViewModel label in Model[i].Labels)
                     {
-                        <span class="badge @SubstitutionViewModel.ColorMappings.GetValueOrDefault(label,"badge-primary")">@label</span>
+                        <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
                     }
                 </td>
             </tr>

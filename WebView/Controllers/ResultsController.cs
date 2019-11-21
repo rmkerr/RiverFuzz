@@ -79,11 +79,8 @@ namespace WebView.Controllers
             return await _endpointRepository.GetRequestSequenceById(id);
         }
 
-        public async Task<IActionResult> AddRequestSequenceLabel(int sequence, string label)
+        public async Task<IActionResult> AddRequestSequenceLabel(RequestSequenceLabelEntity entity) // TODO: Remove db entity, change to binding model.
         {
-            RequestSequenceLabelEntity entity = new RequestSequenceLabelEntity();
-            entity.sequence_id = sequence;
-            entity.name = label;
             await _endpointRepository.AddRequestSequenceLabel(entity);
             return Content("");
         }
@@ -140,7 +137,7 @@ namespace WebView.Controllers
             // Add labels
             foreach (RequestSequenceLabelEntity label in labels)
             {
-                sequenceViewModel.Labels.Add(label.name);
+                sequenceViewModel.Labels.Add(new RequestSequenceLabelViewModel(label));
             }
 
             // Split substitutions.
