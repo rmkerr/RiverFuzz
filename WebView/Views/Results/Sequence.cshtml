@@ -1,37 +1,45 @@
-﻿@{
+﻿@model RequestSequenceViewModel
+@{
     ViewData["Title"] = "Executed Requests";
-    Layout = "_AddLabelSidebar";
+    Layout = "_Sidebar";
 }
 
-<h1>@ViewData["Title"]</h1>
+@section Sidebar
+{
+    <h3>Labels:</h3>
+    @foreach (string label in Model.Labels)
+    {
+        <span class="badge @SubstitutionViewModel.ColorMappings.GetValueOrDefault(label,"badge-primary")">@label</span>
+    }
+}
+
 <div class="accordion" id="accordionExample">
     @{
-        RequestSequenceViewModel sequence = ViewData["RequestSequence"] as RequestSequenceViewModel;
-        for (int i = 0; i < sequence.request_count; ++i)
+        for (int i = 0; i < Model.request_count; ++i)
         {
-            if (i < sequence.Substitutions.Count)
+            if (i < Model.Substitutions.Count)
             {
                 @await Html.PartialAsync("SubstitutionsFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Substitution", sequence.Substitutions[i] },
+                        { "Substitution", Model.Substitutions[i] },
                         { "SequencePosition", i }
                     });
             }
-            if (i < sequence.Requests.Count)
+            if (i < Model.Requests.Count)
             {
                 @await Html.PartialAsync("RequestFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Request", sequence.Requests[i] }
+                        { "Request", Model.Requests[i] }
                     });
             }
-            if (i < sequence.Responses.Count)
+            if (i < Model.Responses.Count)
             {
                 @await Html.PartialAsync("ResponseFull",
                     new ViewDataDictionary(ViewData)
                     {
-                        { "Response", sequence.Responses[i] }
+                        { "Response", Model.Responses[i] }
                     });
             }
 

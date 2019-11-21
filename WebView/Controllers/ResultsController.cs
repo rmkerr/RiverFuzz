@@ -85,8 +85,7 @@ namespace WebView.Controllers
         {
             RequestSequenceViewModel requestSequence = await GetFullSequence(id);
 
-            ViewData["RequestSequence"] = requestSequence;
-            return View();
+            return View(requestSequence);
         }
 
         [HttpGet]

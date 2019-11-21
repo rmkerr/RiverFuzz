@@ -2,16 +2,6 @@
 
 @{
     ViewData["Title"] = "Summary";
-
-    Dictionary<string, string> colorMapping = new Dictionary<string, string>
-    {
-        {"Informational", "badge-info"},
-        {"Success", "badge-success"},
-        {"Redirection", "badge-info"},
-        {"Client Error", "badge-warning"},
-        {"Server Error", "badge-danger"},
-        {"Unknown Status", "badge-warning"},
-    };
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -36,7 +26,7 @@
                 <td>
                     @foreach (string label in Model[i].Labels)
                     {
-                        <span class="badge @colorMapping.GetValueOrDefault(label,"badge-primary")">@label</span>
+                        <span class="badge @SubstitutionViewModel.ColorMappings.GetValueOrDefault(label,"badge-primary")">@label</span>
                     }
                 </td>
             </tr>

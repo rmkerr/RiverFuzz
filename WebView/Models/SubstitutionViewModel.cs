@@ -17,6 +17,16 @@ namespace WebView.Models
             sequence_position = entity.sequence_position;
         }
 
+        public static readonly Dictionary<string, string> ColorMappings = new Dictionary<string, string>
+        {
+            { "Informational", "badge-info"},
+            { "Success", "badge-success"},
+            { "Redirection", "badge-info"},
+            { "Client Error", "badge-warning"},
+            { "Server Error", "badge-danger"},
+            { "Unknown Status", "badge-warning"},
+        };
+
         // From entity.
         public int? id { get; set; }
         public string type { get; set; }
