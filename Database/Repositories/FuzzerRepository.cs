@@ -200,5 +200,19 @@ namespace Database.Repositories
                 return result.ToList();
             }
         }
+
+        public async Task AddRequestSequenceLabel(RequestSequenceLabelEntity label)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequence_labels WHERE sequence_id = @seqId";
+                conn.Open();
+                label.id = (await conn.QueryAsync<int>(
+                    @"INSERT INTO sequence_labels
+                    ( sequence_id, name ) VALUES 
+                    ( @sequence_id, @name );
+                    select last_insert_rowid()", label)).First();
+            }
+        }
     }
 }

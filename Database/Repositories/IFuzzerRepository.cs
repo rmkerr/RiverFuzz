@@ -35,5 +35,6 @@ namespace Database.Repositories
         Task<RequestSequenceLabelEntity> GetRequestSequenceLabelById(int id);
         Task<List<RequestSequenceLabelEntity>> GetAllRequestSequenceLabels();
         Task<List<RequestSequenceLabelEntity>> GetRequestSequenceLabelsBySequence(int id);
+        Task AddRequestSequenceLabel(RequestSequenceLabelEntity label);
     }
 }

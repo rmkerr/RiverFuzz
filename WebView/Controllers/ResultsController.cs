@@ -79,6 +79,15 @@ namespace WebView.Controllers
             return await _endpointRepository.GetRequestSequenceById(id);
         }
 
+        public async Task<IActionResult> AddRequestSequenceLabel(int sequence, string label)
+        {
+            RequestSequenceLabelEntity entity = new RequestSequenceLabelEntity();
+            entity.sequence_id = sequence;
+            entity.name = label;
+            await _endpointRepository.AddRequestSequenceLabel(entity);
+            return Content("");
+        }
+
         [HttpGet]
         [Route("Results/Sequence/{id}")]
         public async Task<IActionResult> Sequence(int id)
