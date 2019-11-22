@@ -205,13 +205,21 @@ namespace Database.Repositories
         {
             using (IDbConnection conn = Connection)
             {
-                string sQuery = "SELECT * FROM sequence_labels WHERE sequence_id = @seqId";
                 conn.Open();
                 label.id = (await conn.QueryAsync<int>(
                     @"INSERT INTO sequence_labels
                     ( sequence_id, name ) VALUES 
                     ( @sequence_id, @name );
                     select last_insert_rowid()", label)).First();
+            }
+        }
+
+        public async Task DeleteRequestSequenceLabel(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                conn.Open();
+                await conn.ExecuteAsync(@"DELETE FROM sequence_labels WHERE id = @labelId", new { labelId = id });
             }
         }
     }

@@ -85,6 +85,12 @@ namespace WebView.Controllers
             return RedirectToAction("Sequence",  new { id = entity.sequence_id });
         }
 
+        public async Task<IActionResult> DeleteRequestSequenceLabel(RequestSequenceLabelEntity entity) // TODO: Remove db entity, change to binding model.
+        {
+            await _endpointRepository.DeleteRequestSequenceLabel(entity.id.Value);
+            return RedirectToAction("Sequence", new { id = entity.sequence_id });
+        }
+
         [HttpGet]
         [Route("Results/Sequence/{id}")]
         public async Task<IActionResult> Sequence(int id)

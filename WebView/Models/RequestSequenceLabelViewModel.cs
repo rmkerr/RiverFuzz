@@ -25,6 +25,7 @@ namespace WebView.Models
         public int sequence_id { get; set; }
         public string name { get; set; }
 
+        // All labels mapped to their colors.
         public static readonly Dictionary<string, string> ColorMappings = new Dictionary<string, string>
         {
             { "Informational", "badge-info"},
@@ -38,6 +39,7 @@ namespace WebView.Models
             { "Expected Result", "badge-success"},
         };
 
+        // User assignable labels.
         public static List<SelectListItem> Labels = new List<SelectListItem>
         {
             new SelectListItem { Value = "Possible Vulnerability", Text = "Possible Vulnerability" },
