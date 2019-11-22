@@ -82,7 +82,7 @@ namespace WebView.Controllers
         public async Task<IActionResult> AddRequestSequenceLabel(RequestSequenceLabelEntity entity) // TODO: Remove db entity, change to binding model.
         {
             await _endpointRepository.AddRequestSequenceLabel(entity);
-            return Content("");
+            return RedirectToAction("Sequence",  new { id = entity.sequence_id });
         }
 
         [HttpGet]

@@ -2,6 +2,6 @@
 
 <form asp-action="AddRequestSequenceLabel" asp-controller="Results">
     <input class="form-control" type="hidden" asp-for="sequence_id"/>
-    <input class="form-control" asp-for="name"/>
+    <select class="form-control" asp-for="name" asp-items="RequestSequenceLabelViewModel.Labels"></select>
     <button type="submit">Submit</button>
 </form>

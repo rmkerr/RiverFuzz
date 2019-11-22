@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,21 @@ namespace WebView.Models
         public static readonly Dictionary<string, string> ColorMappings = new Dictionary<string, string>
         {
             { "Informational", "badge-info"},
-            { "Success", "badge-success"},
+            { "Success", "badge-info"},
             { "Redirection", "badge-info"},
             { "Client Error", "badge-warning"},
-            { "Server Error", "badge-danger"},
+            { "Server Error", "badge-warning"},
             { "Unknown Status", "badge-warning"},
+            { "Possible Vulnerability", "badge-danger"},
+            { "Duplicate", "badge-secondary"},
+            { "Expected Result", "badge-success"},
+        };
+
+        public static List<SelectListItem> Labels = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "Possible Vulnerability", Text = "Possible Vulnerability" },
+            new SelectListItem { Value = "Duplicate", Text = "Duplicate" },
+            new SelectListItem { Value = "Expected Result", Text = "Expected Result" }
         };
     }
 }
