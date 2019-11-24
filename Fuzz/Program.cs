@@ -52,8 +52,6 @@ namespace Fuzz
             TokenCollection startingData = new TokenCollection();
             startingData.Add(new JsonToken("log", "user", "", Types.String));
             startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
-            startingData.Add(new JsonToken("action", "post-quickdraft-save", "", Types.String));
-            startingData.Add(new JsonToken("wp-submit", "Log+In", "", Types.String));
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
