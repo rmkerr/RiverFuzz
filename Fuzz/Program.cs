@@ -11,15 +11,18 @@ using Population.Bucketers;
 using Population;
 using Database;
 using System.Diagnostics;
+using Database.Entities;
 
 namespace Fuzz
 {
     class Program
     {
+        static bool production = false;
+
         static async Task Main(string[] args)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper(@"riverfuzz");
+            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
             databaseHelper.DeleteDatabase();
             databaseHelper.CreateDatabase();
 
@@ -60,19 +63,21 @@ namespace Fuzz
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
                 population.AddEndpoint(endpoint, new TokenNameBucketer());
-                databaseHelper.AddEndpoint(Database.Entities.RequestEntity.FromRequest(endpoint.Request));
+                databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
             }
 
-            // Start with an initial population of one empty request sequence.
-            //population.AddResponse(new RequestSequence(), new TokenCollection());
-            
+            // Record the time we started this run.
+            FuzzerGenerationEntity generationInfo = new FuzzerGenerationEntity();
+            generationInfo.start_time = DateTime.Now;
+
+
             // In each generation, we will:
             // 1: Generate a new set of viable sequences by mutating the existing population.
             // 2: Execute each viable sequence and caputure results.
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 12; generation++)
+            for (int generation = 0; generation < 6; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -142,12 +147,15 @@ namespace Fuzz
                 Console.WriteLine($"Population minimization completed in {generationStopwatch.ElapsedMilliseconds}ms");
             }
 
+            generationInfo.end_time = DateTime.Now;
+            databaseHelper.AddFuzzerGeneration(generationInfo);
+
             foreach (RequestSequence sequence in population.Population)
             {
                 Response? finalResponse = sequence.GetLastResponse();
                 if (finalResponse != null)
                 {
-                    databaseHelper.AddRequestSequence(sequence);
+                    databaseHelper.AddRequestSequence(sequence, generationInfo);
                 }     
             }
 

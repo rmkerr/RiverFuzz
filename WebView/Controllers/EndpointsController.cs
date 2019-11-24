@@ -22,23 +22,6 @@ namespace WebView.Controllers
             _endpointRepository = endpointRepo;
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<string> Index()
-        {
-            DatabaseHelper databaseHelper = new DatabaseHelper(@"C:\Users\Richa\Documents\RiverFuzzResources\Database\results.sqlite");
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine("FROM DATABASE:");
-            List<Database.Entities.RequestEntity> endpoints = await databaseHelper.AllEndpoints();
-            foreach (Database.Entities.RequestEntity endpoint in endpoints)
-            {
-                sb.AppendLine($"\tEndpoint ID: {endpoint.id}, URL: {endpoint.url}");
-            }
-
-            return sb.ToString();
-        }
-
         [HttpGet]
         [Route("Endpoints/API/ById/{id}")]
         public async Task<ActionResult<RequestEntity>> GetByID(int id)

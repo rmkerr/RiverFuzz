@@ -15,10 +15,32 @@ namespace Database
 {
     public class DatabaseHelper
     {
-        public DatabaseHelper(string dbname)
+        private string DbName;
+        private bool Production;
+
+        public DatabaseHelper(string dbname, bool production)
         {
             DbName = dbname;
+            Production = production;
         }
+
+        private NpgsqlConnection GetConnection(string DbName)
+        {
+            if (Production)
+            {
+                return new NpgsqlConnection($"Server=riverfuzz-testing.postgres.database.azure.com;Database={DbName};Port=5432;User Id=riverfuzz@riverfuzz-testing;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
+            }
+            else
+            {
+                return new NpgsqlConnection($"Server=localhost;Database={DbName};Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
+            }
+        }
+
+        private NpgsqlConnection GetConnection()
+        {
+            return GetConnection(DbName);
+        }
+
 
         public void AddEndpoint(RequestEntity endpoint)
         {
@@ -97,11 +119,25 @@ namespace Database
             }
         }
 
-        public void AddRequestSequence(RequestSequence sequence)
+        public void AddFuzzerGeneration(FuzzerGenerationEntity model)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                model.id = connection.Query<int>(
+                    @"INSERT INTO fuzzer_generation
+                    ( start_time, end_time ) VALUES 
+                    ( @start_time, @end_time )
+                    RETURNING id;", model).First();
+            }
+        }
+
+        public void AddRequestSequence(RequestSequence sequence, FuzzerGenerationEntity generation)
         {
             RequestSequenceEntity model = new RequestSequenceEntity();
             model.request_count = sequence.StageCount();
             model.substitution_count = sequence.SubstitutionCount();
+            model.generation_id = generation.id.GetValueOrDefault(0);
 
             using (var connection = GetConnection())
             {
@@ -109,8 +145,8 @@ namespace Database
 
                 model.id = connection.Query<int>(
                     @"INSERT INTO sequences
-                    ( request_count, substitution_count ) VALUES 
-                    ( @request_count, @substitution_count )
+                    ( request_count, substitution_count, generation_id ) VALUES 
+                    ( @request_count, @substitution_count, @generation_id )
                     RETURNING id;", model).First();
             }
 
@@ -182,16 +218,6 @@ namespace Database
             }
         }
 
-        private NpgsqlConnection GetConnection(string DbName)
-        {
-            return new NpgsqlConnection($"Server=riverfuzz-testing.postgres.database.azure.com;Database={DbName};Port=5432;User Id=riverfuzz@riverfuzz-testing;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
-        }
-
-        private NpgsqlConnection GetConnection()
-        {
-            return GetConnection(DbName);
-        }
-
         public void CreateDatabase()
         {
 
@@ -210,7 +236,8 @@ namespace Database
                     @"CREATE TABLE sequences (
                         id                  SERIAL      PRIMARY KEY,
                         request_count       INTEGER     NOT NULL,
-                        substitution_count  INTEGER     NOT NULL
+                        substitution_count  INTEGER     NOT NULL,
+                        generation_id         INTEGER     NOT NULL
                     );");
 
                 // All executed requests.
@@ -263,6 +290,14 @@ namespace Database
                         sequence_id         INTEGER     NOT NULL,
                         name                TEXT        NOT NULL
                     );");
+
+                // Fuzzer run/generation metadata.
+                connection.Execute(
+                    @"CREATE TABLE fuzzer_generation (
+                        id                  SERIAL      PRIMARY KEY,
+                        start_time          timestamp   NOT NULL,
+                        end_time            timestamp   NOT NULL
+                    );");
             }
         }
 
@@ -277,7 +312,5 @@ namespace Database
                     @"DROP DATABASE IF EXISTS riverfuzz;");
             }
         }
-
-        private string DbName;
     }
 }
