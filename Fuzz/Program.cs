@@ -38,6 +38,7 @@ namespace Fuzz
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
             responseTokenizers.Add(new HtmlFormTokenizer());
+            //responseTokenizers.Add(new CookieTokenizer());
 
             // Load all request tokenizers.
             List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
@@ -46,11 +47,13 @@ namespace Fuzz
             requestTokenizers.Add(new BearerTokenizer());
             requestTokenizers.Add(new KnownUrlArgumentTokenizer());
             requestTokenizers.Add(new HtmlFormTokenizer());
-            //requestTokenizers.Add(new CookieTokenizer());
+            requestTokenizers.Add(new CookieTokenizer());
 
             TokenCollection startingData = new TokenCollection();
-            startingData.Add(new JsonToken("username", "asdfg@asdfg.com", "", Types.String));
-            startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
+            startingData.Add(new JsonToken("log", "user", "", Types.String));
+            startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
+            startingData.Add(new JsonToken("action", "post-quickdraft-save", "", Types.String));
+            startingData.Add(new JsonToken("wp-submit", "Log+In", "", Types.String));
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
@@ -77,7 +80,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 6; generation++)
+            for (int generation = 0; generation < 20; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -164,7 +167,8 @@ namespace Fuzz
 
         public static List<RequestResponsePair> InitializeEndpoints()
         {
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
+            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\", @"http://192.168.0.220/");
         }
     }
 }

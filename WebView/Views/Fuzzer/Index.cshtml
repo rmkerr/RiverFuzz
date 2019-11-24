@@ -1,0 +1,24 @@
+﻿@model FuzzerParametersViewModel
+
+@{
+    ViewData["Title"] = "Fuzzer Parameters";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-controller="Fuzzer" asp-action="Start" method="post">
+    <label asp-for="GenerationCount"></label>
+    <input asp-for="GenerationCount" />
+    <br />
+
+    <label asp-for="TargetUrl"></label>
+    <input asp-for="TargetUrl" />
+    <br />
+
+    <select class="form-control" asp-for="TargetEndpoints"
+            asp-items="@(new SelectList(Model.Endpoints,"id","url"))">
+        <option>Select Target Endpoints</option>
+    </select>
+    <br />
+    <button type="submit">Start (Not Implemented)</button>
+</form>
