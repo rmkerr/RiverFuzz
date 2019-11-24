@@ -101,7 +101,6 @@ namespace WebView.Controllers
         }
 
         [HttpGet]
-        [Route("Results/Summary")]
         public async Task<IActionResult> Summary()
         {
             List<RequestSequenceEntity> sequences = await _endpointRepository.GetAllRequestSequences();

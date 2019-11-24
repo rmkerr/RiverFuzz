@@ -18,36 +18,36 @@
     @await Html.PartialAsync("_RequestSequenceLabelPicker", model)
 }
 
-        <div class="accordion" id="accordionExample">
-            @{
-                        for (int i = 0; i<Model.request_count; ++i)
-                        {
-                            if (i<Model.Substitutions.Count)
-                            {
+<div class="accordion" id="accordionExample">
+    @{
+        for (int i = 0; i < Model.request_count; ++i)
+        {
+            if (i < Model.Substitutions.Count)
+            {
                 @await Html.PartialAsync("SubstitutionsFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Substitution", Model.Substitutions[i] },
                         { "SequencePosition", i }
                     });
-                            }
-                            if (i<Model.Requests.Count)
-                            {
+            }
+            if (i < Model.Requests.Count)
+            {
                 @await Html.PartialAsync("RequestFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Request", Model.Requests[i] }
                     });
-                            }
-                            if (i<Model.Responses.Count)
-                            {
+            }
+            if (i < Model.Responses.Count)
+            {
                 @await Html.PartialAsync("ResponseFull",
                     new ViewDataDictionary(ViewData)
                     {
                         { "Response", Model.Responses[i] }
                     });
-                            }
-
-                        }
             }
-        </div>
+
+        }
+    }
+</div>

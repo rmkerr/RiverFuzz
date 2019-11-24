@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Database.Entities;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace Database.Repositories
 {
@@ -25,7 +26,7 @@ namespace Database.Repositories
         {
             get
             {
-                return new SQLiteConnection(config_.GetConnectionString("DefaultConnection"));
+                return new NpgsqlConnection(config_.GetConnectionString("DefaultConnection"));
             }
         }
 
@@ -209,8 +210,8 @@ namespace Database.Repositories
                 label.id = (await conn.QueryAsync<int>(
                     @"INSERT INTO sequence_labels
                     ( sequence_id, name ) VALUES 
-                    ( @sequence_id, @name );
-                    select last_insert_rowid()", label)).First();
+                    ( @sequence_id, @name )
+                    RETURNING id;", label)).First();
             }
         }
 

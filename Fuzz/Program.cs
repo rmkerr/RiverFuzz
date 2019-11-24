@@ -19,8 +19,9 @@ namespace Fuzz
         static async Task Main(string[] args)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper(@"C:\Users\Richa\Documents\RiverFuzzResources\Database\results.sqlite");
+            DatabaseHelper databaseHelper = new DatabaseHelper(@"riverfuzz");
             databaseHelper.DeleteDatabase();
+            databaseHelper.CreateDatabase();
 
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
