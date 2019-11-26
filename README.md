@@ -105,4 +105,10 @@ Connection: close
 {"status":"success","data":{"id":37,"ProductId":24,"BasketId":"1069","quantity":1,"updatedAt":"2019-10-11T05:27:43.448Z","createdAt":"2019-10-11T05:27:43.448Z"}}
 ```
 
-### 
+### Tokens
+
+'Token' is the term used to represent any part of a request or response that has a value we might want to copy the value of, or copy a value into. The most obvious tokens in the login request above are the `username` and `password` json tokens. The most obvious tokens in the login response are the `token`, the `bid` and the `umail` tokens.
+
+### Substitutions
+
+A substitution is the act of replacing the old value of a token with a new value.

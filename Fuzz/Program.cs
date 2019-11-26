@@ -88,11 +88,10 @@ namespace Fuzz
                 generationStopwatch.Start();
 
                 int popCount = population.Population.Count; // Store since we will be growing list.
+
+                // Loops over each existing seed sequence in the population.
                 for (int seed = 0; seed < popCount; ++seed)
                 {
-                    Stopwatch seedStopwatch = new Stopwatch();
-                    seedStopwatch.Start();
-
                     // Combine the starting dictionary and the results of this request sequence.
                     List<TokenCollection> seedTokens;
                     if (population.Population[seed].GetResults() == null)
@@ -105,17 +104,12 @@ namespace Fuzz
                         seedTokens = population.Population[seed].GetResults();
                     }
 
-                    // Generate candidate request sequences.
                     int candidateNumber = 0;
+                    // Generate candidate request sequences by mutating that seed.
                     foreach (IGenerator generator in generators)
                     {
-                        Stopwatch generatorStopwatch = new Stopwatch();
-                        generatorStopwatch.Start();
                         foreach (RequestSequence candidate in generator.Generate(population.Endpoints, population.Population[seed], seedTokens))
                         {
-                            generatorStopwatch.Stop();
-                            Console.WriteLine($"\t\tGeneration completed in {generatorStopwatch.ElapsedMilliseconds}ms");
-
                             Stopwatch candidateStopwatch = new Stopwatch();
                             candidateStopwatch.Start();
 
@@ -126,26 +120,15 @@ namespace Fuzz
                             population.AddResponse(candidate);
 
                             candidateStopwatch.Stop();
-                            Console.WriteLine($"\t\tCandidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
-
-                            generatorStopwatch.Start();
+                            Console.WriteLine($"\tCandidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
                         }
                     }
-
-                    seedStopwatch.Stop();
-                    Console.WriteLine($"\tSeed {seed} completed in {seedStopwatch.ElapsedMilliseconds}ms");
                 }
 
                 generationStopwatch.Stop();
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
 
-                generationStopwatch.Reset();
-                generationStopwatch.Start();
-
                 population.MinimizePopulation();
-
-                generationStopwatch.Stop();
-                Console.WriteLine($"Population minimization completed in {generationStopwatch.ElapsedMilliseconds}ms");
             }
 
             generationInfo.end_time = DateTime.Now;
