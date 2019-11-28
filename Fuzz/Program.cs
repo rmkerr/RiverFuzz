@@ -30,7 +30,7 @@ namespace Fuzz
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(2);
+            client.Timeout = TimeSpan.FromMilliseconds(500);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -38,7 +38,7 @@ namespace Fuzz
             responseTokenizers.Add(new JsonTokenizer());
             responseTokenizers.Add(new BearerTokenizer());
             responseTokenizers.Add(new HtmlFormTokenizer());
-            //responseTokenizers.Add(new CookieTokenizer());
+            responseTokenizers.Add(new CookieTokenizer());
 
             // Load all request tokenizers.
             List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
@@ -50,11 +50,19 @@ namespace Fuzz
             requestTokenizers.Add(new CookieTokenizer());
 
             TokenCollection startingData = new TokenCollection();
+
+            // Wordpress
             startingData.Add(new JsonToken("log", "user", "", Types.String));
             startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
+            startingData.Add(new JsonToken("const", "0", "", Types.Integer));
+
+            // OWASP juice shop
+            // startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
+            // startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
 
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
+            //generators.Add(new RemoveTokenGenerator(5));
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
@@ -78,7 +86,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 20; generation++)
+            for (int generation = 0; generation < 50; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -120,7 +128,11 @@ namespace Fuzz
                             population.AddResponse(candidate);
 
                             candidateStopwatch.Stop();
-                            Console.WriteLine($"\tCandidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
+
+                            if (candidateStopwatch.ElapsedMilliseconds > 500)
+                            {
+                                Console.WriteLine($"\tWARNING: Long running candidate {candidateNumber++} completed in {candidateStopwatch.ElapsedMilliseconds}ms");
+                            }
                         }
                     }
                 }
@@ -129,6 +141,8 @@ namespace Fuzz
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
 
                 population.MinimizePopulation();
+
+                Console.WriteLine($"Population size: {population.Population.Count}");
             }
 
             generationInfo.end_time = DateTime.Now;
@@ -149,7 +163,7 @@ namespace Fuzz
         public static List<RequestResponsePair> InitializeEndpoints()
         {
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\", @"http://192.168.0.220/");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://10.0.0.197");
         }
     }
 }

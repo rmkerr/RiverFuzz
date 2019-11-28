@@ -29,6 +29,8 @@ namespace HttpTokenize.Tokens
         public string Name { get; }
         public string Value { get; }
         public Types SupportedTypes { get; }
+
+        // These all modify the actual request.
         public void ReplaceValue(Request request, string value);
         public void ReplaceName(Request request, string name);
         public void ReplaceToken(Request request, IToken replacement);

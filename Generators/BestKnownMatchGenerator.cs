@@ -20,31 +20,45 @@ namespace Generators
         {
             if (sequence.GetLastResponse() == null || (int)sequence.GetLastResponse().Status < 300)
             {
+                // Search for an endpoint that we can append to the end of this request sequence.
                 foreach (RequestResponsePair endpoint in endpoints)
                 {
                     bool foundMatch = true;
                     TokenCollection requirements = endpoint.InputTokens;
                     Stage candidateStage = new Stage(endpoint.Request);
+
                     foreach (IToken token in requirements)
                     {
                         int matchIndex = 0;
                         IToken? matchToken = null;
 
-                        // Name only is usually a good bet, but sometimes gets stuck if there is a false positive.
-                        bool useNameOnly = Rand.Next(0, 1) > 0;
-
-                        if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
+                        // Decide if we should use the value of the token from the example request, or if we should try to find
+                        // a token from a previous request that would work as a substitution. We should be able to
+                        // make a better decision about this based on static analysis of full set of example requests.
+                        bool useOriginalValue = Rand.Next(0, 9) > 0;
+                        if (useOriginalValue)
                         {
-                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
-                        }
-                        else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
-                        {
-                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                            candidateStage.Substitutions.Add(new SubstituteConstant(token, token.Value));
                         }
                         else
                         {
-                            foundMatch = false;
-                            break;
+                            // Substituting a token with the same name is usually a good bet, but sometimes gets stuck if there is a false positive.
+                            // Add some level of randomness to keep things working.
+                            bool useNameOnly = Rand.Next(0, 1) > 0;
+
+                            if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
+                            {
+                                candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                            }
+                            else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
+                            {
+                                candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                            }
+                            else
+                            {
+                                foundMatch = false;
+                                break;
+                            }
                         }
                     }
                     if (foundMatch)
