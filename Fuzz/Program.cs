@@ -60,9 +60,10 @@ namespace Fuzz
             // startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
             // startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
 
+            // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            //generators.Add(new RemoveTokenGenerator(5));
+            generators.Add(new RemoveTokenGenerator(5));
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
             //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
@@ -71,7 +72,7 @@ namespace Fuzz
             foreach (RequestResponsePair endpoint in InitializeEndpoints())
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
-                population.AddEndpoint(endpoint, new TokenNameBucketer());
+                population.AddEndpoint(endpoint, new StatusCodeBucketer());
                 databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
             }
 
@@ -163,7 +164,7 @@ namespace Fuzz
         public static List<RequestResponsePair> InitializeEndpoints()
         {
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://10.0.0.197");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Generators
                         // Decide if we should use the value of the token from the example request, or if we should try to find
                         // a token from a previous request that would work as a substitution. We should be able to
                         // make a better decision about this based on static analysis of full set of example requests.
-                        bool useOriginalValue = Rand.Next(0, 9) > 0;
+                        bool useOriginalValue = Rand.Next(0, 3) > 0;
                         if (useOriginalValue)
                         {
                             candidateStage.Substitutions.Add(new SubstituteConstant(token, token.Value));
