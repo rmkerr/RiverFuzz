@@ -10,8 +10,19 @@ namespace Population.Bucketers
     public class TokenNameBucketer : IBucketer
     {
         private Dictionary<string, List<RequestSequence>> Sorted = new Dictionary<string, List<RequestSequence>>();
-        public TokenNameBucketer()
+        private List<string> UseValueOverrides;
+
+        // Overrides allow us to 
+        public TokenNameBucketer(string[] useValueOverrides = null)
         {
+            if (useValueOverrides != null)
+            {
+                UseValueOverrides = new List<string>(useValueOverrides);
+            }
+            else
+            {
+                UseValueOverrides = new List<string>();
+            }
         }
 
         public bool Add(RequestSequence sequence)
@@ -26,7 +37,15 @@ namespace Population.Bucketers
 
             foreach (IToken token in results)
             {
-                tokenNames.Add(token.Name);
+                
+                if (UseValueOverrides.Contains(token.Name))
+                {
+                    tokenNames.Add($"{token.Name}:{token.Value}");
+                }
+                else
+                {
+                    tokenNames.Add(token.Name);
+                }
             }
 
             StringBuilder sb = new StringBuilder();

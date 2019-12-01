@@ -52,27 +52,34 @@ namespace Fuzz
             TokenCollection startingData = new TokenCollection();
 
             // Wordpress
-            startingData.Add(new JsonToken("log", "user", "", Types.String));
-            startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
-            startingData.Add(new JsonToken("const", "0", "", Types.Integer));
+            //startingData.Add(new JsonToken("log", "user", "", Types.String));
+            //startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
+            //startingData.Add(new JsonToken("const", "0", "", Types.Integer));
 
             // OWASP juice shop
             // startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
             // startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
 
+            // Moodle
+            startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
+            startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
+
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new RemoveTokenGenerator(5));
-            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\web_store.txt", 3));
-            //generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
+            // generators.Add(new RemoveTokenGenerator(5));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
             PopulationManager population = new PopulationManager();
             foreach (RequestResponsePair endpoint in InitializeEndpoints())
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
-                population.AddEndpoint(endpoint, new StatusCodeBucketer());
+
+                // The bucketer sorts based on the token names produced by each result, and ignores
+                // the values. However, we can specify individual token names we are interested in
+                // the value of.
+                population.AddEndpoint(endpoint, new TokenNameBucketer(new string[] {"exception"}));
                 databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
             }
 
@@ -87,7 +94,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 50; generation++)
+            for (int generation = 0; generation < 30; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -164,7 +171,8 @@ namespace Fuzz
         public static List<RequestResponsePair> InitializeEndpoints()
         {
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
+            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Moodle", @"http://10.0.0.197");
         }
     }
 }

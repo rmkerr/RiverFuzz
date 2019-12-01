@@ -18,6 +18,7 @@ namespace Generators
 
         public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
+            // Only build off sequences that have an actual result.
             if (sequence.GetLastResponse() == null || (int)sequence.GetLastResponse().Status < 300)
             {
                 // Search for an endpoint that we can append to the end of this request sequence.
@@ -32,33 +33,24 @@ namespace Generators
                         int matchIndex = 0;
                         IToken? matchToken = null;
 
-                        // Decide if we should use the value of the token from the example request, or if we should try to find
-                        // a token from a previous request that would work as a substitution. We should be able to
-                        // make a better decision about this based on static analysis of full set of example requests.
-                        bool useOriginalValue = Rand.Next(0, 3) > 0;
-                        if (useOriginalValue)
+                        // Substituting a token with the same name is usually a good bet, but sometimes gets stuck if there is a false positive.
+                        // Add some level of randomness to keep things working. 
+                        int skip = Rand.Next(0, 2);
+
+                        if (skip >= 2 && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
                         {
-                            candidateStage.Substitutions.Add(new SubstituteConstant(token, token.Value));
+                            // Find a token that has the same name as this one.
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                        }
+                        else if ( skip >= 1 && GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
+                        {
+                            // Find a token that has the same type as this one.
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
                         }
                         else
                         {
-                            // Substituting a token with the same name is usually a good bet, but sometimes gets stuck if there is a false positive.
-                            // Add some level of randomness to keep things working.
-                            bool useNameOnly = Rand.Next(0, 1) > 0;
-
-                            if (useNameOnly && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
-                            {
-                                candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
-                            }
-                            else if (GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
-                            {
-                                candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
-                            }
-                            else
-                            {
-                                foundMatch = false;
-                                break;
-                            }
+                            // Use the original value from the example request.
+                            candidateStage.Substitutions.Add(new SubstituteConstant(token, token.Value));
                         }
                     }
                     if (foundMatch)
