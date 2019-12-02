@@ -12,6 +12,7 @@ using Population;
 using Database;
 using System.Diagnostics;
 using Database.Entities;
+using ProjectSpecific;
 
 namespace Fuzz
 {
@@ -29,6 +30,7 @@ namespace Fuzz
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
+            handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromMilliseconds(500);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -63,6 +65,7 @@ namespace Fuzz
             // Moodle
             startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
             startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
+            MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
 
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
@@ -147,6 +150,8 @@ namespace Fuzz
 
                 generationStopwatch.Stop();
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
+
+                await resetHelper.Reset(client);
 
                 population.MinimizePopulation();
 

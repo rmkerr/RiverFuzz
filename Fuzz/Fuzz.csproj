@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Generators\Generators.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
     <ProjectReference Include="..\PopulationManager\Population.csproj" />
+    <ProjectReference Include="..\ProjectSpecific\ProjectSpecific.csproj" />
   </ItemGroup>
 
 </Project>

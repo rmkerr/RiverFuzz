@@ -4,6 +4,7 @@ using HttpTokenize.Tokens;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -102,6 +103,11 @@ namespace HttpTokenize
                     if (rawResponse.Content.Headers.Contains("Content-Type"))
                     {
                         response.Headers.Add("Content-Type", rawResponse.Content.Headers.ContentType.ToString());
+                    }
+                    if (rawResponse.Headers.Contains("Set-Cookie"))
+                    {
+                        IEnumerable<string> setCookieHeaders = rawResponse.Headers.GetValues("Set-Cookie");
+                        response.Headers.Add("Set-Cookie", setCookieHeaders.FirstOrDefault());
                     }
                     Responses.Add(response);
 
