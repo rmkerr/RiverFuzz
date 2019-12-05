@@ -15,12 +15,12 @@ namespace UnitTests.HttpTokenize.Tokens
         {
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "";
-            request.Headers.Add("Cookie", "test1=test2;test3=test4");
+            request.Headers.Add("Cookie", new List<string> { "test1=test2;test3=test4" });
 
             CookieToken token = new CookieToken("test1", "", Types.String);
             token.ReplaceValue(request, "newValue");
 
-            Assert.Equal("test1=newValue;test3=test4", request.Headers["Cookie"]);
+            Assert.Equal("test1=newValue;test3=test4", request.Headers["Cookie"][0]);
         }
 
         [Fact]
@@ -28,12 +28,12 @@ namespace UnitTests.HttpTokenize.Tokens
         {
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "";
-            request.Headers.Add("Cookie", "test1=test2;test3=test4");
+            request.Headers.Add("Cookie", new List<string> { "test1=test2;test3=test4" });
 
             CookieToken token = new CookieToken("test3", "", Types.String);
             token.ReplaceValue(request, "newValue");
 
-            Assert.Equal("test1=test2;test3=newValue", request.Headers["Cookie"]);
+            Assert.Equal("test1=test2;test3=newValue", request.Headers["Cookie"][0]);
         }
     }
 }

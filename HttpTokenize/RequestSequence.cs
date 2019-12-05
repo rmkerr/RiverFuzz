@@ -77,7 +77,6 @@ namespace HttpTokenize
             return Responses;
         }
 
-        // TODO: More informative return information. Get rid of the stupid tuple.
         public async Task<List<Response>> Execute(HttpClient client, List<IResponseTokenizer> responseTokenizers, TokenCollection initialTokens)
         {
             Responses = new List<Response>();

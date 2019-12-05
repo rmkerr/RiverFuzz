@@ -18,14 +18,14 @@ namespace HttpTokenize
             Method = method;
             Url = url;
             Content = content;
-            Headers = new Dictionary<string, string>();
+            Headers = new Dictionary<string, List<string>>();
             original = this;
         }
 
         public Request Clone()
         {
             Request clone = new Request(Url, Method, Content);
-            clone.Headers = new Dictionary<string, string>(Headers);
+            clone.Headers = new Dictionary<string, List<string>>(Headers);
             clone.original = original;
 
             return clone;
@@ -35,14 +35,16 @@ namespace HttpTokenize
         {
             HttpRequestMessage request = new HttpRequestMessage(Method, Url);
             request.Content = new StringContent(Content);
-            if (Headers.ContainsKey("Content-Type"))
+            if (Headers.ContainsKey("Content-Type") && Headers["Content-Type"].Count >= 1)
             {
-                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(Headers["Content-Type"]);
+                // If there are multiple content-type headers, grab only the first. I think this is safe?
+                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(Headers["Content-Type"][0]);
             }
 
-            if (Headers.ContainsKey("Authorization"))
+            if (Headers.ContainsKey("Authorization") && Headers["Authorization"].Count >= 1)
             {
-                string[] values = Headers["Authorization"].Split(' ');
+                // If there are multiple authorization headers, grab only the first. I'm pretty sure this is safe.
+                string[] values = Headers["Authorization"][0].Split(' ');
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(values[0], values[1]);
             }
 
@@ -72,7 +74,7 @@ namespace HttpTokenize
         public Uri Url { get; set; }
         public HttpMethod Method { get; set; }
         public string? Content { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, List<string>> Headers { get; set; }
         public Request OriginalEndpoint { get { return original; } }
 
         // Used to track the source endpoint that this request is a 

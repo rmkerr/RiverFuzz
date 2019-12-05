@@ -16,7 +16,8 @@ namespace UnitTests.HttpTokenize.Tokenizers
         {
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
             request.Content = "";
-            request.Headers.Add("Cookie", "test1=test2;test3=test4");
+            List<String> cookieHeaderVals = new List<string> { "test1=test2;test3=test4" };
+            request.Headers.Add("Cookie", cookieHeaderVals);
 
             CookieTokenizer tokenizer = new CookieTokenizer();
 

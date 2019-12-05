@@ -30,11 +30,15 @@ namespace CaptureParse
                     Uri url = new Uri(host + contents[1]);
 
                     line = sr.ReadLine();
-                    Dictionary<string, string> headers = new Dictionary<string, string>();
+                    Dictionary<string, List<string>> headers = new Dictionary<string, List<string>>();
                     while (line != "")
                     {
                         string[] header = line.Split(": ", 2);
-                        headers.Add(header[0], header[1]);
+                        if (!headers.ContainsKey(header[0]))
+                        {
+                            headers.Add(header[0], new List<string>());
+                        }
+                        headers[header[0]].Add(header[1]);
                         line = sr.ReadLine();
                     }
 

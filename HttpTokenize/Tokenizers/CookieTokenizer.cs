@@ -13,13 +13,15 @@ namespace HttpTokenize.Tokenizers
 
             if (request.Headers.ContainsKey("Cookie"))
             {
-                string cookieHeader = request.Headers["Cookie"];
-                string[] cookies = cookieHeader.Split(';');
-
-                foreach (string cookieString in cookies)
+                foreach (string cookieHeader in request.Headers["Cookie"])
                 {
-                    string[] vals = cookieString.Split('=');
-                    tokens.Add(new CookieToken(vals[0], vals[1], TypeGuesser.GuessTypes(vals[1])));
+                    string[] cookies = cookieHeader.Split(';');
+
+                    foreach (string cookieString in cookies)
+                    {
+                        string[] vals = cookieString.Split('=');
+                        tokens.Add(new CookieToken(vals[0], vals[1], TypeGuesser.GuessTypes(vals[1])));
+                    }
                 }
             }
 
@@ -32,9 +34,13 @@ namespace HttpTokenize.Tokenizers
 
             if (response.Headers.ContainsKey("Set-Cookie"))
             {
-                string cookieHeader = response.Headers["Set-Cookie"];
-                string[] vals = cookieHeader.Split(';', '=');
-                tokens.Add(new CookieToken(vals[0], vals[1], TypeGuesser.GuessTypes(vals[1])));
+                // TODO: Convert responses to multi header value map.
+                // foreach (string cookieHeader in response.Headers["Cookie"])
+                {
+                    string cookieHeader = response.Headers["Set-Cookie"];
+                    string[] vals = cookieHeader.Split(';', '=');
+                    tokens.Add(new CookieToken(vals[0], vals[1], TypeGuesser.GuessTypes(vals[1])));
+                }
             }
 
             return tokens;

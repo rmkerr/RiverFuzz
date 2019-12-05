@@ -17,7 +17,7 @@ namespace UnitTests.HttpTokenize.Tokenizers
         {
             string content = "key1=value1&key2=value2";
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get, content);
-            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            request.Headers.Add("Content-Type", new List<string> { "application/x-www-form-urlencoded" });
 
             HtmlFormTokenizer tokenizer = new HtmlFormTokenizer();
 
@@ -31,7 +31,7 @@ namespace UnitTests.HttpTokenize.Tokenizers
         {
             string content = "";
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get, content);
-            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            request.Headers.Add("Content-Type", new List<string> { "application/x-www-form-urlencoded" });
 
             HtmlFormTokenizer tokenizer = new HtmlFormTokenizer();
 

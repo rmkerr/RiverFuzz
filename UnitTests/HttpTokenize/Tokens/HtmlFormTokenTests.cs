@@ -16,7 +16,7 @@ namespace UnitTests.HttpTokenize.Tokens
         {
             string content = "key1=value1&key2=value2";
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get, content);
-            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            request.Headers.Add("Content-Type", new List<string> { "application/x-www-form-urlencoded" });
 
             HtmlFormToken token1 = new HtmlFormToken("key1", "", Types.String);
             token1.ReplaceValue(request, "testvalue");
@@ -29,7 +29,7 @@ namespace UnitTests.HttpTokenize.Tokens
         {
             string content = "key1=value1&key2=value2";
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get, content);
-            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            request.Headers.Add("Content-Type", new List<string> { "application/x-www-form-urlencoded" });
 
             HtmlFormToken token1 = new HtmlFormToken("key2", "", Types.String);
             token1.ReplaceValue(request, "testvalue");

@@ -32,7 +32,7 @@ namespace UnitTests
         {
             Request initializeCart = new Request(new Uri(@"http://localhost/api/BasketItems/"), HttpMethod.Post);
             initializeCart.Content = "{\"ProductId\":24,\"BasketId\":\"20\",\"quantity\":1}";
-            initializeCart.Headers.Add("Authorization", $"Bearer {BearerExample}");
+            initializeCart.Headers.Add("Authorization", new List<string> { $"Bearer {BearerExample}" });
 
             BearerTokenizer tokenizer = new BearerTokenizer();
             TokenCollection tokens = tokenizer.ExtractTokens(initializeCart);
@@ -43,7 +43,7 @@ namespace UnitTests
 
             match[0].ReplaceValue(initializeCart, "testresult");
 
-            Assert.Equal("Bearer testresult", initializeCart.Headers["Authorization"]);
+            Assert.Equal("Bearer testresult", initializeCart.Headers["Authorization"][0]);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceValue(Request request, string value)
         {
-            string cookieHeader = request.Headers["Cookie"];
+            string cookieHeader = request.Headers["Cookie"][0];
             string[] cookiePairs = cookieHeader.Split(';');
 
             StringBuilder sb = new StringBuilder(cookieHeader.Length + value.Length);
@@ -53,12 +53,12 @@ namespace HttpTokenize.Tokens
             {
                 sb.Length--;
             }
-            request.Headers["Cookie"] = sb.ToString();
+            request.Headers["Cookie"][0] = sb.ToString();
         }
 
         public void Remove(Request request)
         {
-            string cookieHeader = request.Headers["Cookie"];
+            string cookieHeader = request.Headers["Cookie"][0];
             string[] cookiePairs = cookieHeader.Split(';');
 
             StringBuilder sb = new StringBuilder(cookieHeader.Length);
@@ -76,7 +76,7 @@ namespace HttpTokenize.Tokens
             {
                 sb.Length--;
             }
-            request.Headers["Cookie"] = sb.ToString();
+            request.Headers["Cookie"][0] = sb.ToString();
         }
     }
 }

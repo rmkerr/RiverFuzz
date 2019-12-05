@@ -14,7 +14,8 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
             if (request.Headers.ContainsKey("Content-Type") &&
-                request.Headers["Content-Type"] == "application/x-www-form-urlencoded")
+                request.Headers["Content-Type"].Count >= 1 &&
+                request.Headers["Content-Type"][0] == "application/x-www-form-urlencoded")
             {
                 string[] pairs = request.Content.Split("&");
                 foreach (string pair in pairs)

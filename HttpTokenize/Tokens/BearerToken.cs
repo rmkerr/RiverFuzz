@@ -30,7 +30,8 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceValue(Request request, string value)
         {
-            request.Headers["Authorization"] = "Bearer " + value;
+            // We're trusting that there should only ever be one Authorization header here.
+            request.Headers["Authorization"][0] = "Bearer " + value;
         }
 
         public void Remove(Request request)
