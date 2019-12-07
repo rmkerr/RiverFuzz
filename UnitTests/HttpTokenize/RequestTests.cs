@@ -21,14 +21,20 @@ namespace UnitTests
 
             TokenCollection requirements = addItemToCart.GetRequirements(request_tokenizers);
 
-            /*Assert.Equal("ProductId", requirements[0].Name);
-            Assert.Equal(Types.Integer, requirements[0].SupportedTypes);
+            List<IToken> product_id = requirements.GetByName("ProductId");
+            Assert.Single(product_id);
+            Assert.Equal("ProductId", product_id[0].Name);
+            Assert.Equal(Types.Integer, product_id[0].SupportedTypes);
 
-            Assert.Equal("BasketId", requirements[1].Name);
-            Assert.Equal(Types.String, requirements[1].SupportedTypes);
+            List<IToken> basket_id = requirements.GetByName("BasketId");
+            Assert.Single(basket_id);
+            Assert.Equal("BasketId", basket_id[0].Name);
+            Assert.Equal(Types.Integer | Types.String, basket_id[0].SupportedTypes);
 
-            Assert.Equal("quantity", requirements[2].Name);
-            Assert.Equal(Types.Integer, requirements[2].SupportedTypes);*/
+            List<IToken> quantity = requirements.GetByName("quantity");
+            Assert.Single(quantity);
+            Assert.Equal("quantity", quantity[0].Name);
+            Assert.Equal(Types.Integer, quantity[0].SupportedTypes);
         }
     }
 }

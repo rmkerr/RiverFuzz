@@ -31,29 +31,32 @@ namespace HttpTokenize.Tokens
 
         public void ReplaceValue(Request request, string value)
         {
-            string cookieHeader = request.Headers["Cookie"][0];
-            string[] cookiePairs = cookieHeader.Split(';');
-
-            StringBuilder sb = new StringBuilder(cookieHeader.Length + value.Length);
-            for (int i = 0; i < cookiePairs.Length; ++i)
+            for (int i = 0; i < request.Headers["Cookie"].Count; ++i)
             {
-                if (cookiePairs[i].StartsWith(Name + "="))
-                {
-                    sb.Append($"{Name}={value}");
-                }
-                else
-                {
-                    sb.Append(cookiePairs[i]);
-                }
-                sb.Append(";");
-            }
+                string cookieHeader = request.Headers["Cookie"][i];
+                string[] cookiePairs = cookieHeader.Split(';');
 
-            // Drop trailing semicolon.
-            if (sb.Length > 0)
-            {
-                sb.Length--;
+                StringBuilder sb = new StringBuilder(cookieHeader.Length + value.Length);
+                for (int t = 0; t < cookiePairs.Length; ++t)
+                {
+                    if (cookiePairs[t].StartsWith(Name + "="))
+                    {
+                        sb.Append($"{Name}={value}");
+                    }
+                    else
+                    {
+                        sb.Append(cookiePairs[t]);
+                    }
+                    sb.Append(";");
+                }
+
+                // Drop trailing semicolon.
+                if (sb.Length > 0)
+                {
+                    sb.Length--;
+                }
+                request.Headers["Cookie"][i] = sb.ToString();
             }
-            request.Headers["Cookie"][0] = sb.ToString();
         }
 
         public void Remove(Request request)

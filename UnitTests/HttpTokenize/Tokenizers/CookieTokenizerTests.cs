@@ -32,5 +32,47 @@ namespace UnitTests.HttpTokenize.Tokenizers
             Assert.Equal("test3", token.Name);
             Assert.Equal("test4", token.Value);
         }
+
+        [Fact]
+        public void CookieTokenizer_SimpleCookieResponse_Parsed()
+        {
+            Response response = new Response(System.Net.HttpStatusCode.OK, "");
+            response.Headers.Add("Set-Cookie", "test_name=test_value; HttpOnly");
+
+            CookieTokenizer tokenizer = new CookieTokenizer();
+
+            TokenCollection tokens = tokenizer.ExtractTokens(response);
+            Assert.Equal(1, tokens.Count());
+
+            IToken token = tokens.GetByName("test_name")[0];
+            Assert.Equal("test_name", token.Name);
+            Assert.Equal("test_value", token.Value);
+        }
+
+        [Fact]
+        public void CookieTokenizer_MultiCookieResponse_Parsed()
+        {
+            Response response = new Response(System.Net.HttpStatusCode.OK, "");
+            response.Headers.Add("Set-Cookie", "test_name=test_value; HttpOnly");
+            response.Headers.Add("Set-Cookie", "test_name2=test_value2; SameSite=Strict");
+            response.Headers.Add("Set-Cookie", "test_name3=test_value3; SameSite=Strict; HttpOnly");
+
+            CookieTokenizer tokenizer = new CookieTokenizer();
+
+            TokenCollection tokens = tokenizer.ExtractTokens(response);
+            Assert.Equal(3, tokens.Count());
+
+            IToken token = tokens.GetByName("test_name")[0];
+            Assert.Equal("test_name", token.Name);
+            Assert.Equal("test_value", token.Value);
+
+            token = tokens.GetByName("test_name2")[0];
+            Assert.Equal("test_name2", token.Name);
+            Assert.Equal("test_value2", token.Value);
+
+            token = tokens.GetByName("test_name3")[0];
+            Assert.Equal("test_name3", token.Name);
+            Assert.Equal("test_value3", token.Value);
+        }
     }
 }

@@ -35,5 +35,19 @@ namespace UnitTests.HttpTokenize.Tokens
 
             Assert.Equal("test1=test2;test3=newValue", request.Headers["Cookie"][0]);
         }
+
+        [Fact]
+        public void CookieToken_SimpleCookie_MultiHeader()
+        {
+            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
+            request.Content = "";
+            request.Headers.Add("Cookie", new List<string> { "test1=test2;test3=test4", "test5=test6;test7=test8" });
+
+            CookieToken token = new CookieToken("test7", "", Types.String);
+            token.ReplaceValue(request, "newValue");
+
+            Assert.Equal("test1=test2;test3=test4", request.Headers["Cookie"][0]);
+            Assert.Equal("test5=test6;test7=newValue", request.Headers["Cookie"][1]);
+        }
     }
 }
