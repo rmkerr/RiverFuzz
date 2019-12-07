@@ -101,12 +101,12 @@ namespace HttpTokenize
                     Response response = new Response(rawResponse.StatusCode, await rawResponse.Content.ReadAsStringAsync());
                     if (rawResponse.Content.Headers.Contains("Content-Type"))
                     {
-                        response.Headers.Add("Content-Type", rawResponse.Content.Headers.ContentType.ToString());
+                        response.Headers.Add("Content-Type", new List<string> { rawResponse.Content.Headers.ContentType.ToString() });
                     }
                     if (rawResponse.Headers.Contains("Set-Cookie"))
                     {
                         IEnumerable<string> setCookieHeaders = rawResponse.Headers.GetValues("Set-Cookie");
-                        response.Headers.Add("Set-Cookie", setCookieHeaders.FirstOrDefault());
+                        response.Headers.Add("Set-Cookie", setCookieHeaders.ToList());
                     }
                     Responses.Add(response);
 

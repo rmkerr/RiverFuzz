@@ -35,6 +35,7 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
             if (response.Headers.ContainsKey("Content-Type") &&
+                response.Headers["Content-Type"].Count >= 1 &&
                 response.Headers["Content-Type"].Contains("text/html"))
             {
                 HtmlDocument doc = new HtmlDocument();

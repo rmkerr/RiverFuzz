@@ -34,10 +34,8 @@ namespace HttpTokenize.Tokenizers
 
             if (response.Headers.ContainsKey("Set-Cookie"))
             {
-                // TODO: Convert responses to multi header value map.
-                // foreach (string cookieHeader in response.Headers["Cookie"])
+                foreach (string cookieHeader in response.Headers["Set-Cookie"])
                 {
-                    string cookieHeader = response.Headers["Set-Cookie"];
                     string[] vals = cookieHeader.Split(';', '=');
                     tokens.Add(new CookieToken(vals[0], vals[1], TypeGuesser.GuessTypes(vals[1])));
                 }

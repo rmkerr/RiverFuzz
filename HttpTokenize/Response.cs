@@ -14,7 +14,7 @@ namespace HttpTokenize
         {
             Status = status;
             Content = content;
-            Headers = new Dictionary<string, string>();
+            Headers = new Dictionary<string, List<string>>();
         }
 
         public TokenCollection GetResults(List<IResponseTokenizer> tokenizers)
@@ -33,7 +33,7 @@ namespace HttpTokenize
 
         public HttpStatusCode Status { get; }
         public string Content { get; }
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, List<string>> Headers { get; set; }
 
         // ID that uniquely identifies this response. Primarily used by database.
         public int? Id { get; set; }

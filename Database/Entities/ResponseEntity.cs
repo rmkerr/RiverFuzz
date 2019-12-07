@@ -22,10 +22,13 @@ namespace Database.Entities
             StringBuilder sb = new StringBuilder();
             foreach (string key in response.Headers.Keys)
             {
-                sb.Append(key);
-                sb.Append(": ");
-                sb.Append(response.Headers[key]);
-                sb.Append('\n');
+                foreach (string value in response.Headers[key])
+                {
+                    sb.Append(key);
+                    sb.Append(": ");
+                    sb.Append(value);
+                    sb.Append('\n');
+                }
             }
             model.headers = sb.ToString();
 

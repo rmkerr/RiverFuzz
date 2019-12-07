@@ -37,7 +37,7 @@ namespace UnitTests.HttpTokenize.Tokenizers
         public void CookieTokenizer_SimpleCookieResponse_Parsed()
         {
             Response response = new Response(System.Net.HttpStatusCode.OK, "");
-            response.Headers.Add("Set-Cookie", "test_name=test_value; HttpOnly");
+            response.Headers.Add("Set-Cookie", new List<string> { "test_name=test_value; HttpOnly" });
 
             CookieTokenizer tokenizer = new CookieTokenizer();
 
@@ -53,9 +53,11 @@ namespace UnitTests.HttpTokenize.Tokenizers
         public void CookieTokenizer_MultiCookieResponse_Parsed()
         {
             Response response = new Response(System.Net.HttpStatusCode.OK, "");
-            response.Headers.Add("Set-Cookie", "test_name=test_value; HttpOnly");
-            response.Headers.Add("Set-Cookie", "test_name2=test_value2; SameSite=Strict");
-            response.Headers.Add("Set-Cookie", "test_name3=test_value3; SameSite=Strict; HttpOnly");
+            response.Headers.Add("Set-Cookie", new List<string> {
+                "test_name=test_value; HttpOnly",
+                "test_name2=test_value2; SameSite=Strict",
+                "test_name3=test_value3; SameSite=Strict; HttpOnly"
+            });
 
             CookieTokenizer tokenizer = new CookieTokenizer();
 

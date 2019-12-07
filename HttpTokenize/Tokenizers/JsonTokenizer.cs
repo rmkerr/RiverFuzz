@@ -20,7 +20,9 @@ namespace HttpTokenize.Tokenizers
 
         public TokenCollection ExtractTokens(Response response)
         {
-            if (!response.Headers.ContainsKey("Content-Type") || response.Headers["Content-Type"].Contains("json"))
+            if (!response.Headers.ContainsKey("Content-Type") ||
+                (response.Headers["Content-Type"].Count >= 1 &&
+                 response.Headers["Content-Type"].Contains("json")))
             {
                 return JsonToTokens(response.Content);
             }
