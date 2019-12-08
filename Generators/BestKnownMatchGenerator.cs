@@ -26,7 +26,7 @@ namespace Generators
                 {
                     bool foundMatch = true;
                     TokenCollection requirements = endpoint.InputTokens;
-                    Stage candidateStage = new Stage(endpoint.Request);
+                    Stage candidateStage = new Stage(endpoint.Request.Clone());
 
                     foreach (IToken token in requirements)
                     {

@@ -64,7 +64,7 @@ namespace Fuzz
 
             // Moodle
             startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
-            startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
+            // startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
             MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
 
             // Generators take a sequence and modify it.
@@ -97,7 +97,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 30; generation++)
+            for (int generation = 0; generation < 5; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");

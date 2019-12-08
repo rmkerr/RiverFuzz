@@ -25,7 +25,11 @@ namespace HttpTokenize
         public Request Clone()
         {
             Request clone = new Request(Url, Method, Content);
-            clone.Headers = new Dictionary<string, List<string>>(Headers);
+            clone.Headers = new Dictionary<string, List<string>>();
+            foreach (string headerName in Headers.Keys)
+            {
+                clone.Headers.Add(headerName, new List<string>(Headers[headerName]));
+            }
             clone.original = original;
 
             return clone;

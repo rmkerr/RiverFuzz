@@ -51,27 +51,25 @@ namespace Population
             {
                 foreach (List<RequestSequence> bucket in bucketer.Bucketize())
                 {
-                    if (bucket.Count > 0)
+                    RequestSequence shortest = null;
+                    foreach (RequestSequence candidate in bucket)
                     {
-                        Response response = bucket[0].GetLastResponse();
-                        if (response.Status != HttpStatusCode.RequestTimeout)
+                        bool candidateIsValid = (candidate.GetResponses().Count > 0 && candidate.GetLastResponse().Status != HttpStatusCode.RequestTimeout);
+                        if (candidateIsValid && (shortest == null ||
+                            (candidate.StageCount() < shortest.StageCount() ||
+                            (candidate.StageCount() == shortest.StageCount() &&
+                            candidate.SubstitutionCount() < shortest.SubstitutionCount()))))
                         {
-                            RequestSequence shortest = bucket[0];
-                            foreach (RequestSequence candidate in bucket)
-                            {
-                                if (candidate.StageCount() < shortest.StageCount() ||
-                                   (candidate.StageCount() == shortest.StageCount() &&
-                                    candidate.SubstitutionCount() < shortest.SubstitutionCount()))
-                                {
-                                    shortest = candidate;
-                                }
-                            }
-                            Population.Add(shortest);
+                            shortest = candidate;
                         }
+                    }
+                    if (shortest != null)
+                    {
+                        Population.Add(shortest);
                     }
                 }
             }
-        
+
         }
 
         public string Summary()
