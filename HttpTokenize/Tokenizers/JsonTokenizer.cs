@@ -11,7 +11,9 @@ namespace HttpTokenize.Tokenizers
     {
         public TokenCollection ExtractTokens(Request request)
         {
-            if (!request.Headers.ContainsKey("Content-Type") || request.Headers["Content-Type"].Contains("json"))
+            if (!request.Headers.ContainsKey("Content-Type") ||
+                (request.Headers["Content-Type"].Count >= 1 &&
+                 request.Headers["Content-Type"][0].Contains("json")))
             {
                 return JsonToTokens(request.Content);
             }
@@ -22,7 +24,7 @@ namespace HttpTokenize.Tokenizers
         {
             if (!response.Headers.ContainsKey("Content-Type") ||
                 (response.Headers["Content-Type"].Count >= 1 &&
-                 response.Headers["Content-Type"].Contains("json")))
+                 response.Headers["Content-Type"][0].Contains("json")))
             {
                 return JsonToTokens(response.Content);
             }

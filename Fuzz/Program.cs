@@ -32,7 +32,7 @@ namespace Fuzz
             handler.UseCookies = false;
             handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromMilliseconds(500);
+            client.Timeout = TimeSpan.FromMilliseconds(1000);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
@@ -151,7 +151,7 @@ namespace Fuzz
                 generationStopwatch.Stop();
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
 
-                await resetHelper.Reset(client);
+                // await resetHelper.Reset(client);
 
                 population.MinimizePopulation();
 
