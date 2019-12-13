@@ -11,9 +11,9 @@ namespace CaptureParse
 {
     public class BurpSavedParse
     {
-        public static RequestResponsePair LoadSingleRequestFromFile(string path, string host)
+        public static KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
-            RequestResponsePair result = null;
+            KnownEndpoint result = null;
             using (StreamReader sr = new StreamReader(path))
             {
                 string fileContent = sr.ReadToEnd();
@@ -26,13 +26,13 @@ namespace CaptureParse
 
                 Request request = TextParseHelper.ParseRequest(decodedString, host);
 
-                return new RequestResponsePair(request, null);
+                return new KnownEndpoint(request, null);
             }
         }
 
-        public static List<RequestResponsePair> LoadRequestsFromDirectory(string directory, string host)
+        public static List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
         {
-            List<RequestResponsePair> requests = new List<RequestResponsePair>();
+            List<KnownEndpoint> requests = new List<KnownEndpoint>();
 
             string[] filePaths = Directory.GetFiles(directory, "*.txt", SearchOption.TopDirectoryOnly);
             foreach (string path in filePaths)

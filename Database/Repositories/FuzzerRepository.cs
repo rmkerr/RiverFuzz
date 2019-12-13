@@ -72,6 +72,17 @@ namespace Database.Repositories
             }
         }
 
+        public async Task<List<RequestSequenceEntity>> GetRequestSequencesByRunId(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sQuery = "SELECT * FROM sequences WHERE run_id = @ID";
+                conn.Open();
+                var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
+                return result.ToList();
+            }
+        }
+
         public async Task<RequestEntity> GetEndpointById(int id)
         {
             using (IDbConnection conn = Connection)

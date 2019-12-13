@@ -19,7 +19,7 @@ namespace Generators
             rand = new Random();
         }
 
-        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
+        public IEnumerable<RequestSequence> Generate(List<KnownEndpoint> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
             for (int i = 0; i < MaxRemovals; ++i)
             {

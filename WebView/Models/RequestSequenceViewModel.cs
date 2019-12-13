@@ -13,7 +13,7 @@ namespace WebView.Models
             id = entity.id;
             request_count = entity.request_count;
             substitution_count = entity.substitution_count;
-            generation_id = entity.generation_id;
+            run_id = entity.run_id;
 
             Requests = new List<RequestViewModel>();
             Responses = new List<ResponseViewModel>();
@@ -25,7 +25,7 @@ namespace WebView.Models
         public int? id { get; set; }
         public int request_count { get; set; }
         public int substitution_count { get; set; }
-        public int generation_id { get; set; }
+        public int run_id { get; set; }
 
         // Not from entity
         public List<RequestViewModel> Requests { get; set; }

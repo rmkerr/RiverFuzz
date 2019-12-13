@@ -24,6 +24,7 @@ namespace Database.Repositories
 
         // Request Sequences
         Task<RequestSequenceEntity> GetRequestSequenceById(int id);
+        Task<List<RequestSequenceEntity>> GetRequestSequencesByRunId(int id);
         Task<List<RequestSequenceEntity>> GetAllRequestSequences();
 
         // Substitutions

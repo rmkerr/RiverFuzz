@@ -24,8 +24,8 @@ namespace Fuzz
         {
             // Set up a database connection to store the results.
             DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
-            databaseHelper.DeleteDatabase();
-            databaseHelper.CreateDatabase();
+            //databaseHelper.DeleteDatabase();
+            //databaseHelper.CreateDatabase();
 
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
@@ -64,18 +64,18 @@ namespace Fuzz
 
             // Moodle
             startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
-            // startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
+            startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
             MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
 
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
             // generators.Add(new RemoveTokenGenerator(5));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
+            // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 3));
 
             PopulationManager population = new PopulationManager();
-            foreach (RequestResponsePair endpoint in InitializeEndpoints())
+            foreach (KnownEndpoint endpoint in InitializeEndpoints())
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
 
@@ -87,9 +87,11 @@ namespace Fuzz
             }
 
             // Record the time we started this run.
-            FuzzerGenerationEntity generationInfo = new FuzzerGenerationEntity();
-            generationInfo.start_time = DateTime.Now;
-
+            FuzzerRunEntity runInfo = new FuzzerRunEntity();
+            Console.WriteLine("Enter Run Name:");
+            runInfo.name = Console.ReadLine();
+            runInfo.start_time = DateTime.Now;
+            List<FuzzerGenerationEntity> generationInfo = new List<FuzzerGenerationEntity>();
 
             // In each generation, we will:
             // 1: Generate a new set of viable sequences by mutating the existing population.
@@ -147,33 +149,44 @@ namespace Fuzz
                         }
                     }
                 }
-
-                generationStopwatch.Stop();
-                Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
-
                 // await resetHelper.Reset(client);
 
                 population.MinimizePopulation();
 
+                generationStopwatch.Stop();
+                Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
+                
+                generationInfo.Add(new FuzzerGenerationEntity
+                {
+                    population_size = population.Population.Count,
+                    run_position = generation,
+                    execution_time = generationStopwatch.Elapsed
+                });
+
                 Console.WriteLine($"Population size: {population.Population.Count}");
             }
 
-            generationInfo.end_time = DateTime.Now;
-            databaseHelper.AddFuzzerGeneration(generationInfo);
+            runInfo.end_time = DateTime.Now;
+            databaseHelper.AddFuzzerRun(runInfo);
+            foreach (FuzzerGenerationEntity entity in generationInfo)
+            {
+                entity.run_id = runInfo.id.Value;
+                databaseHelper.AddFuzzerGeneration(entity);
+            }
 
             foreach (RequestSequence sequence in population.Population)
             {
                 Response? finalResponse = sequence.GetLastResponse();
                 if (finalResponse != null)
                 {
-                    databaseHelper.AddRequestSequence(sequence, generationInfo);
+                    databaseHelper.AddRequestSequence(sequence, runInfo);
                 }     
             }
 
             
         }
 
-        public static List<RequestResponsePair> InitializeEndpoints()
+        public static List<KnownEndpoint> InitializeEndpoints()
         {
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");

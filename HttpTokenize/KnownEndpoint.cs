@@ -6,12 +6,12 @@ using System.Text;
 
 namespace HttpTokenize
 {
-    public class RequestResponsePair
+    public class KnownEndpoint
     {
         public Request Request { get; }
         public Response Response { get; }
 
-        public RequestResponsePair(Request request, Response response)
+        public KnownEndpoint(Request request, Response response)
         {
             Request = request;
             Response = response;

@@ -10,7 +10,7 @@ namespace Population
 {
     public class PopulationManager
     {
-        public List<RequestResponsePair> Endpoints { get; set; }
+        public List<KnownEndpoint> Endpoints { get; set; }
         public List<RequestSequence> Population { get; internal set; }
 
         // Maps from each endpoint to all request sequences ending in that request.
@@ -20,7 +20,7 @@ namespace Population
 
         public PopulationManager()
         {
-            Endpoints = new List<RequestResponsePair>();
+            Endpoints = new List<KnownEndpoint>();
             Population = new List<RequestSequence>();
             Bucketers = new Dictionary<Request, IBucketer>();
             // AllKnownSequences = new Dictionary<Request, List<RequestSequence>>();
@@ -28,7 +28,7 @@ namespace Population
             Population.Add(new RequestSequence());
         }
 
-        public void AddEndpoint(RequestResponsePair endpoint, IBucketer bucketer)
+        public void AddEndpoint(KnownEndpoint endpoint, IBucketer bucketer)
         {
             Endpoints.Add(endpoint);
             Bucketers.Add(endpoint.Request.OriginalEndpoint, bucketer);
@@ -75,7 +75,7 @@ namespace Population
         public string Summary()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (RequestResponsePair endpoint in Endpoints)
+            foreach (KnownEndpoint endpoint in Endpoints)
             {
                 IBucketer bucketer = Bucketers[endpoint.Request.OriginalEndpoint];
                 List<List<RequestSequence>> bucketed = bucketer.Bucketize();

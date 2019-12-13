@@ -9,6 +9,6 @@ namespace Database.Entities
         public int? id { get; set; }
         public int request_count { get; set; }
         public int substitution_count { get; set; }
-        public int generation_id { get; set; }
+        public int run_id { get; set; }
     }
 }

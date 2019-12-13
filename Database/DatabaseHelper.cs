@@ -119,6 +119,19 @@ namespace Database
             }
         }
 
+        public void AddFuzzerRun(FuzzerRunEntity model)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                model.id = connection.Query<int>(
+                    @"INSERT INTO fuzzer_run
+                    ( start_time, end_time, name ) VALUES 
+                    ( @start_time, @end_time, @name )
+                    RETURNING id;", model).First();
+            }
+        }
+
         public void AddFuzzerGeneration(FuzzerGenerationEntity model)
         {
             using (var connection = GetConnection())
@@ -126,18 +139,18 @@ namespace Database
                 connection.Open();
                 model.id = connection.Query<int>(
                     @"INSERT INTO fuzzer_generation
-                    ( start_time, end_time ) VALUES 
-                    ( @start_time, @end_time )
+                    ( run_id, run_position, population_size, execution_time ) VALUES 
+                    ( @run_id, @run_position, @population_size, @execution_time )
                     RETURNING id;", model).First();
             }
         }
 
-        public void AddRequestSequence(RequestSequence sequence, FuzzerGenerationEntity generation)
+        public void AddRequestSequence(RequestSequence sequence, FuzzerRunEntity run)
         {
             RequestSequenceEntity model = new RequestSequenceEntity();
             model.request_count = sequence.StageCount();
             model.substitution_count = sequence.SubstitutionCount();
-            model.generation_id = generation.id.GetValueOrDefault(0);
+            model.run_id = run.id.GetValueOrDefault(0);
 
             using (var connection = GetConnection())
             {
@@ -145,8 +158,8 @@ namespace Database
 
                 model.id = connection.Query<int>(
                     @"INSERT INTO sequences
-                    ( request_count, substitution_count, generation_id ) VALUES 
-                    ( @request_count, @substitution_count, @generation_id )
+                    ( request_count, substitution_count, run_id ) VALUES 
+                    ( @request_count, @substitution_count, @run_id )
                     RETURNING id;", model).First();
             }
 
@@ -237,7 +250,7 @@ namespace Database
                         id                  SERIAL      PRIMARY KEY,
                         request_count       INTEGER     NOT NULL,
                         substitution_count  INTEGER     NOT NULL,
-                        generation_id         INTEGER     NOT NULL
+                        run_id              INTEGER     NOT NULL
                     );");
 
                 // All executed requests.
@@ -291,12 +304,23 @@ namespace Database
                         name                TEXT        NOT NULL
                     );");
 
-                // Fuzzer run/generation metadata.
+                // Fuzzer run metadata.
+                connection.Execute(
+                    @"CREATE TABLE fuzzer_run (
+                        id                  SERIAL      PRIMARY KEY,
+                        name                TEXT        NOT NULL,
+                        start_time          TIMESTAMP   NOT NULL,
+                        end_time            TIMESTAMP   NOT NULL
+                    );");
+
+                // Fuzzer generation metadata.
                 connection.Execute(
                     @"CREATE TABLE fuzzer_generation (
                         id                  SERIAL      PRIMARY KEY,
-                        start_time          timestamp   NOT NULL,
-                        end_time            timestamp   NOT NULL
+                        run_id              INTEGER     NOT NULL,
+                        run_position        INTEGER     NOT NULL,
+                        population_size     INTEGER     NOT NULL,
+                        execution_time      TIME        NOT NULL
                     );");
             }
         }

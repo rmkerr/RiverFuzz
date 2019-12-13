@@ -8,6 +8,6 @@ namespace Generators
 {
     public interface IGenerator
     {
-        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults);
+        public IEnumerable<RequestSequence> Generate(List<KnownEndpoint> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults);
     }
 }

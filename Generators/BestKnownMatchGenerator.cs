@@ -16,13 +16,13 @@ namespace Generators
             Rand = new Random();
         }
 
-        public IEnumerable<RequestSequence> Generate(List<RequestResponsePair> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
+        public IEnumerable<RequestSequence> Generate(List<KnownEndpoint> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
             // Only build off sequences that have an actual result.
             if (sequence.GetLastResponse() == null || (int)sequence.GetLastResponse().Status < 300)
             {
                 // Search for an endpoint that we can append to the end of this request sequence.
-                foreach (RequestResponsePair endpoint in endpoints)
+                foreach (KnownEndpoint endpoint in endpoints)
                 {
                     bool foundMatch = true;
                     TokenCollection requirements = endpoint.InputTokens;
