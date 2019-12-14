@@ -53,7 +53,7 @@ namespace WebView
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Results}/{action=Summary}");
+                    pattern: "{controller=FuzzerRun}/{action=Summary}");
             });
         }
     }

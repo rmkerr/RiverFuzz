@@ -234,5 +234,15 @@ namespace Database.Repositories
                 await conn.ExecuteAsync(@"DELETE FROM sequence_labels WHERE id = @labelId", new { labelId = id });
             }
         }
+
+        public async Task<List<FuzzerRunEntity>> GetAllFuzzerRuns()
+        {
+            using (IDbConnection connection = Connection)
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<FuzzerRunEntity>(@"SELECT * FROM fuzzer_run");
+                return result.ToList();
+            }
+        }
     }
 }
