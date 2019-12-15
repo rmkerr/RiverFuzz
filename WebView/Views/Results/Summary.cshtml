@@ -22,7 +22,7 @@
             <tr>
                 <th scope="row"><a asp-controller="Results" asp-action="Sequence" asp-route-id="@Model[i].id">@Model[i].id</a></th>
                 <td>@result</td>
-                <td>@url</td>
+                <td class="text-break">@url</td>
                 <td>
                     @foreach (RequestSequenceLabelViewModel label in Model[i].Labels)
                     {

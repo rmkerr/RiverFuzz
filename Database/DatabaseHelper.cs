@@ -333,7 +333,7 @@ namespace Database
 
                 // Executed sequences
                 connection.Execute(
-                    @"DROP DATABASE IF EXISTS riverfuzz;");
+                    @"DROP DATABASE IF EXISTS riverfuzz;", null, null, 1000);
             }
         }
     }

@@ -18,7 +18,7 @@ namespace Fuzz
 {
     class Program
     {
-        static bool production = false;
+        static bool production = true;
 
         static async Task Main(string[] args)
         {
@@ -59,30 +59,39 @@ namespace Fuzz
             //startingData.Add(new JsonToken("const", "0", "", Types.Integer));
 
             // OWASP juice shop
-            // startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
-            // startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
+            //startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
+            startingData.Add(new JsonToken("user", "admin@juice-sh.op", "", Types.String));
+            //startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
+            // startingData.Add(new JsonToken("password2", "admin123", "", Types.String));
 
             // Moodle
-            startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
-            startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
-            MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
+            // startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
+            // startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
+            // MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
 
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
             // generators.Add(new RemoveTokenGenerator(5));
             // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 3));
+            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
             PopulationManager population = new PopulationManager();
             foreach (KnownEndpoint endpoint in InitializeEndpoints())
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
 
-                // The bucketer sorts based on the token names produced by each result, and ignores
-                // the values. However, we can specify individual token names we are interested in
-                // the value of.
-                population.AddEndpoint(endpoint, new TokenNameBucketer(new string[] {"exception"}));
+                if (endpoint.Request.Url.AbsolutePath.Contains("login"))
+                {
+                    // The bucketer sorts based on the token names produced by each result, and ignores
+                    // the values. However, we can specify individual token names we are interested in
+                    // the value of. In this case, we can specifically check which user is logged in.
+                    population.AddEndpoint(endpoint, new TokenNameBucketer(new string[] { "umail" }));
+                }
+                else
+                {
+                    population.AddEndpoint(endpoint, new TokenNameBucketer());
+                }
                 databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
             }
 
@@ -99,7 +108,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 5; generation++)
+            for (int generation = 0; generation < 100; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
@@ -188,9 +197,9 @@ namespace Fuzz
 
         public static List<KnownEndpoint> InitializeEndpoints()
         {
-            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
+            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Moodle", @"http://10.0.0.197");
+            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Moodle", @"http://10.0.0.197");
         }
     }
 }

@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-header" id="request-accordion-heading-@request.id">
         <h2 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#request-accordion-collapse-@request.id" ; aria-expanded="true" aria-controls="request-accordion-collapse-@request.id">
+            <button class="btn btn-link text-break" type="button" data-toggle="collapse" data-target="#request-accordion-collapse-@request.id" ; aria-expanded="true" aria-controls="request-accordion-collapse-@request.id">
                 @request.sequence_position - @request.method - @request.url
             </button>
         </h2>
@@ -13,9 +13,9 @@
     <div id="request-accordion-collapse-@request.id" class="collapse hide" aria-labelledby="request-accordion-heading-@request.id">
         <div class="card-body">
             <h3>Headers:</h3>
-            <pre class="card-text">@request.headers</pre>
+            <pre class="card-text text-break">@request.headers</pre>
             <h3>Content:</h3>
-            <p class="card-text">@request.content</p>
+            <pre class="card-text text-break">@request.content</pre>
         </div>
     </div>
 </div>

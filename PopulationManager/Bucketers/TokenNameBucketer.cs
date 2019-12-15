@@ -61,6 +61,7 @@ namespace Population.Bucketers
 
             if (!Sorted.ContainsKey(sb.ToString()))
             {
+                Console.WriteLine($"Added new bucket {sb.ToString()}");
                 Sorted.Add(sb.ToString(), new List<RequestSequence>());
                 Sorted[sb.ToString()].Add(sequence);
                 return true;
