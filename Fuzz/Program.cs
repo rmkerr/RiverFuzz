@@ -18,14 +18,18 @@ namespace Fuzz
 {
     class Program
     {
-        static bool production = true;
+        static bool production = false;
 
         static async Task Main(string[] args)
         {
             // Set up a database connection to store the results.
             DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
-            //databaseHelper.DeleteDatabase();
-            //databaseHelper.CreateDatabase();
+
+            if (!production)
+            {
+                databaseHelper.DeleteDatabase();
+                databaseHelper.CreateDatabase();
+            }
 
             // Set up HttpClient.
             HttpClientHandler handler = new HttpClientHandler();
@@ -59,10 +63,8 @@ namespace Fuzz
             //startingData.Add(new JsonToken("const", "0", "", Types.Integer));
 
             // OWASP juice shop
-            //startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
-            startingData.Add(new JsonToken("user", "admin@juice-sh.op", "", Types.String));
-            //startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
-            // startingData.Add(new JsonToken("password2", "admin123", "", Types.String));
+            startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
+            startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
 
             // Moodle
             // startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
@@ -108,7 +110,7 @@ namespace Fuzz
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 100; generation++)
+            for (int generation = 0; generation < 5; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");

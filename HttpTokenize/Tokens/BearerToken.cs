@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,12 +32,32 @@ namespace HttpTokenize.Tokens
         public void ReplaceValue(Request request, string value)
         {
             // We're trusting that there should only ever be one Authorization header here.
-            request.Headers["Authorization"][0] = "Bearer " + value;
+            request.Headers["Authorization"][0] = "Bearer " + RemoveUnicode(value);
         }
 
         public void Remove(Request request)
         {
             request.Headers.Remove("Authorization");
+        }
+
+        private string RemoveUnicode(string value)
+        {
+            if (value.Any(c => c > 127))
+            {
+                Console.WriteLine("WARNING: Removing Non-ASCII characters from header.");
+                return Encoding.ASCII.GetString(
+                    Encoding.Convert(
+                        Encoding.UTF8,
+                        Encoding.GetEncoding(
+                            Encoding.ASCII.EncodingName,
+                            new EncoderReplacementFallback(string.Empty),
+                            new DecoderExceptionFallback()
+                            ),
+                        Encoding.UTF8.GetBytes(value)
+                    )
+                );
+            }
+            return value;
         }
     }
 }

@@ -37,6 +37,6 @@ namespace HttpTokenize.Tokens
         public void Remove(Request request);
 
         // Try to find the equivalent of this token in a new request or response.
-        // public IToken? FindNearestMatch(TokenCollection tokens);
+        // public IToken? FindClosestEquivalent(TokenCollection tokens);
     }
 }

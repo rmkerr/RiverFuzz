@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace HttpTokenize.Tokens
@@ -41,7 +42,7 @@ namespace HttpTokenize.Tokens
                 {
                     if (cookiePairs[t].StartsWith(Name + "="))
                     {
-                        sb.Append($"{Name}={value}");
+                        sb.Append($"{Name}={RemoveUnicode(value)}");
                     }
                     else
                     {
@@ -80,6 +81,26 @@ namespace HttpTokenize.Tokens
                 sb.Length--;
             }
             request.Headers["Cookie"][0] = sb.ToString();
+        }
+
+        private string RemoveUnicode(string value)
+        {
+            if (value.Any(c => c > 127))
+            {
+                Console.WriteLine("WARNING: Removing Non-ASCII characters from header.");
+                return Encoding.ASCII.GetString(
+                    Encoding.Convert(
+                        Encoding.UTF8,
+                        Encoding.GetEncoding(
+                            Encoding.ASCII.EncodingName,
+                            new EncoderReplacementFallback(string.Empty),
+                            new DecoderExceptionFallback()
+                            ),
+                        Encoding.UTF8.GetBytes(value)
+                    )
+                );
+            }
+            return value;
         }
     }
 }

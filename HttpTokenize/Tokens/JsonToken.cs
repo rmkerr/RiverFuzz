@@ -53,9 +53,10 @@ namespace HttpTokenize.Tokens
 
                 request.Content = json_content.ToString();
             }
-            catch
+            catch (Exception ex)
             {
                 // TODO: Not JSON
+                Console.WriteLine($"Expected JSON. Got: {ex.Message}");
             }
         }
 
@@ -79,9 +80,10 @@ namespace HttpTokenize.Tokens
 
                 request.Content = json_content.ToString();
             }
-            catch
+            catch (Exception ex)
             {
                 // TODO: Not JSON
+                Console.WriteLine($"Expected JSON. Got: {ex.Message}");
             }
         }
 

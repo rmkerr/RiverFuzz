@@ -14,20 +14,10 @@ namespace HttpTokenize.Tokenizers
         {
             TokenCollection tokens = new TokenCollection();
 
-            // If the content type is json, or if it is unspecified.
-            if (!request.Headers.ContainsKey("Content-Type") || (request.Headers["Content-Type"].Count >= 1 && request.Headers["Content-Type"][0].Contains("json")))
+            if (request.Headers.ContainsKey("Authorization") && request.Headers["Authorization"].Count >= 1)
             {
-                try
-                {
-                    if (request.Headers.ContainsKey("Authorization") && request.Headers["Authorization"].Count >= 1)
-                    {
-                        string bearerToken = request.Headers["Authorization"][0].Split(' ', 2)[1];
-                        tokens.Add(new BearerToken(bearerToken));
-                    }
-                }
-                catch
-                {
-                }
+                string bearerToken = request.Headers["Authorization"][0].Split(' ', 2)[1];
+                tokens.Add(new BearerToken(bearerToken));
             }
             return tokens;
         }

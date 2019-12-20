@@ -127,6 +127,10 @@ namespace HttpTokenize
                 }
                 catch (Exception ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"WARNING: Non-Timeout Exception {ex.Message}");
+                    Console.ForegroundColor = ConsoleColor.White;
+
                     Response response = new Response(System.Net.HttpStatusCode.RequestTimeout, ex.Message);
                     Responses.Add(response);
                     break;
