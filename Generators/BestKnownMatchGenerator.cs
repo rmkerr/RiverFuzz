@@ -40,12 +40,12 @@ namespace Generators
                         if (skip >= 2 && GetRandomNameMatch(sequenceResults, token.Name, out matchToken, out matchIndex))
                         {
                             // Find a token that has the same name as this one.
-                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken, matchIndex));
                         }
                         else if ( skip >= 1 && GetRandomTypeMatch(sequenceResults, token.SupportedTypes, out matchToken, out matchIndex))
                         {
                             // Find a token that has the same type as this one.
-                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken.Name, matchIndex, token.SupportedTypes));
+                            candidateStage.Substitutions.Add(new SubstituteNamedToken(token, matchToken, matchIndex));
                         }
                         else
                         {

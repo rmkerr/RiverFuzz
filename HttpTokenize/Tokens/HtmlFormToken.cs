@@ -40,6 +40,31 @@ namespace HttpTokenize.Tokens
             ReplaceHelper(request, value, false);
         }
 
+        public IToken? FindClosestEquivalent(TokenCollection tokens)
+        {
+            List<IToken> matches = new List<IToken>();
+            foreach (IToken potentialMatch in tokens)
+            {
+                if (potentialMatch.Name == this.Name && potentialMatch.GetType() == this.GetType())
+                {
+                    matches.Add(potentialMatch);
+                }
+            }
+            if (matches.Count > 1)
+            {
+                Console.WriteLine("WARNING: Multiple form tokens with the same name. This probably shouldn't happen.");
+                foreach (IToken match in matches)
+                {
+                    Console.WriteLine($"\t {match.ToString()}");
+                }
+            }
+            if (matches.Count >= 1)
+            {
+                return matches[0];
+            }
+            return null;
+        }
+
         private void ReplaceHelper(Request request, string value, bool remove)
         {
             string content = request.Content;

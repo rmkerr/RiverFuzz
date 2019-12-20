@@ -97,5 +97,19 @@ namespace HttpTokenize
                 }
             }
         }
+
+        public IToken? FindClosestEquivalent(TokenCollection tokens)
+        {
+            List<IToken> matches = tokens.GetByName(this.Name);
+            if (matches.Count > 1)
+            {
+                Console.WriteLine("WARNING: Multiple cookies with the same name. This probably shouldn't happen.");
+            }
+            if (matches.Count >= 1)
+            {
+                return matches[0];
+            }
+            return null;
+        }
     }
 }

@@ -83,6 +83,25 @@ namespace HttpTokenize.Tokens
             request.Headers["Cookie"][0] = sb.ToString();
         }
 
+        // Cookie names should be unique, so this is actually probably okay.
+        public IToken? FindClosestEquivalent(TokenCollection tokens)
+        {
+            List<IToken> matches = tokens.GetByName(this.Name);
+            if (matches.Count > 1)
+            {
+                Console.WriteLine("WARNING: Multiple cookies with the same name. This probably shouldn't happen.");
+                foreach (IToken match in matches)
+                {
+                    Console.WriteLine($"\t {match.ToString()}");
+                }
+            }
+            if (matches.Count >= 1)
+                {
+                return matches[0];
+            }
+            return null;
+        }
+
         private string RemoveUnicode(string value)
         {
             if (value.Any(c => c > 127))

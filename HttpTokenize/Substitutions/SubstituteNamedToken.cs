@@ -8,14 +8,13 @@ namespace HttpTokenize.Substitutions
     public class SubstituteNamedToken : ISubstitution
     {
         private readonly IToken target;
-        private readonly string sourceName;
+        private readonly IToken source;
         private readonly Types sourceType;
         private readonly int sourceResponse;
-        public SubstituteNamedToken(IToken token, string name, int responseIndex, Types type)
+        public SubstituteNamedToken(IToken target, IToken source, int responseIndex)
         {
-            target = token;
-            sourceName = name;
-            sourceType = type;
+            this.target = target;
+            this.source = source;
             sourceResponse = responseIndex;
         }
         public IToken GetTarget()
@@ -26,14 +25,14 @@ namespace HttpTokenize.Substitutions
         public void MakeSubstitution(List<TokenCollection> previous, Request next)
         {
             // Get token from previous sequence and replace new value with old one.
-            List<IToken> replacement = previous[sourceResponse].GetByName(sourceName);
+            IToken? replacement = source.FindClosestEquivalent(previous[sourceResponse]);
 
-            if (replacement.Count == 0)
+            if (replacement == null)
             {
-                throw new Exception($"Unable to find token by name '{sourceName}'.");
+                throw new Exception($"Unable to find token '{source.Name}' '{source.ToString()}'.");
             }
 
-            target.ReplaceValue(next, replacement[0].Value);
+            target.ReplaceValue(next, replacement.Value);
         }
 
         public bool ReplacesToken(IToken token)
@@ -45,9 +44,9 @@ namespace HttpTokenize.Substitutions
         {
             if (sourceResponse == 0)
             {
-                return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from seed tokens.";
+                return $"Replace the value of '{target.Name}' with the token '{source.Name}' from seed tokens.";
             }
-            return $"Replace the value of '{target.Name}' with the value of '{sourceName}' from response #{sourceResponse}.";
+            return $"Replace the value of '{target.Name}' with the token '{source.Name}' from response #{sourceResponse}.";
         }
     }
 }

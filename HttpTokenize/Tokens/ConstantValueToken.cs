@@ -18,6 +18,12 @@ namespace HttpTokenize.Tokens
 
         public Types SupportedTypes { get; }
 
+        // TODO: This may actually need an implementation.
+        public IToken? FindClosestEquivalent(TokenCollection tokens)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove(Request request)
         {
             throw new NotImplementedException();

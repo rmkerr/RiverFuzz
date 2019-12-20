@@ -59,5 +59,16 @@ namespace HttpTokenize.Tokens
             }
             return value;
         }
+
+        // TODO: This just picks by type. We can do way better than this.
+        public IToken? FindClosestEquivalent(TokenCollection tokens)
+        {
+            List<IToken> matches = tokens.GetByType(Types.BearerToken);
+            if (matches.Count >= 1)
+            {
+                return matches[0];
+            }
+            return null;
+        }
     }
 }

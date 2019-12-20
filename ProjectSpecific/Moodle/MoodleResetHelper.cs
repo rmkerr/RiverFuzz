@@ -25,7 +25,7 @@ namespace ProjectSpecific
 
         public MoodleResetHelper(string host, string adminUser, string adminPass)
         {
-            // Load the Requests from a file.
+            /*// Load the Requests from a file.
             GetLoginForm = CaptureParse.BurpSavedParse.LoadSingleRequestFromFile(exampleRequestPath + "get_login_form.txt", host).Request;
             SubmitLoginForm = CaptureParse.BurpSavedParse.LoadSingleRequestFromFile(exampleRequestPath + "submit_login_form.txt", host).Request;
             TestSession = CaptureParse.BurpSavedParse.LoadSingleRequestFromFile(exampleRequestPath + "test_session.txt", host).Request;
@@ -89,7 +89,7 @@ namespace ProjectSpecific
             ResponseTokenizers = new List<IResponseTokenizer>();
             ResponseTokenizers.Add(cookieTokenizer);
             ResponseTokenizers.Add(formTokenizer);
-            ResponseTokenizers.Add(jsonTokenizer);
+            ResponseTokenizers.Add(jsonTokenizer);*/
         }
 
         public async Task Reset(HttpClient client)
