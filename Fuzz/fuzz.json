@@ -1,0 +1,5 @@
+{
+  "Target": "http://localhost",
+  "Endpoints": "C:\\Users\\Richa\\Documents\\RiverFuzzResources\\JuiceShop",
+  "ResetDatabase": false
+}

@@ -13,6 +13,8 @@ using Database;
 using System.Diagnostics;
 using Database.Entities;
 using ProjectSpecific;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Fuzz
 {
@@ -22,10 +24,17 @@ namespace Fuzz
 
         static async Task Main(string[] args)
         {
+            string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
+            JObject config = JObject.Parse(fuzzerConfig);
+            
+            await Fuzz(config);
+        }
+
+        static async Task Fuzz(JObject config)
+        {
             // Set up a database connection to store the results.
             DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
-
-            if (!production)
+            if (config.Value<bool?>("ResetDatabase") ?? false)
             {
                 databaseHelper.DeleteDatabase();
                 databaseHelper.CreateDatabase();
@@ -63,8 +72,8 @@ namespace Fuzz
             //startingData.Add(new JsonToken("const", "0", "", Types.Integer));
 
             // OWASP juice shop
-            startingData.Add(new JsonToken("user", "asdfg@asdfg.com", "", Types.String));
-            startingData.Add(new JsonToken("password", "asdfg", "", Types.String));
+            startingData.Add(new HttpTokenize.Tokens.JsonToken("user", "asdfg@asdfg.com", "", Types.String));
+            startingData.Add(new HttpTokenize.Tokens.JsonToken("password", "asdfg", "", Types.String));
 
             // Moodle
             // startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
@@ -79,7 +88,7 @@ namespace Fuzz
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
             PopulationManager population = new PopulationManager();
-            foreach (KnownEndpoint endpoint in InitializeEndpoints())
+            foreach (KnownEndpoint endpoint in InitializeEndpoints(config.Value<string>("Endpoints"), config.Value<string>("Target")))
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
 
@@ -197,9 +206,9 @@ namespace Fuzz
             
         }
 
-        public static List<KnownEndpoint> InitializeEndpoints()
+        public static List<KnownEndpoint> InitializeEndpoints(string endpoint_path, string host)
         {
-            return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\JuiceShop\", @"http://localhost");
+            return BurpSavedParse.LoadRequestsFromDirectory(endpoint_path, host);
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
             //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Moodle", @"http://10.0.0.197");
         }

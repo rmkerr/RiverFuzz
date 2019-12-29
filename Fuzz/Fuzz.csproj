@@ -8,12 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CaptureParse\CaptureParse.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\Generators\Generators.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
     <ProjectReference Include="..\PopulationManager\Population.csproj" />
     <ProjectReference Include="..\ProjectSpecific\ProjectSpecific.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="fuzz.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
