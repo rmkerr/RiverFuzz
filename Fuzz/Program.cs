@@ -113,13 +113,18 @@ namespace Fuzz
             runInfo.start_time = DateTime.Now;
             List<FuzzerGenerationEntity> generationInfo = new List<FuzzerGenerationEntity>();
 
+            // TimeSpan used to stop the fuzzer.
+            TimeSpan timeLimit = TimeSpan.FromMinutes(config.Value<int>("ExecutionTime"));
+            Stopwatch runTime = new Stopwatch();
+            runTime.Start();
+
             // In each generation, we will:
             // 1: Generate a new set of viable sequences by mutating the existing population.
             // 2: Execute each viable sequence and caputure results.
             // 3: Bucket the results.
             // 4: Keep the shortest sequences from each bucket.
             // 5: Repeat with the new population.
-            for (int generation = 0; generation < 5; generation++)
+            for (int generation = 0; runTime.ElapsedMilliseconds < timeLimit.TotalMilliseconds; generation++)
             {
                 Console.WriteLine("\n\n----------------------------------------------------------------------------------");
                 Console.WriteLine($"Generation {generation}");
