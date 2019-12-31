@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace Fuzz
 {
-    class Program
+    public class Program
     {
         static bool production = false;
 
@@ -30,7 +30,7 @@ namespace Fuzz
             await Fuzz(config);
         }
 
-        static async Task Fuzz(JObject config)
+        public static async Task Fuzz(JObject config)
         {
             // Set up a database connection to store the results.
             DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
@@ -108,8 +108,7 @@ namespace Fuzz
 
             // Record the time we started this run.
             FuzzerRunEntity runInfo = new FuzzerRunEntity();
-            Console.WriteLine("Enter Run Name:");
-            runInfo.name = Console.ReadLine();
+            runInfo.name = config.Value<string?>("RunName") ?? "Untitled Fuzzer Run";
             runInfo.start_time = DateTime.Now;
             List<FuzzerGenerationEntity> generationInfo = new List<FuzzerGenerationEntity>();
 
