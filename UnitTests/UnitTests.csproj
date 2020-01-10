@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
+    <ProjectReference Include="..\PopulationManager\Population.csproj" />
   </ItemGroup>
 
 </Project>
