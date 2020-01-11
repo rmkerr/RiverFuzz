@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Text;
 using System.Xml.Linq;
 using System.Linq;
@@ -13,7 +12,6 @@ namespace CaptureParse
     {
         public static KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
-            KnownEndpoint result = null;
             using (StreamReader sr = new StreamReader(path))
             {
                 string fileContent = sr.ReadToEnd();

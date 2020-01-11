@@ -1,6 +1,6 @@
 {
   "Target": "http://localhost",
-  "Endpoints": "C:\\Users\\Richa\\Documents\\RiverFuzzResources\\JuiceShop",
+  "Endpoints": [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
   "ResetDatabase": false,
   "ExecutionTime": 2,
   "RunName":  "JSON Test Local"

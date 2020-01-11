@@ -15,6 +15,7 @@ using Database.Entities;
 using ProjectSpecific;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Fuzz
 {
@@ -87,8 +88,14 @@ namespace Fuzz
             // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
+            // Parse the list of endpoints we should include in this run, then load them.
+            DatabaseParse databaseParse = new DatabaseParse(databaseHelper, config.Value<string>("Target"));
+            List<int> endpointIds = config["Endpoints"].Select(x => (int)x).ToList();
+            List<KnownEndpoint> endpoints = await databaseParse.LoadEndpointsById(endpointIds);
+
+            // Add the endpoints to the population and set up bucketers.
             PopulationManager population = new PopulationManager();
-            foreach (KnownEndpoint endpoint in InitializeEndpoints(config.Value<string>("Endpoints"), config.Value<string>("Target")))
+            foreach (KnownEndpoint endpoint in endpoints)
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
 
@@ -103,7 +110,12 @@ namespace Fuzz
                 {
                     population.AddEndpoint(endpoint, new TokenNameBucketer());
                 }
-                databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
+
+                // If the endpoint is not already in the database, add it.
+                if (endpoint.Request.Id == null)
+                {
+                    databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
+                }
             }
 
             // Record the time we started this run.

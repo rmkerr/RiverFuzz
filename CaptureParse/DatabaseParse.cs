@@ -37,7 +37,8 @@ namespace CaptureParse
             RequestEntity model = await DbHelper.GetEndpointById(id);
 
             HttpMethod method = new HttpMethod(model.method);
-            Uri url = new Uri(Host + model.url);
+            Uri rawUrl = new Uri(model.url);
+            Uri url = new Uri(Host + rawUrl.GetComponents(UriComponents.PathAndQuery, UriFormat.UriEscaped));
             string content = model.content;
 
             Dictionary<string, List<string>> headers = new Dictionary<string, List<string>>();
