@@ -203,7 +203,7 @@ namespace Fuzz
                 Response? finalResponse = sequence.GetLastResponse();
                 if (finalResponse != null)
                 {
-                    databaseHelper.AddRequestSequence(sequence, runInfo);
+                    await databaseHelper.AddRequestSequence(sequence, runInfo);
                 }     
             }
 
