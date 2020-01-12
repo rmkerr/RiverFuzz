@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Database.Entities;
 using Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using WebView.Models;
@@ -17,13 +18,15 @@ namespace WebView.Controllers
     {
         private readonly ILogger<FuzzerController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
+        private IConfiguration _configuration;
         private HttpClient _client;
 
-        public FuzzerController(ILogger<FuzzerController> logger, IFuzzerRepository endpointRepo)
+        public FuzzerController(ILogger<FuzzerController> logger, IFuzzerRepository endpointRepo, IConfiguration configuration)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
             _client = new HttpClient();
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -45,7 +48,7 @@ namespace WebView.Controllers
         public async Task<FuzzerParametersViewModel> Start(FuzzerParametersViewModel model)
         {
             HttpContent content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            await _client.PostAsync("https://localhost:44393/Fuzz/Start", content);
+            await _client.PostAsync(_configuration.GetValue<string>("FuzzerHost") + "/Fuzz/Start", content);
             return model;
         }
     }
