@@ -7,12 +7,16 @@
 <h1>@ViewData["Title"]</h1>
 
 <form asp-controller="Fuzzer" asp-action="Start" method="post">
-    <label asp-for="GenerationCount"></label>
-    <input asp-for="GenerationCount" />
+    <label asp-for="RunName"></label>
+    <input asp-for="RunName" />
     <br />
 
-    <label asp-for="TargetUrl"></label>
-    <input asp-for="TargetUrl" />
+    <label asp-for="ExecutionTime"></label>
+    <input asp-for="ExecutionTime" />
+    <br />
+
+    <label asp-for="Target"></label>
+    <input asp-for="Target" />
     <br />
 
     <select class="form-control" asp-for="TargetEndpoints"

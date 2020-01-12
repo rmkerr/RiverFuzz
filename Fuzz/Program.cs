@@ -90,7 +90,7 @@ namespace Fuzz
 
             // Parse the list of endpoints we should include in this run, then load them.
             DatabaseParse databaseParse = new DatabaseParse(databaseHelper, config.Value<string>("Target"));
-            List<int> endpointIds = config["Endpoints"].Select(x => (int)x).ToList();
+            List<int> endpointIds = config["TargetEndpoints"].Select(x => (int)x).ToList();
             List<KnownEndpoint> endpoints = await databaseParse.LoadEndpointsById(endpointIds);
 
             // Add the endpoints to the population and set up bucketers.

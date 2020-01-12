@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,15 +10,19 @@ namespace WebView.Models
 {
     public class FuzzerParametersViewModel
     {
-        [Display(Name = "Number of Generations")]
-        public int? GenerationCount { get; set; }
+        [Display(Name = "Execution Time (minutes)")]
+        [JsonProperty("ExecutionTime")]
+        public int? ExecutionTime { get; set; }
 
         [Url]
         [Display(Name = "Fuzzer Target URL")]
-        public string TargetUrl { get; set; }
+        public string Target { get; set; }
 
         [Display(Name = "Target Endpoints")]
         public IEnumerable<int> TargetEndpoints { get; set; }
+
+        [Display(Name = "Run Name")]
+        public string RunName { get; set; }
 
         public List<RequestViewModel> Endpoints { get; } = new List<RequestViewModel>();
     }
