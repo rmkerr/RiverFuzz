@@ -20,6 +20,17 @@ namespace WebView.Models
             sequence_position = entity.sequence_position;
         }
 
+        public RequestViewModel()
+        {
+            id = null;
+            url = "";
+            method = "";
+            headers = null;
+            content = null;
+            sequence_id = null;
+            sequence_position = null;
+        }
+
         // From entity.
         public int? id { get; set; }
         public string url { get; set; }

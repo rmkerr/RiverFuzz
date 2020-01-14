@@ -11,6 +11,7 @@ namespace Database.Repositories
         // Endpoints
         Task<RequestEntity> GetEndpointById(int id);
         Task<List<RequestEntity>> GetAllEndpoints();
+        void AddEndpoint(RequestEntity endpoint);
 
         // Executed Requests
         Task<RequestEntity> GetExecutedRequestById(int id);

@@ -1,0 +1,27 @@
+﻿@model RequestViewModel
+
+@{
+    ViewData["Title"] = "Add Endpoint";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-controller="Endpoints" asp-action="APIAddEndpoint" method="post">
+    <label asp-for="method"></label>
+    <input asp-for="method" />
+    <br />
+
+    <label asp-for="url"></label>
+    <input asp-for="url" />
+    <br />
+
+    <label asp-for="headers"></label>
+    <input asp-for="headers" />
+    <br />
+
+    <label asp-for="content"></label>
+    <input asp-for="content" />
+    <br />
+
+    <button type="submit">Add</button>
+</form>

@@ -8,6 +8,7 @@ using Database.Entities;
 using Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebView.Models;
 
 namespace WebView.Controllers
 {
@@ -44,5 +45,28 @@ namespace WebView.Controllers
             ViewBag.Endpoints = endpoints;
             return View();
         }
+
+        [HttpGet]
+        [Route("Endpoints/Add")]
+        public IActionResult AddEndpoint()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("Endpoints/API/Add")]
+        public IActionResult APIAddEndpoint(RequestViewModel request)
+        {
+            RequestEntity entity = new RequestEntity();
+
+            entity.content = request.content;
+            entity.headers = request.headers;
+            entity.method = request.method;
+            entity.url = request.url;
+            _endpointRepository.AddEndpoint(entity);
+
+            return RedirectToAction("GetAllVisual");
+        }
+
     }
 }

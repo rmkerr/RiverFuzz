@@ -1,7 +1,7 @@
 {
   "Target": "http://localhost",
   "TargetEndpoints": [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
-  "ResetDatabase": false,
+  "ResetDatabase": true,
   "ExecutionTime": 2,
   "RunName": "JSON Test Local"
 }
