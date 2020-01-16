@@ -6,21 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-controller="Endpoints" asp-action="APIAddEndpoint" method="post">
+<form asp-controller="Endpoints" asp-action="APIAddEndpoint" method="post" class="form-group">
     <label asp-for="method"></label>
-    <input asp-for="method" />
+    <input asp-for="method" class="form-control text-monospace" />
     <br />
 
     <label asp-for="url"></label>
-    <input asp-for="url" />
+    <input asp-for="url" class="form-control text-monospace" />
     <br />
 
     <label asp-for="headers"></label>
-    <input asp-for="headers" />
+    <textarea asp-for="headers" class="form-control text-monospace" style="height:20em"></textarea>
     <br />
 
     <label asp-for="content"></label>
-    <input asp-for="content" />
+    <textarea asp-for="content" class="form-control text-monospace" style="height:20em"></textarea>
     <br />
 
     <button type="submit">Add</button>
