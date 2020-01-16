@@ -8,7 +8,7 @@
 
 <form asp-controller="Endpoints" asp-action="APIAddEndpoint" method="post" class="form-group">
     <label asp-for="method"></label>
-    <input asp-for="method" class="form-control text-monospace" />
+    <select asp-for="method" asp-items="RequestViewModel.Methods" class="form-control text-monospace"></select>
     <br />
 
     <label asp-for="url"></label>

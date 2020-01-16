@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace WebView.Models
 {
-    // TODO: Note updated or used
     public class RequestViewModel
     {
         public RequestViewModel(RequestEntity entity)
@@ -42,5 +42,19 @@ namespace WebView.Models
 
         // Not from entity
         public RequestSequenceViewModel? Sequence { get; set; }
+
+        // Selection menu items for method
+        public static List<SelectListItem> Methods = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "GET", Text = "GET" },
+            new SelectListItem { Value = "HEAD", Text = "HEAD" },
+            new SelectListItem { Value = "POST", Text = "POST"  },
+            new SelectListItem { Value = "PUT", Text = "PUT"  },
+            new SelectListItem { Value = "DELETE", Text = "DELETE"  },
+            new SelectListItem { Value = "CONNECT", Text = "CONNECT"  },
+            new SelectListItem { Value = "OPTIONS", Text = "OPTIONS"  },
+            new SelectListItem { Value = "TRACE", Text = "TRACE"  },
+            new SelectListItem { Value = "PATCH", Text = "PATCH"  }
+        };
     }
 }
