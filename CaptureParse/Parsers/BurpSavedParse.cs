@@ -15,16 +15,7 @@ namespace CaptureParse
             using (StreamReader sr = new StreamReader(path))
             {
                 string fileContent = sr.ReadToEnd();
-                XElement parsed = XElement.Parse(fileContent);
-
-                XElement requestEncoded = parsed.Descendants("request").First();
-
-                byte[] data = Convert.FromBase64String(requestEncoded.Value);
-                string decodedString = Encoding.UTF8.GetString(data);
-
-                Request request = TextParseHelper.ParseRequest(decodedString, host);
-
-                return new KnownEndpoint(request, null);
+                return ParseSingleRequestFile(fileContent, host);
             }
         }
 
@@ -38,6 +29,20 @@ namespace CaptureParse
                 requests.Add(LoadSingleRequestFromFile(path, host));
             }
             return requests;
+        }
+
+        public static KnownEndpoint ParseSingleRequestFile(string content, string host)
+        {
+            XElement parsed = XElement.Parse(content);
+
+            XElement requestEncoded = parsed.Descendants("request").First();
+
+            byte[] data = Convert.FromBase64String(requestEncoded.Value);
+            string decodedString = Encoding.UTF8.GetString(data);
+
+            Request request = TextParseHelper.ParseRequest(decodedString, host);
+
+            return new KnownEndpoint(request, null);
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿@model RequestViewModel
 
 @{
-    ViewData["Title"] = "Add Endpoint";
+    ViewData["Title"] = "Add Single Endpoint";
 }
 
 <h1>@ViewData["Title"]</h1>
+
+<a asp-controller="Endpoints" asp-action="AddFromFile">Bulk Upload</a>
 
 <form asp-controller="Endpoints" asp-action="APIAddEndpoint" method="post" class="form-group">
     <label asp-for="method"></label>

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CaptureParse;
 using Database;
 using Database.Entities;
 using Database.Repositories;
+using HttpTokenize;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebView.Models;
@@ -65,6 +69,31 @@ namespace WebView.Controllers
             entity.url = request.url;
             _endpointRepository.AddEndpoint(entity);
 
+            return RedirectToAction("GetAllVisual");
+        }
+
+        [HttpGet]
+        [Route("Endpoints/AddFromFile")]
+        public IActionResult AddFromFile()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("Endpoints/API/AddFromFile")]
+        public IActionResult APIAddEndpointFromFile(List<IFormFile> files)
+        {
+            foreach (IFormFile file in files)
+            {
+                StreamReader sr = new StreamReader(file.OpenReadStream());
+                string content = sr.ReadToEnd();
+
+                // TODO: Replace the hardcoded URL here.
+                Request request = BurpSavedParse.ParseSingleRequestFile(content, "http://localhost").Request;
+                RequestEntity entity = RequestEntity.FromRequest(request);
+
+                _endpointRepository.AddEndpoint(entity);
+            }
             return RedirectToAction("GetAllVisual");
         }
 
