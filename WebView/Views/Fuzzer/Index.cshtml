@@ -8,21 +8,22 @@
 
 <form asp-controller="Fuzzer" asp-action="Start" method="post">
     <label asp-for="RunName"></label>
-    <input asp-for="RunName" />
+    <input asp-for="RunName" class="form-control" />
     <br />
 
     <label asp-for="ExecutionTime"></label>
-    <input asp-for="ExecutionTime" />
+    <input asp-for="ExecutionTime" class="form-control" />
     <br />
 
     <label asp-for="Target"></label>
-    <input asp-for="Target" />
+    <input asp-for="Target" type="url" class="form-control" />
     <br />
 
+    <label asp-for="TargetEndpoints"></label>
     <select class="form-control" asp-for="TargetEndpoints"
             asp-items="@(new SelectList(Model.Endpoints,"id","url"))">
         <option>Select Target Endpoints</option>
     </select>
     <br />
-    <button type="submit">Start (Not Implemented)</button>
+    <button type="submit">Start</button>
 </form>

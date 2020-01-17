@@ -18,7 +18,7 @@ namespace WebView.Models
         [Display(Name = "Fuzzer Target URL")]
         public string Target { get; set; }
 
-        [Display(Name = "Target Endpoints")]
+        [Display(Name = "Target Endpoints (multiselect)")]
         public IEnumerable<int> TargetEndpoints { get; set; }
 
         [Display(Name = "Run Name")]
