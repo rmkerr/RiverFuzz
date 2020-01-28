@@ -1,4 +1,4 @@
-﻿@model List<RequestSequenceViewModel>
+﻿@model List<SequenceSummaryViewModel>
 
 @{
     ViewData["Title"] = "Summary";
@@ -15,6 +15,21 @@
         </tr>
     </thead>
     <tbody>
+        @foreach (SequenceSummaryViewModel summary in Model)
+        {
+            <tr>
+                <th scope="row"><a asp-controller="Results" asp-action="Sequence" asp-route-id="@(summary.sequence_id)">@(summary.sequence_id)</a></th>
+                <td>@summary.status</td>
+                <td class="text-break">@summary.url</td>
+                <td>
+                     @foreach (RequestSequenceLabelViewModel label in summary.Labels)
+                      {
+                          <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
+                      }
+                </td>
+            </tr>
+        }
+        @*
         @for (int i = 0; i < Model.Count; ++i)
         {
             string url = Model[i].Requests[Model[i].Requests.Count - 1].url;
@@ -30,6 +45,6 @@
                     }
                 </td>
             </tr>
-        }
+        }*@
     </tbody>
 </table>

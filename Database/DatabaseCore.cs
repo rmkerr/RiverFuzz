@@ -202,6 +202,53 @@ namespace Database
             }
         }
 
+        public async Task<List<SequenceSummaryEntity>> GetAllSequenceSummaries()
+        {
+            using (IDbConnection conn = GetConnection())
+            {
+                string sQuery = @"SELECT last_req.sequence_id as sequence_id,
+                                        last_req.url as url,
+                                        last_req.method as method,
+                                        responses.status as status
+                                FROM
+                                    (select a.*
+                                        FROM requests a
+                                        LEFT OUTER JOIN requests b ON 
+                                        a.sequence_id = b.sequence_id
+                                        AND a.sequence_position < b.sequence_position
+                                        where b.id IS NULL) last_req
+                                JOIN responses ON (responses.sequence_id = last_req.sequence_id
+                                                    and responses.sequence_position = last_req.sequence_position);";
+                conn.Open();
+                var result = await conn.QueryAsync<SequenceSummaryEntity>(sQuery);
+                return result.ToList();
+            }
+        }
+        public async Task<List<SequenceSummaryEntity>> GetSequenceSummariesByRunId(int id)
+        {
+            using (IDbConnection conn = GetConnection())
+            {
+                string sQuery = @"SELECT last_req.sequence_id as sequence_id,
+                                       last_req.url as url,
+                                       last_req.method as method,
+                                       responses.status as status
+                                FROM
+                                    (select a.*
+                                     FROM requests a
+                                     LEFT OUTER JOIN requests b ON 
+                                     a.sequence_id = b.sequence_id
+                                     AND a.sequence_position < b.sequence_position
+                                     where b.id IS NULL) last_req
+                                JOIN responses ON (responses.sequence_id = last_req.sequence_id
+                                                   and responses.sequence_position = last_req.sequence_position)
+                                JOIN sequences ON sequences.id = responses.sequence_id
+                                WHERE sequences.run_id = @id";
+                conn.Open();
+                var result = await conn.QueryAsync<SequenceSummaryEntity>(sQuery, new { id = id });
+                return result.ToList();
+            }
+        }
+
         public async Task AddRequestSequenceLabel(RequestSequenceLabelEntity label)
         {
             using (IDbConnection conn = GetConnection())

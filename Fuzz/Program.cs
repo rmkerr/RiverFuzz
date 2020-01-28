@@ -21,7 +21,7 @@ namespace Fuzz
 {
     public class Program
     {
-        static bool production = false;
+        static bool production = true;
 
         static async Task Main(string[] args)
         {

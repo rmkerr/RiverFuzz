@@ -103,21 +103,27 @@ namespace WebView.Controllers
         [HttpGet]
         public async Task<IActionResult> Summary(int? id)
         {
-            List<RequestSequenceEntity> sequences;
+            List<SequenceSummaryEntity> sequences;
             if (id == null)
             {
-                sequences = await _endpointRepository.GetAllRequestSequences();
+                sequences = await _endpointRepository.GetAllSequenceSummaries();
             }
             else
             {
-                sequences = await _endpointRepository.GetRequestSequencesByRunId(id.Value);
+                sequences = await _endpointRepository.GetSequenceSummariesByRunId(id.Value);
             }
 
-            // TODO: This makes many DB calls. Should just make one. Maybe add SummaryViewModel?
-            List<RequestSequenceViewModel> sequenceViewModels = new List<RequestSequenceViewModel>();
-            foreach (RequestSequenceEntity entity in sequences)
+            List<SequenceSummaryViewModel> sequenceViewModels = new List<SequenceSummaryViewModel>();
+            foreach (SequenceSummaryEntity entity in sequences)
             {
-                sequenceViewModels.Add(await GetFullSequence(entity.id.GetValueOrDefault()));
+                SequenceSummaryViewModel model = new SequenceSummaryViewModel(entity);
+                List<RequestSequenceLabelEntity> labels = await _endpointRepository.GetRequestSequenceLabelsBySequence(entity.sequence_id.Value);
+
+                foreach (RequestSequenceLabelEntity label in labels)
+                {
+                    model.Labels.Add(new RequestSequenceLabelViewModel(label));
+                }
+                sequenceViewModels.Add(model);
             }
 
             return View(sequenceViewModels);
