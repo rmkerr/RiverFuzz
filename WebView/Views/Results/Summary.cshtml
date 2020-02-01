@@ -29,22 +29,5 @@
                 </td>
             </tr>
         }
-        @*
-        @for (int i = 0; i < Model.Count; ++i)
-        {
-            string url = Model[i].Requests[Model[i].Requests.Count - 1].url;
-            string result = Model[i].Responses[Model[i].Responses.Count - 1].status;
-            <tr>
-                <th scope="row"><a asp-controller="Results" asp-action="Sequence" asp-route-id="@Model[i].id">@Model[i].id</a></th>
-                <td>@result</td>
-                <td class="text-break">@url</td>
-                <td>
-                    @foreach (RequestSequenceLabelViewModel label in Model[i].Labels)
-                    {
-                        <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
-                    }
-                </td>
-            </tr>
-        }*@
     </tbody>
 </table>
