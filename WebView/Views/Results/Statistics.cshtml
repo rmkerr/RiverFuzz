@@ -1,0 +1,14 @@
+﻿@model List<FuzzerRunViewModel>
+@{
+    ViewData["Title"] = "Run Statistics";
+}
+
+<div id="tutorial-result"  style="min-height: 1000px"></div>
+
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.js"></script>
+    <script src="@Url.Content("~/lib/plottable.js/plottable.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/lib/plottable.js/plottable.css")">
+    <script src="@Url.Content("~/js/Graphing.js")"></script>
+}

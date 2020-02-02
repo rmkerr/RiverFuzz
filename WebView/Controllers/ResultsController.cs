@@ -129,6 +129,40 @@ namespace WebView.Controllers
             return View(sequenceViewModels);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Statistics()
+        {
+            return View(await GetRunSummaries());
+        }
+
+        [HttpGet]
+        [Route("Results/API/Statistics")]
+        public async Task<List<FuzzerRunViewModel>> APIStatistics()
+        {
+            return await GetRunSummaries();
+        }
+
+        private async Task<List<FuzzerRunViewModel>> GetRunSummaries()
+        {
+            List<FuzzerRunViewModel> runModels = new List<FuzzerRunViewModel>();
+            List<FuzzerRunEntity> runEntities = await _endpointRepository.GetAllFuzzerRuns();
+
+            foreach (FuzzerRunEntity runEntity in runEntities)
+            {
+                List<FuzzerGenerationEntity> generationEntities = await _endpointRepository.GetFuzzerGenerationByRun(runEntity.id.Value);
+
+                FuzzerRunViewModel runModel = new FuzzerRunViewModel(runEntity);
+                foreach (FuzzerGenerationEntity generationEntity in generationEntities)
+                {
+                    runModel.Generations.Add(new FuzzerGenerationViewModel(generationEntity));
+                }
+
+                runModels.Add(runModel);
+            }
+
+            return runModels;
+        }
+
         private async Task<RequestSequenceViewModel> GetFullSequence(int id)
         {
             RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);

@@ -281,6 +281,16 @@ namespace Database
             }
         }
 
+        public async Task<List<FuzzerGenerationEntity>> GetFuzzerGenerationByRun(int id)
+        {
+            using (IDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<FuzzerGenerationEntity>(@"SELECT * FROM fuzzer_generation WHERE run_id = @runId", new { runId = id });
+                return result.ToList();
+            }
+        }
+
         public void AddEndpoint(RequestEntity endpoint)
         {
             using (var connection = GetConnection())

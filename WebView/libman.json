@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "plottable.js@3.8.6",
+      "destination": "wwwroot/lib/plottable.js/"
+    }
+  ]
+}
