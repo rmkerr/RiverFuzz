@@ -84,7 +84,7 @@ namespace Fuzz
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            // generators.Add(new RemoveTokenGenerator(5));
+            generators.Add(new RemoveTokenGenerator(5));
             // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_many.txt", 10));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 

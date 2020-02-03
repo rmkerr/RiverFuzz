@@ -1,4 +1,4 @@
-﻿function makeBasicChart(raw_data) {
+﻿function makeBasicChart(raw_data, class_name) {
 
     var xScale = new Plottable.Scales.Linear();
     var yScale = new Plottable.Scales.Linear();
@@ -13,8 +13,8 @@
     var data = [
     ];
 
-    for (i = 0; i < raw_data[0].generations.length; i++) {
-        var point = { x: raw_data[0].generations[i].run_position, y: raw_data[0].generations[i].population_size };
+    for (i = 0; i < raw_data.generations.length; i++) {
+        var point = { x: raw_data.generations[i].run_position, y: raw_data.generations[i].population_size };
         data.push(point);
         console.log(point);
     }
@@ -27,15 +27,22 @@
         [null, xAxis]
     ]);
 
-    chart.renderTo("div#tutorial-result");
-
+    //"div#tutorial-result"
+    chart.renderTo("div#" + class_name);
 }
 
 $(document).ready(function () {
     $.getJSON('/Results/API/Statistics', function (data) {
-        //data is the JSON string
-        console.log(data);
-        makeBasicChart(data);
+        // <div id="tutorial-result" class="plottable"  style="width:100%; min-height:15em"></div>
+        console.log(data.length);
+        for (j = 0; j < data.length; j++) {
+            var element = document.createElement("div");
+            element.id = "graph-child-" + j;
+            console.log("Creating element: " + element.id);
+            element.style.height = "15em";
+            document.getElementById("graph-parent").appendChild(element);
+            makeBasicChart(data[j], element.id);
+        }
     });
     
 });
