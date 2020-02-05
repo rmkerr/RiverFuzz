@@ -26,7 +26,10 @@
         "Unique Sequences", 270
     );
 
+    var titleLabel = new Plottable.Components.TitleLabel(raw_data.name).yAlignment("top").xAlignment("left");
+
     var chart = new Plottable.Components.Table([
+        [null, null, titleLabel],
         [yLabel, yAxis, plot],
         [null, null, xAxis],
         [null, null, xLabel]
