@@ -10,8 +10,7 @@
     plot.x(function (d) { return d.x; }, xScale);
     plot.y(function (d) { return d.y; }, yScale);
 
-    var data = [
-    ];
+    var data = [];
 
     for (i = 0; i < raw_data.generations.length; i++) {
         var point = { x: raw_data.generations[i].run_position, y: raw_data.generations[i].population_size };
@@ -22,9 +21,15 @@
     var dataset = new Plottable.Dataset(data);
     plot.addDataset(dataset);
 
+    var xLabel = new Plottable.Components.AxisLabel("Generations");
+    var yLabel = new Plottable.Components.AxisLabel(
+        "Unique Sequences", 270
+    );
+
     var chart = new Plottable.Components.Table([
-        [yAxis, plot],
-        [null, xAxis]
+        [yLabel, yAxis, plot],
+        [null, null, xAxis],
+        [null, null, xLabel]
     ]);
 
     //"div#tutorial-result"
