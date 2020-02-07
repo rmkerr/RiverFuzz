@@ -41,7 +41,6 @@
 
 $(document).ready(function () {
     $.getJSON('/Results/API/Statistics', function (data) {
-        // <div id="tutorial-result" class="plottable"  style="width:100%; min-height:15em"></div>
         console.log(data.length);
         for (j = 0; j < data.length; j++) {
             var element = document.createElement("div");

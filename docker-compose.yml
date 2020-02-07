@@ -1,5 +1,16 @@
-version: '3'
+version: '3.4'
+
 services:
+  webview:
+    image: ${DOCKER_REGISTRY-}webview
+    build:
+      context: .
+      dockerfile: WebView/Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+        - db
+
   db:
     image: postgres:12.1
     ports:

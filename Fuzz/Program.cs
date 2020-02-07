@@ -63,7 +63,7 @@ namespace Fuzz
             requestTokenizers.Add(new BearerTokenizer());
             requestTokenizers.Add(new KnownUrlArgumentTokenizer());
             requestTokenizers.Add(new HtmlFormTokenizer());
-            requestTokenizers.Add(new CookieTokenizer());
+            // requestTokenizers.Add(new CookieTokenizer());
 
             TokenCollection startingData = new TokenCollection();
 
