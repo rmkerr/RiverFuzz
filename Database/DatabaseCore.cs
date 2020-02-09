@@ -16,7 +16,7 @@ namespace Database
     {
         internal virtual IDbConnection GetConnection()
         {
-            throw new NotImplementedException("Derived DatabaseCore classed must implement .Connection");
+            throw new NotImplementedException("Derived DatabaseCore classed must implement GetConnection");
         }
 
         public async Task<List<RequestEntity>> GetAllEndpoints()

@@ -171,6 +171,16 @@ namespace WebView.Controllers
             List<SubstitutionEntity> substitutions = await _endpointRepository.GetSubstitutionsBySequence(id);
             List<RequestSequenceLabelEntity> labels = await _endpointRepository.GetRequestSequenceLabelsBySequence(id);
 
+            requests.Sort(delegate (RequestEntity left, RequestEntity right)
+            {
+                return left.sequence_position - right.sequence_position ?? 0;
+            });
+
+            responses.Sort(delegate (ResponseEntity left, ResponseEntity right)
+            {
+                return left.sequence_position - right.sequence_position ?? 0;
+            });
+
             RequestSequenceViewModel sequenceViewModel = new RequestSequenceViewModel(sequence);
 
             foreach (RequestEntity entity in requests)
