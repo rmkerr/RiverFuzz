@@ -36,6 +36,7 @@ namespace WebLauncher.Controllers
             }
             
             JObject config = JObject.Parse(jsonString);
+            
             Fuzz.Program.Fuzz(config);
 
             return config.ToString();

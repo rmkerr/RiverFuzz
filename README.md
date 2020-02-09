@@ -109,6 +109,8 @@ Connection: close
 
 'Token' is the term used to represent any part of a request or response that has a value we might want to copy the value of, or copy a value into. The most obvious tokens in the login request above are the `username` and `password` json tokens. The most obvious tokens in the login response are the `token`, the `bid` and the `umail` tokens.
 
+There are also some less obvious tokens in the request, such as (but not limited to) the `language` cookie and the `Authentication: Bearer` header.
+
 ### Substitutions
 
-A substitution is the act of replacing the old value of a token with a new value.
+A substitution is the act of replacing the old value of a token with a new value. This is implemented within the token classes -- each token type knows how to replace itself with a new value.

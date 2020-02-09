@@ -24,7 +24,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints");
+                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -34,7 +34,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM requests");
+                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM requests ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -43,7 +43,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM sequences";
+                string sQuery = "SELECT * FROM sequences ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery);
                 return result.ToList();
@@ -65,7 +65,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM sequences WHERE run_id = @ID";
+                string sQuery = "SELECT * FROM sequences WHERE run_id = @ID ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
                 return result.ToList();
@@ -98,7 +98,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM requests WHERE sequence_id = @seqId";
+                string sQuery = "SELECT * FROM requests WHERE sequence_id = @seqId ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestEntity>(sQuery, new { seqId = seqId });
                 return result.ToList();
@@ -120,7 +120,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM substitutions";
+                string sQuery = "SELECT * FROM substitutions ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<SubstitutionEntity>(sQuery);
                 return result.ToList();
@@ -131,7 +131,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM substitutions WHERE sequence_id = @seqId";
+                string sQuery = "SELECT * FROM substitutions WHERE sequence_id = @seqId ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<SubstitutionEntity>(sQuery, new { seqId = seqId });
                 return result.ToList();
@@ -153,7 +153,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM responses WHERE sequence_id = @seqId";
+                string sQuery = "SELECT * FROM responses WHERE sequence_id = @seqId ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<ResponseEntity>(sQuery, new { seqId = seqId });
                 return result.ToList();
@@ -165,7 +165,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<ResponseEntity>(@"SELECT * FROM responses");
+                var result = await connection.QueryAsync<ResponseEntity>(@"SELECT * FROM responses ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -186,7 +186,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestSequenceLabelEntity>(@"SELECT * FROM sequence_labels");
+                var result = await connection.QueryAsync<RequestSequenceLabelEntity>(@"SELECT * FROM sequence_labels ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -195,7 +195,7 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM sequence_labels WHERE sequence_id = @seqId";
+                string sQuery = "SELECT * FROM sequence_labels WHERE sequence_id = @seqId ORDER BY id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestSequenceLabelEntity>(sQuery, new { seqId = id });
                 return result.ToList();
@@ -218,7 +218,8 @@ namespace Database
                                         AND a.sequence_position < b.sequence_position
                                         where b.id IS NULL) last_req
                                 JOIN responses ON (responses.sequence_id = last_req.sequence_id
-                                                    and responses.sequence_position = last_req.sequence_position);";
+                                                    and responses.sequence_position = last_req.sequence_position)
+                                ORDER BY sequence_id ASC;";
                 conn.Open();
                 var result = await conn.QueryAsync<SequenceSummaryEntity>(sQuery);
                 return result.ToList();
@@ -242,7 +243,8 @@ namespace Database
                                 JOIN responses ON (responses.sequence_id = last_req.sequence_id
                                                    and responses.sequence_position = last_req.sequence_position)
                                 JOIN sequences ON sequences.id = responses.sequence_id
-                                WHERE sequences.run_id = @id";
+                                WHERE sequences.run_id = @id
+                                ORDER BY sequence_id ASC";
                 conn.Open();
                 var result = await conn.QueryAsync<SequenceSummaryEntity>(sQuery, new { id = id });
                 return result.ToList();
@@ -276,7 +278,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<FuzzerRunEntity>(@"SELECT * FROM fuzzer_run");
+                var result = await connection.QueryAsync<FuzzerRunEntity>(@"SELECT * FROM fuzzer_run ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -286,7 +288,7 @@ namespace Database
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<FuzzerGenerationEntity>(@"SELECT * FROM fuzzer_generation WHERE run_id = @runId", new { runId = id });
+                var result = await connection.QueryAsync<FuzzerGenerationEntity>(@"SELECT * FROM fuzzer_generation WHERE run_id = @runId ORDER BY id ASC", new { runId = id });
                 return result.ToList();
             }
         }
@@ -311,7 +313,7 @@ namespace Database
             using (var connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints");
+                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
                 return result.ToList();
             }
         }

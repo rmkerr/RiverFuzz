@@ -47,7 +47,7 @@ namespace Fuzz
             handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromMilliseconds(1000);
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            // client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
@@ -67,19 +67,9 @@ namespace Fuzz
 
             TokenCollection startingData = new TokenCollection();
 
-            // Wordpress
-            //startingData.Add(new JsonToken("log", "user", "", Types.String));
-            //startingData.Add(new JsonToken("pwd", "43isDOT6OMbe", "", Types.String));
-            //startingData.Add(new JsonToken("const", "0", "", Types.Integer));
-
             // OWASP juice shop
             startingData.Add(new HttpTokenize.Tokens.JsonToken("user", "asdfg@asdfg.com", "", Types.String));
             startingData.Add(new HttpTokenize.Tokens.JsonToken("password", "asdfg", "", Types.String));
-
-            // Moodle
-            // startingData.Add(new JsonToken("wstoken", "e2d751fb7c35bf2f60bae7f46df48b51", "", Types.String));
-            // startingData.Add(new JsonToken("forumid", "1", "", Types.Integer | Types.String));
-            // MoodleResetHelper resetHelper = new MoodleResetHelper(@"http://10.0.0.197", "user", "qHJROplbMs1F");
 
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
