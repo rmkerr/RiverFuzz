@@ -49,7 +49,12 @@ namespace Population
 
             foreach (IBucketer bucketer in Bucketers.Values)
             {
-                foreach (List<RequestSequence> bucket in bucketer.Bucketize())
+                // Get the bucketed requests, then reset the bucketer to free up memory.
+                List<List<RequestSequence>> buckets = bucketer.Bucketize();
+                bucketer.Reset();
+
+                // Go through each bucket and pick the shortest sequence to save.
+                foreach (List<RequestSequence> bucket in buckets)
                 {
                     RequestSequence shortest = null;
                     foreach (RequestSequence candidate in bucket)
@@ -66,6 +71,7 @@ namespace Population
                     if (shortest != null)
                     {
                         Population.Add(shortest);
+                        bucketer.Add(shortest);
                     }
                 }
             }

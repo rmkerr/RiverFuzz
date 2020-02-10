@@ -95,6 +95,10 @@ namespace Fuzz
                     // the value of. In this case, we can specifically check which user is logged in.
                     population.AddEndpoint(endpoint, new TokenNameBucketer(new string[] { "umail" }));
                 }
+                else if (endpoint.Request.Url.AbsolutePath.Contains("addresss"))
+                {
+                    population.AddEndpoint(endpoint, new StatusCodeBucketer());
+                }
                 else
                 {
                     population.AddEndpoint(endpoint, new TokenNameBucketer());

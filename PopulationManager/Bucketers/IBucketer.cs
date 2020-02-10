@@ -11,5 +11,6 @@ namespace Population.Bucketers
         // Returns true if this results in a new bucket.
         public bool Add(RequestSequence sequence);
         public List<List<RequestSequence>> Bucketize();
+        public void Reset();
     }
 }

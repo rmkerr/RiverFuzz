@@ -81,5 +81,10 @@ namespace Population.Bucketers
 
             return ret;
         }
+
+        public void Reset()
+        {
+            Sorted = new Dictionary<string, List<RequestSequence>>();
+        }
     }
 }
