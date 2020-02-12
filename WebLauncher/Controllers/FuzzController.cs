@@ -29,15 +29,18 @@ namespace WebLauncher.Controllers
         [Route("Fuzz/Start")]
         public async Task<string> Start()
         {
+            _logger.LogDebug("Starting Fuzzer...");
             string jsonString;
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 jsonString = await reader.ReadToEndAsync();
             }
-            
+
+            _logger.LogDebug($"Fuzzer Config: {jsonString}");
+
             JObject config = JObject.Parse(jsonString);
             
-            Fuzz.Program.Fuzz(config);
+            await Fuzz.Program.Fuzz(config);
 
             return config.ToString();
         }

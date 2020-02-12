@@ -21,7 +21,7 @@ namespace Fuzz
 {
     public class Program
     {
-        static bool production = false;
+        static bool production = true;
 
         static async Task Main(string[] args)
         {
@@ -75,7 +75,7 @@ namespace Fuzz
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
             generators.Add(new RemoveTokenGenerator(5));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
+            // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
 
             // Parse the list of endpoints we should include in this run, then load them.
             DatabaseParse databaseParse = new DatabaseParse(databaseHelper, config.Value<string>("Target"));

@@ -29,7 +29,7 @@ namespace Database
         {
             if (Production)
             {
-                return new NpgsqlConnection($"Server=riverfuzz-testing.postgres.database.azure.com;Database={DbName};Port=5432;User Id=riverfuzz@riverfuzz-testing;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
+                return new NpgsqlConnection($"Server=riverfuzz-postgres.postgres.database.azure.com;Database={DbName};Port=5432;User Id=postgres@riverfuzz-postgres;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
             }
             else
             {
