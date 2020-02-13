@@ -36,7 +36,7 @@ namespace WebView.Controllers
 
             FuzzerParametersViewModel model = new FuzzerParametersViewModel();
             model.ExecutionTime = 2;
-            model.Target = @"https://webview20200210104037.azurewebsites.net";
+            model.Target = @"http://localhost";
 
             foreach (RequestEntity requestEntity in endpoints)
             {
@@ -52,6 +52,7 @@ namespace WebView.Controllers
 
             HttpContent content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
             await client.PostAsync(_configuration.GetValue<string>("FuzzerHost") + "/Fuzz/Start", content);
+
             return RedirectToAction("Summary", "FuzzerRun");
         }
     }

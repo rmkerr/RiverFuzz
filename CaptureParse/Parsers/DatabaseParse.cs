@@ -13,11 +13,11 @@ namespace CaptureParse
     public class DatabaseParse
     {
         DatabaseHelper DbHelper;
-        string Host;
+        Uri Host;
         public DatabaseParse(DatabaseHelper dbHelper, string host)
         {
             DbHelper = dbHelper;
-            Host = host;
+            Host = new Uri(host);
         }
 
         public async Task<List<KnownEndpoint>> LoadEndpointsById(List<int> ids)
@@ -38,7 +38,8 @@ namespace CaptureParse
 
             HttpMethod method = new HttpMethod(model.method);
             Uri rawUrl = new Uri(model.url);
-            Uri url = new Uri(Host + rawUrl.GetComponents(UriComponents.PathAndQuery, UriFormat.UriEscaped));
+            Uri url = new Uri(Host.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
+                              + rawUrl.GetComponents(UriComponents.PathAndQuery, UriFormat.UriEscaped));
             string content = model.content;
 
             Dictionary<string, List<string>> headers = new Dictionary<string, List<string>>();

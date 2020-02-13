@@ -21,14 +21,9 @@ namespace WebLauncher.Controllers
             _logger = logger;
         }
 
-        public string Index()
-        {
-            return "FuzzController loads.";
-        }
-
         [HttpPost]
         [Route("Fuzz/Start")]
-        public async Task<string> Start()
+        public async Task<IActionResult> Start()
         {
             _logger.LogDebug("Starting Fuzzer...");
             string jsonString;
@@ -40,10 +35,10 @@ namespace WebLauncher.Controllers
             _logger.LogDebug($"Fuzzer Config: {jsonString}");
 
             JObject config = JObject.Parse(jsonString);
-            
-            await Fuzz.Program.Fuzz(config);
 
-            return config.ToString();
+            Fuzz.Program.Fuzz(config);
+
+            return new EmptyResult();
         }
     }
 }
