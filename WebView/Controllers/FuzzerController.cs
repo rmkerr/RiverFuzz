@@ -18,14 +18,15 @@ namespace WebView.Controllers
     {
         private readonly ILogger<FuzzerController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
-        private IConfiguration _configuration;
-        private HttpClient _client;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public FuzzerController(ILogger<FuzzerController> logger, IFuzzerRepository endpointRepo, IConfiguration configuration)
+        private IConfiguration _configuration;
+
+        public FuzzerController(ILogger<FuzzerController> logger, IFuzzerRepository endpointRepo, IConfiguration configuration, IHttpClientFactory clientFactory)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
-            _client = new HttpClient();
+            _clientFactory = clientFactory;
             _configuration = configuration;
         }
 
@@ -47,8 +48,10 @@ namespace WebView.Controllers
 
         public async Task<IActionResult> Start(FuzzerParametersViewModel model)
         {
+            HttpClient client = _clientFactory.CreateClient();
+
             HttpContent content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            await _client.PostAsync(_configuration.GetValue<string>("FuzzerHost") + "/Fuzz/Start", content);
+            await client.PostAsync(_configuration.GetValue<string>("FuzzerHost") + "/Fuzz/Start", content);
             return RedirectToAction("Summary", "FuzzerRun");
         }
     }
