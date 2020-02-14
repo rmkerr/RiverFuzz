@@ -9,7 +9,6 @@ namespace HttpTokenize.Substitutions
     {
         private readonly IToken target;
         private readonly IToken source;
-        private readonly Types sourceType;
         private readonly int sourceResponse;
         public SubstituteNamedToken(IToken target, IToken source, int responseIndex)
         {

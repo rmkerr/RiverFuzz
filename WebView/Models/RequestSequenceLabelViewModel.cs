@@ -32,7 +32,7 @@ namespace WebView.Models
             { "Success", "badge-info"},
             { "Redirection", "badge-info"},
             { "Client Error", "badge-warning"},
-            { "Server Error", "badge-warning"},
+            { "Server Error", "badge-danger"},
             { "Unknown Status", "badge-warning"},
             { "Possible Vulnerability", "badge-danger"},
             { "Duplicate", "badge-secondary"},

@@ -39,11 +39,14 @@ namespace HttpTokenize.Tokenizers
                     {
                         if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                         {
-                            string name = reader.Value.ToString();
                             reader.Read();
                             if (reader.TokenType == Newtonsoft.Json.JsonToken.String && rx.IsMatch(reader.Value.ToString()))
                             {
-                                tokens.Add(new BearerToken(reader.Value.ToString()));
+                                string? bearer_token = reader.Value.ToString();
+                                if (bearer_token != null)
+                                {
+                                    tokens.Add(new BearerToken(bearer_token));
+                                }
                             }
                         }
                     }

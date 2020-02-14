@@ -42,23 +42,23 @@ namespace HttpTokenize.Tokenizers
                 {
                     if (reader.Value != null && reader.TokenType == Newtonsoft.Json.JsonToken.PropertyName)
                     {
-                        string name = reader.Value.ToString();
+                        string name = reader.Value.ToString() ?? "";
                         string path = reader.Path;
                         // Console.WriteLine(path);
                         reader.Read();
                         if (reader.TokenType == Newtonsoft.Json.JsonToken.String)
                         {
-                            string value = reader.Value.ToString();
+                            string value = reader.Value.ToString() ?? "";
                             Types supported = Types.String | TypeGuesser.GuessTypes(value);
                             tokens.Add(new Tokens.JsonToken(name, value, path, supported));
                         }
                         else if (reader.TokenType == Newtonsoft.Json.JsonToken.Integer)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.Integer));
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString() ?? "", path, Types.Integer));
                         }
                         else if (reader.TokenType == Newtonsoft.Json.JsonToken.Boolean)
                         {
-                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString(), path, Types.Boolean));
+                            tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString() ?? "", path, Types.Boolean));
                         }
                     }
                 }
