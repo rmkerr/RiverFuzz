@@ -9,19 +9,6 @@ namespace UnitTests
     public class JsonTokenTests
     {
         [Fact]
-        public void JsonToken_SingleDepthReplaceName_ReplacesName()
-        {
-            Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
-            request.Content = "{\r\n  \"testname\": \"testval\"\r\n}";
-
-            JsonToken token = new JsonToken("testname", "testval", "testname", Types.String);
-
-            token.ReplaceName(request, "newname");
-
-            Assert.Equal("{\r\n  \"newname\": \"testval\"\r\n}", request.Content);
-        }
-
-        [Fact]
         public void JsonToken_SingleDepthReplaceValue_ReplacesValue()
         {
             Request request = new Request(new Uri("http://test.com"), HttpMethod.Get);
@@ -42,7 +29,7 @@ namespace UnitTests
 
             JsonToken token = new JsonToken("testname", "testval", "testname", Types.String);
 
-            token.Remove(request);
+            token.DeleteToken(request);
 
             Assert.Equal("{}", request.Content);
         }

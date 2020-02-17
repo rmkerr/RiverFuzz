@@ -10,15 +10,14 @@
     plot.x(function (d) { return d.x; }, xScale);
     plot.y(function (d) { return d.y; }, yScale);
 
-    var data = [];
+    var population_data = [];
 
     for (i = 0; i < raw_data.generations.length; i++) {
         var point = { x: raw_data.generations[i].run_position, y: raw_data.generations[i].population_size };
-        data.push(point);
-        console.log(point);
+        population_data.push(point);
     }
 
-    var dataset = new Plottable.Dataset(data);
+    var dataset = new Plottable.Dataset(population_data);
     plot.addDataset(dataset);
 
     var xLabel = new Plottable.Components.AxisLabel("Generations");

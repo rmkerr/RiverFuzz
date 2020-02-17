@@ -27,13 +27,7 @@ namespace HttpTokenize
             ReplaceToken(request, token);
         }
 
-        public void ReplaceName(Request request, string name)
-        {
-            QueryToken token = new QueryToken(name, Value, Types.Integer | Types.String);
-            ReplaceToken(request, token);
-        }
-
-        public void ReplaceToken(Request request, IToken replacement)
+        private void ReplaceToken(Request request, IToken replacement)
         {
             Uri url = request.Url;
             NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
@@ -72,7 +66,7 @@ namespace HttpTokenize
             return $"QueryToken: {Name}={Value}";
         }
 
-        public void Remove(Request request)
+        public void DeleteToken(Request request)
         {
             Uri url = request.Url;
             NameValueCollection parameters = HttpUtility.ParseQueryString(url.Query);
@@ -103,7 +97,7 @@ namespace HttpTokenize
             List<IToken> matches = tokens.GetByName(this.Name);
             if (matches.Count > 1)
             {
-                Console.WriteLine("WARNING: Multiple cookies with the same name. This probably shouldn't happen.");
+                Console.WriteLine("WARNING: Multiple query tokens with the same name. This probably shouldn't happen.");
             }
             if (matches.Count >= 1)
             {

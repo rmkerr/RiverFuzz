@@ -17,6 +17,9 @@ namespace Database.Entities
         // The population size at the end of this generation.
         public int population_size { get; set; }
 
+        // The total number of requests executed this generation.
+        public int executed_requests { get; set; }
+
         // The time it took to execute this generation.
         public TimeSpan execution_time { get; set;}
     }

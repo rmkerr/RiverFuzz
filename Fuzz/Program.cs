@@ -138,6 +138,7 @@ namespace Fuzz
                 generationStopwatch.Start();
 
                 int popCount = population.Population.Count; // Store since we will be growing list.
+                int requestCount = 0; // Used for performance measurement.
 
                 // Loops over each existing seed sequence in the population.
                 for (int seed = 0; seed < popCount; ++seed)
@@ -169,6 +170,12 @@ namespace Fuzz
                             // Add a response to the population. If it looks interesting, we will look at it later.
                             population.AddResponse(candidate);
 
+                            List<Response>? responses = candidate.GetResponses();
+                            if (responses != null)
+                            {
+                                requestCount += responses.Count;
+                            }
+
                             candidateStopwatch.Stop();
 
                             if (candidateStopwatch.ElapsedMilliseconds > 500)
@@ -184,15 +191,17 @@ namespace Fuzz
 
                 generationStopwatch.Stop();
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
-                
+
                 generationInfo.Add(new FuzzerGenerationEntity
                 {
                     population_size = population.Population.Count,
                     run_position = generation,
-                    execution_time = generationStopwatch.Elapsed
+                    execution_time = generationStopwatch.Elapsed,
+                    executed_requests = requestCount
                 });
 
                 Console.WriteLine($"Population size: {population.Population.Count}");
+                Console.WriteLine($"Requests per second: {requestCount / generationStopwatch.Elapsed.TotalSeconds}");
             }
 
             runInfo.end_time = DateTime.Now;

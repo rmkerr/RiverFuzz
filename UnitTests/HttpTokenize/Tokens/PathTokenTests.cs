@@ -44,7 +44,7 @@ namespace UnitTests.HttpTokenize.Tokens
 
             PathToken token = new PathToken(1, "name", "none", Types.String);
 
-            token.Remove(request);
+            token.DeleteToken(request);
 
             Assert.Equal(@"http://test.com/part1", request.Url.ToString());
         }
@@ -57,7 +57,7 @@ namespace UnitTests.HttpTokenize.Tokens
 
             PathToken token = new PathToken(0, "name", "none", Types.String);
 
-            token.Remove(request);
+            token.DeleteToken(request);
 
             Assert.Equal(@"http://test.com/part2", request.Url.ToString());
         }

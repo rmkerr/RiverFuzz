@@ -32,9 +32,7 @@ namespace HttpTokenize.Tokens
 
         // These all modify the actual request.
         public void ReplaceValue(Request request, string value);
-        public void ReplaceName(Request request, string name);
-        public void ReplaceToken(Request request, IToken replacement);
-        public void Remove(Request request);
+        public void DeleteToken(Request request);
 
         // Try to find the equivalent of this token in a new request or response.
         public IToken? FindClosestEquivalent(TokenCollection tokens);

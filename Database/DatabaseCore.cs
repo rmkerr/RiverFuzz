@@ -377,8 +377,8 @@ namespace Database
                 connection.Open();
                 model.id = connection.Query<int>(
                     @"INSERT INTO fuzzer_generation
-                    ( run_id, run_position, population_size, execution_time ) VALUES 
-                    ( @run_id, @run_position, @population_size, @execution_time )
+                    ( run_id, run_position, population_size, execution_time, executed_requests ) VALUES 
+                    ( @run_id, @run_position, @population_size, @execution_time, @executed_requests )
                     RETURNING id;", model).First();
             }
         }

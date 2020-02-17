@@ -25,11 +25,6 @@ namespace HttpTokenize.Tokens
             throw new NotImplementedException();
         }
 
-        public void ReplaceToken(Request request, IToken replacement)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReplaceValue(Request request, string value)
         {
             for (int i = 0; i < request.Headers["Cookie"].Count; ++i)
@@ -60,7 +55,7 @@ namespace HttpTokenize.Tokens
             }
         }
 
-        public void Remove(Request request)
+        public void DeleteToken(Request request)
         {
             string cookieHeader = request.Headers["Cookie"][0];
             string[] cookiePairs = cookieHeader.Split(';');

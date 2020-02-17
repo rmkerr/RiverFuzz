@@ -20,19 +20,9 @@ namespace HttpTokenize.Tokens
 
         public Types SupportedTypes { get; }
 
-        public void Remove(Request request)
+        public void DeleteToken(Request request)
         {
             ReplaceHelper(request, string.Empty, true);
-        }
-
-        public void ReplaceName(Request request, string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReplaceToken(Request request, IToken replacement)
-        {
-            throw new NotImplementedException();
         }
 
         public void ReplaceValue(Request request, string value)

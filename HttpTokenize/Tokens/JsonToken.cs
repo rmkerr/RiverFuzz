@@ -22,7 +22,7 @@ namespace HttpTokenize.Tokens
         public string Path { get; }
         public Types SupportedTypes { get; }
 
-        public void Remove(Request request)
+        public void DeleteToken(Request request)
         {
             string content = request.Content;
             try
@@ -37,53 +37,6 @@ namespace HttpTokenize.Tokens
             catch
             {
                 // TODO: Not JSON
-            }
-        }
-
-        public void ReplaceName(Request request, string name)
-        {
-            string content = request.Content;
-            try
-            {
-                JObject json_content = JObject.Parse(content);
-                JToken token = json_content.SelectToken($"..{Name}");
-                JContainer parent = token.Parent;
-
-                parent.Replace(new JProperty(name, token));
-
-                request.Content = json_content.ToString();
-            }
-            catch (Exception ex)
-            {
-                // TODO: Not JSON
-                Console.WriteLine($"Expected JSON. Got: {ex.Message}");
-            }
-        }
-
-        public void ReplaceToken(Request request, IToken replacement)
-        {
-            string content = request.Content;
-            try
-            {
-                JObject json_content = JObject.Parse(content);
-                JToken token = json_content.SelectToken($"..{Name}");
-                JContainer parent = token.Parent;
-
-                if ((SupportedTypes & Types.Integer) != Types.None)
-                {
-                    parent.Replace(new JProperty(replacement.Name, int.Parse(replacement.Value)));
-                }
-                else
-                {
-                    parent.Replace(new JProperty(replacement.Name, JValue.CreateString(replacement.Value)));
-                }
-
-                request.Content = json_content.ToString();
-            }
-            catch (Exception ex)
-            {
-                // TODO: Not JSON
-                Console.WriteLine($"Expected JSON. Got: {ex.Message}");
             }
         }
 

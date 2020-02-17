@@ -24,17 +24,7 @@ namespace HttpTokenize.Tokens
             throw new NotImplementedException();
         }
 
-        public void Remove(Request request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReplaceName(Request request, string value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReplaceToken(Request request, IToken replacement)
+        public void DeleteToken(Request request)
         {
             throw new NotImplementedException();
         }

@@ -11,12 +11,12 @@ namespace UnitTests.Population.Bucketers
     public class ExactStringBucketerTests
     {
         [Fact]
-        void ExactStringBucketer_SimpleStrings_DistinctBuckets()
+        public void ExactStringBucketer_SimpleStrings_SingleBucket()
         {
             ExactStringBucketer bucketer = new ExactStringBucketer();
 
-            RequestSequence sequence1 = GenerateSequence(1);
-            RequestSequence sequence2 = GenerateSequence(1);
+            RequestSequence sequence1 = GenerateSequence(1, "matching");
+            RequestSequence sequence2 = GenerateSequence(1, "matching");
 
             bucketer.Add(sequence1);
             bucketer.Add(sequence2);
@@ -24,7 +24,21 @@ namespace UnitTests.Population.Bucketers
             Assert.Single(bucketer.Bucketize());
         }
 
-        RequestSequence GenerateSequence(int numStages)
+        [Fact]
+        public void ExactStringBucketer_SimpleStrings_MultipleBucket()
+        {
+            ExactStringBucketer bucketer = new ExactStringBucketer();
+
+            RequestSequence sequence1 = GenerateSequence(1, "non-matching 1");
+            RequestSequence sequence2 = GenerateSequence(1, "non-matching 2");
+
+            bucketer.Add(sequence1);
+            bucketer.Add(sequence2);
+
+            Assert.Equal(2, bucketer.Bucketize().Count);
+        }
+
+        RequestSequence GenerateSequence(int numStages, string responseContent)
         {
             RequestSequence sequence = new RequestSequence();
             
@@ -38,7 +52,7 @@ namespace UnitTests.Population.Bucketers
 
                 sequence.Add(new Stage(request));
 
-                Response response = new Response(System.Net.HttpStatusCode.OK, "test1");
+                Response response = new Response(System.Net.HttpStatusCode.OK, responseContent);
                 sequence.GetResponses().Add(response);
             }
 

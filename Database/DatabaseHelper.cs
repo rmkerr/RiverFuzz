@@ -131,7 +131,8 @@ namespace Database
                         run_id              INTEGER     NOT NULL,
                         run_position        INTEGER     NOT NULL,
                         population_size     INTEGER     NOT NULL,
-                        execution_time      TIME        NOT NULL
+                        execution_time      TIME        NOT NULL,
+                        executed_requests   INTEGER     NOT NULL
                     );");
             }
         }
