@@ -41,7 +41,7 @@ namespace Generators
                 // Pick a random token and remove it.
                 int subIndex = rand.Next(0, newSequence.Get(selectedStage).Substitutions.Count);
                 ISubstitution sub = newSequence.Get(selectedStage).Substitutions[subIndex];
-                sub.GetTarget().Remove(stage.Request);
+                sub.GetTarget().DeleteToken(stage.Request);
 
                 yield return newSequence;
             }
