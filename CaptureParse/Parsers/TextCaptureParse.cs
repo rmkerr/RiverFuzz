@@ -8,27 +8,20 @@ namespace CaptureParse
 {
     public class TextCaptureParse
     {
-        public static Request LoadSingleRequestFromFile(string path, string host)
+        public static KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
             Request request = null;
-            try
+
+            using (StreamReader sr = new StreamReader(path))
             {
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    return TextParseHelper.ParseRequest(sr.ReadToEnd(), host);
-                }
+                request = TextParseHelper.ParseRequest(sr.ReadToEnd(), host);
             }
-            catch (IOException e)
-            {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
-            }
-            return request;
+            return new KnownEndpoint(request, null);
         }
 
-        public static List<Request> LoadRequestsFromDirectory(string directory, string host)
+        public static List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
         {
-            List<Request> requests = new List<Request>();
+            var requests = new List<KnownEndpoint>();
 
             string[] filePaths = Directory.GetFiles(directory, "*.txt", SearchOption.TopDirectoryOnly);
             foreach (string path in filePaths)
