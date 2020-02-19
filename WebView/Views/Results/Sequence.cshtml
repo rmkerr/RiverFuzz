@@ -18,8 +18,11 @@
     @await Html.PartialAsync("_RequestSequenceLabelPicker", model)
 }
 
+<a asp-controller="Results" asp-action="Summary" asp-route-id="@(Model.run_id)">Back to run summary</a>
+<br/>
+
 <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.id-1)">Previous</a>
-<a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.id+1)">Next</a>
+<a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.id+1)" class="float-right">Next</a>
 
 <div class="accordion" id="accordionExample" style="width:100%">
     @{
