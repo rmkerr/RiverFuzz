@@ -42,6 +42,7 @@ namespace Generators
                 int subIndex = rand.Next(0, newSequence.Get(selectedStage).Substitutions.Count);
                 ISubstitution sub = newSequence.Get(selectedStage).Substitutions[subIndex];
                 sub.GetTarget().DeleteToken(stage.Request);
+                newSequence.Get(selectedStage).Substitutions.RemoveAt(subIndex);
 
                 yield return newSequence;
             }

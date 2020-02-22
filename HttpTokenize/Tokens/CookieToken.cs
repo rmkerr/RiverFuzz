@@ -75,7 +75,15 @@ namespace HttpTokenize.Tokens
             {
                 sb.Length--;
             }
-            request.Headers["Cookie"][0] = sb.ToString();
+
+            if (sb.Length == 0) // Last cookie deleted
+            {
+                request.Headers.Remove("Cookie");
+            }
+            else
+            {
+                request.Headers["Cookie"][0] = sb.ToString();
+            }
         }
 
         // Cookie names should be unique, so this is actually probably okay.

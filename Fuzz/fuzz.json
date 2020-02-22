@@ -1,7 +1,7 @@
 {
   "Target": "http://localhost",
-  "TargetEndpoints": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ],
+  "TargetEndpoints": [ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22 ],
   "ResetDatabase": false,
   "ExecutionTime": 5,
-  "RunName": "RPS Test"
+  "RunName": "Simplification Test -- Full Endpoint Set"
 }
