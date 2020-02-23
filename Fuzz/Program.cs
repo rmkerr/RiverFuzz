@@ -25,6 +25,7 @@ namespace Fuzz
 
         static async Task Main(string[] args)
         {
+            //string fuzzerConfig = System.IO.File.ReadAllText(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\FuzzerConfig\fuzz.json");
             string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
             JObject config = JObject.Parse(fuzzerConfig);
             
@@ -47,7 +48,6 @@ namespace Fuzz
             handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromMilliseconds(1000);
-            // client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             // Load all response tokenizers.
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
@@ -74,8 +74,9 @@ namespace Fuzz
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new RemoveTokenGenerator(5));
+            generators.Add(new RemoveTokenGenerator(50));
             generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
+            // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_quick.txt", 10));
 
             // Parse the list of endpoints we should include in this run, then load them.
             DatabaseParse databaseParse = new DatabaseParse(databaseHelper, config.Value<string>("Target"));

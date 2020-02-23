@@ -60,6 +60,11 @@ namespace HttpTokenize.Tokenizers
                         {
                             tokens.Add(new Tokens.JsonToken(name, reader.Value.ToString() ?? "", path, Types.Boolean));
                         }
+                        else if (reader.TokenType == Newtonsoft.Json.JsonToken.Null)
+                        {
+                            // TODO: Re-Evaluate handling of null values.
+                            tokens.Add(new Tokens.JsonToken(name, "", path, Types.Boolean));
+                        }
                     }
                 }
             }
