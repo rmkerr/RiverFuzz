@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CaptureParse.Parsers
 {
-    interface ICaptureParse
+    public interface ICaptureParse
     {
         KnownEndpoint ParseSingleRequestFile(string content, string host);
     }
