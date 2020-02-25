@@ -8,13 +8,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CaptureParse
+namespace CaptureParse.Loaders
 {
-    public class DatabaseParse
+    public class DatabaseLoader
     {
         DatabaseHelper DbHelper;
         Uri Host;
-        public DatabaseParse(DatabaseHelper dbHelper, string host)
+        public DatabaseLoader(DatabaseHelper dbHelper, string host)
         {
             DbHelper = dbHelper;
             Host = new Uri(host);

@@ -6,11 +6,11 @@ using System.Text;
 using System.Xml.Linq;
 using System.Linq;
 
-namespace CaptureParse
+namespace CaptureParse.Parsers
 {
-    public class BurpSavedParse
+    public class BurpCaptureParse : ICaptureParse
     {
-        public static KnownEndpoint LoadSingleRequestFromFile(string path, string host)
+        public KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
             using (StreamReader sr = new StreamReader(path))
             {
@@ -19,9 +19,9 @@ namespace CaptureParse
             }
         }
 
-        public static List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
+        public List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
         {
-            List<KnownEndpoint> requests = new List<KnownEndpoint>();
+            var requests = new List<KnownEndpoint>();
 
             string[] filePaths = Directory.GetFiles(directory, "*.txt", SearchOption.TopDirectoryOnly);
             foreach (string path in filePaths)
@@ -31,7 +31,7 @@ namespace CaptureParse
             return requests;
         }
 
-        public static KnownEndpoint ParseSingleRequestFile(string content, string host)
+        public KnownEndpoint ParseSingleRequestFile(string content, string host)
         {
             XElement parsed = XElement.Parse(content);
 
@@ -40,7 +40,7 @@ namespace CaptureParse
             byte[] data = Convert.FromBase64String(requestEncoded.Value);
             string decodedString = Encoding.UTF8.GetString(data);
 
-            Request request = TextParseHelper.ParseRequest(decodedString, host);
+            Request request = TextParseHelpers.ParseRequest(decodedString, host);
 
             return new KnownEndpoint(request, null);
         }

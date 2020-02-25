@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CaptureParse;
+using CaptureParse.Parsers;
 using Database;
 using Database.Entities;
 using Database.Repositories;
@@ -89,7 +90,8 @@ namespace WebView.Controllers
                 string content = sr.ReadToEnd();
 
                 // TODO: Replace the hardcoded URL here.
-                Request request = BurpSavedParse.ParseSingleRequestFile(content, "http://localhost").Request;
+                BurpCaptureParse parser = new BurpCaptureParse();
+                Request request = parser.ParseSingleRequestFile(content, "http://localhost").Request;
                 RequestEntity entity = RequestEntity.FromRequest(request);
 
                 _endpointRepository.AddEndpoint(entity);

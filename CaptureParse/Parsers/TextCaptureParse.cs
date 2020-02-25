@@ -4,22 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 
-namespace CaptureParse
+namespace CaptureParse.Parsers
 {
-    public class TextCaptureParse
+    public class TextCaptureParse : ICaptureParse
     {
-        public static KnownEndpoint LoadSingleRequestFromFile(string path, string host)
+        public KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
             Request request = null;
 
             using (StreamReader sr = new StreamReader(path))
             {
-                request = TextParseHelper.ParseRequest(sr.ReadToEnd(), host);
+                request = TextParseHelpers.ParseRequest(sr.ReadToEnd(), host);
             }
             return new KnownEndpoint(request, null);
         }
 
-        public static List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
+        public List<KnownEndpoint> LoadRequestsFromDirectory(string directory, string host)
         {
             var requests = new List<KnownEndpoint>();
 
@@ -29,6 +29,12 @@ namespace CaptureParse
                 requests.Add(LoadSingleRequestFromFile(path, host));
             }
             return requests;
+        }
+
+        public KnownEndpoint ParseSingleRequestFile(string content, string host)
+        {
+            Request request = TextParseHelpers.ParseRequest(content, host);
+            return new KnownEndpoint(request, null);
         }
     }
 }

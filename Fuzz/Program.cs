@@ -6,16 +6,15 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Generators;
-using CaptureParse;
 using Population.Bucketers;
 using Population;
 using Database;
 using System.Diagnostics;
 using Database.Entities;
-using ProjectSpecific;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Linq;
+using CaptureParse.Parsers;
+using CaptureParse.Loaders;
 
 namespace Fuzz
 {
@@ -79,7 +78,7 @@ namespace Fuzz
             // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_quick.txt", 10));
 
             // Parse the list of endpoints we should include in this run, then load them.
-            DatabaseParse databaseParse = new DatabaseParse(databaseHelper, config.Value<string>("Target"));
+            DatabaseLoader databaseParse = new DatabaseLoader(databaseHelper, config.Value<string>("Target"));
             List<int> endpointIds = config["TargetEndpoints"].Select(x => (int)x).ToList();
             List<KnownEndpoint> endpoints = await databaseParse.LoadEndpointsById(endpointIds);
 
@@ -223,13 +222,6 @@ namespace Fuzz
             }
 
             
-        }
-
-        public static List<KnownEndpoint> InitializeEndpoints(string endpoint_path, string host)
-        {
-            return BurpSavedParse.LoadRequestsFromDirectory(endpoint_path, host);
-            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\wp-json", @"http://192.168.43.232");
-            //return BurpSavedParse.LoadRequestsFromDirectory(@"C:\Users\Richa\Documents\RiverFuzzResources\Moodle", @"http://10.0.0.197");
         }
     }
 }

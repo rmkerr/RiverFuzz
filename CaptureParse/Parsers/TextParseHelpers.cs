@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CaptureParse
 {
-    internal class TextParseHelper
+    internal class TextParseHelpers
     {
         public static Request ParseRequest(string requestString, string host)
         {
@@ -26,6 +26,13 @@ namespace CaptureParse
                     }
 
                     HttpMethod method = new HttpMethod(contents[0]);
+
+                    // Special case for fiddler. It exports full URLs instead of just the path.
+                    if (contents[1].StartsWith("http://") || contents[1].StartsWith("https://"))
+                    {
+                        Uri full = new Uri(contents[1]);
+                        contents[1] = full.PathAndQuery;
+                    }
 
                     Uri url = new Uri(host + contents[1]);
 
