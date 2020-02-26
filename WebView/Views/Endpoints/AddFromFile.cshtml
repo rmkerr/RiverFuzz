@@ -1,18 +1,24 @@
-﻿@{
+﻿@model EndpointFileViewModel
+@{
     ViewData["Title"] = "Bulk Upload Endpoints";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form method="post" enctype="multipart/form-data" asp-controller="Endpoints" asp-action="APIAddEndpointFromFile" class="form-group">
-    <label>XML + Base64 Encoded Request</label>
-    <label>(As exported from Burp Intruder)</label>
-    <br />
-    <div class="custom-file">
-        <input type="file" class="custom-file-input" id="customFile" name="files" multiple>
-        <label class="custom-file-label" for="customFile">Choose file(s)</label>
-    </div>
-    <br />
-    <br />
-    <button type="submit" class="btn btn-primary">Add</button>
+<form enctype="multipart/form-data" method="post"  asp-controller="Endpoints" asp-action="APIAddEndpointFromFile">
+    <dl>
+        <dt>
+            <label asp-for="FileFormat"></label>
+        </dt>
+        <dd>
+            <select asp-for="FileFormat" asp-items="EndpointFileViewModel.SupportedFormats"></select>
+        </dd>
+        <dt>
+            <label asp-for="Files"></label>
+        </dt>
+        <dd>
+            <input asp-for="Files" type="file" multiple>
+        </dd>
+    </dl>
+    <input class="btn btn-primary" type="submit" />
 </form>

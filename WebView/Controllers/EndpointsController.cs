@@ -82,15 +82,29 @@ namespace WebView.Controllers
 
         [HttpPost]
         [Route("Endpoints/API/AddFromFile")]
-        public IActionResult APIAddEndpointFromFile(List<IFormFile> files)
+        public IActionResult APIAddEndpointFromFile(EndpointFileViewModel model)
         {
-            foreach (IFormFile file in files)
+            ICaptureParse parser;
+            if (model.FileFormat == "Fiddler")
+            {
+                parser = new TextCaptureParse();
+            }
+            else if (model.FileFormat == "Burp")
+            {
+                parser = new BurpCaptureParse();
+            }
+            else
+            {
+                throw new ApplicationException($"Unknown file format {model.FileFormat}");
+            }
+
+
+            foreach (IFormFile file in model.Files)
             {
                 StreamReader sr = new StreamReader(file.OpenReadStream());
                 string content = sr.ReadToEnd();
 
                 // TODO: Replace the hardcoded URL here.
-                BurpCaptureParse parser = new BurpCaptureParse();
                 Request request = parser.ParseSingleRequestFile(content, "http://localhost").Request;
                 RequestEntity entity = RequestEntity.FromRequest(request);
 
