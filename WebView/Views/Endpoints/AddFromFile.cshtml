@@ -11,7 +11,7 @@
             <label asp-for="FileFormat"></label>
         </dt>
         <dd>
-            <select asp-for="FileFormat" asp-items="EndpointFileViewModel.SupportedFormats"></select>
+            <select asp-for="FileFormat" asp-items=@Model.SupportedFormats></select>
         </dd>
         <dt>
             <label asp-for="Files"></label>

@@ -9,7 +9,7 @@ namespace UnitTests.CaptureParse
     public class ParserFactoryTests
     {
         [Theory]
-        [InlineData("Burp", typeof(BurpCaptureParse))]
+        [InlineData(ParserConstants.BurpValue, typeof(BurpCaptureParse))]
         [InlineData("Fiddler", typeof(TextCaptureParse))]
         public void ParseFactory_GivenKnownFileType_ReturnsExpectedClass(string inputName, Type expectedType)
         {

@@ -22,12 +22,14 @@ namespace WebView.Controllers
         private readonly ILogger<EndpointsController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
         private readonly IParserFactory _parserFactory;
+        private EndpointFileViewModel _bulkImportModel;
 
         public EndpointsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo, IParserFactory parserFactory)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
             _parserFactory = parserFactory;
+            _bulkImportModel = new EndpointFileViewModel();
         }
 
         [HttpGet]
@@ -79,7 +81,7 @@ namespace WebView.Controllers
         [Route("Endpoints/AddFromFile")]
         public IActionResult AddFromFile()
         {
-            return View();
+            return View(_bulkImportModel);
         }
 
         [HttpPost]
