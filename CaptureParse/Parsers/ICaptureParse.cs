@@ -8,7 +8,5 @@ namespace CaptureParse.Parsers
     public interface ICaptureParse
     {
         KnownEndpoint ParseSingleRequestFile(string content, string host);
-        string Value { get; }
-        string DisplayName { get; }
     }
 }

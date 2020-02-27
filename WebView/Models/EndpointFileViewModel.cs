@@ -15,6 +15,7 @@ namespace WebView.Models
             Files = new List<IFormFile>();
             FileFormat = ParserConstants.FiddlerValue;
         }
+
         public IEnumerable<IFormFile> Files { get; set; }
         public string FileFormat { get; set; }
 
@@ -23,6 +24,5 @@ namespace WebView.Models
             new SelectListItem { Value = ParserConstants.FiddlerValue, Text = ParserConstants.FiddlerDiplayName },
             new SelectListItem { Value = ParserConstants.BurpValue, Text = ParserConstants.BurpDisplayName },
         };
-
     }
 }
