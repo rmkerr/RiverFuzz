@@ -21,11 +21,13 @@ namespace WebView.Controllers
     {
         private readonly ILogger<EndpointsController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
+        private readonly IParserFactory _parserFactory;
 
-        public EndpointsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo)
+        public EndpointsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo, IParserFactory parserFactory)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
+            _parserFactory = parserFactory;
         }
 
         [HttpGet]
@@ -84,20 +86,7 @@ namespace WebView.Controllers
         [Route("Endpoints/API/AddFromFile")]
         public IActionResult APIAddEndpointFromFile(EndpointFileViewModel model)
         {
-            ICaptureParse parser;
-            if (model.FileFormat == "Fiddler")
-            {
-                parser = new TextCaptureParse();
-            }
-            else if (model.FileFormat == "Burp")
-            {
-                parser = new BurpCaptureParse();
-            }
-            else
-            {
-                throw new ApplicationException($"Unknown file format {model.FileFormat}");
-            }
-
+            ICaptureParse parser = _parserFactory.GetParser(model.FileFormat);
 
             foreach (IFormFile file in model.Files)
             {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CaptureParse.Parsers;
 using Database.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,7 @@ namespace WebView
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IFuzzerRepository, FuzzerRepository>();
+            services.AddTransient<IParserFactory, ParserFactory>();
             services.AddControllersWithViews();
             services.AddHttpClient();
         }
