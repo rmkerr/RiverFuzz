@@ -10,6 +10,10 @@ namespace CaptureParse.Parsers
 {
     public class BurpCaptureParse : ICaptureParse
     {
+        public string Value => ParserConstants.BurpValue;
+
+        public string DisplayName => ParserConstants.BurpDisplayName;
+
         public KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
             using (StreamReader sr = new StreamReader(path))

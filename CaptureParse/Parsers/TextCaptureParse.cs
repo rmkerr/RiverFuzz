@@ -8,6 +8,10 @@ namespace CaptureParse.Parsers
 {
     public class TextCaptureParse : ICaptureParse
     {
+        public string Value => ParserConstants.FiddlerValue;
+
+        public string DisplayName => ParserConstants.FiddlerDiplayName;
+
         public KnownEndpoint LoadSingleRequestFromFile(string path, string host)
         {
             Request request = null;

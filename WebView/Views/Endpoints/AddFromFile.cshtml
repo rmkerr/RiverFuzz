@@ -1,17 +1,19 @@
 ﻿@model EndpointFileViewModel
+@using  WebView.Models.Services
+@inject ParserService ParseService
 @{
     ViewData["Title"] = "Bulk Upload Endpoints";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form enctype="multipart/form-data" method="post"  asp-controller="Endpoints" asp-action="APIAddEndpointFromFile">
+<form enctype="multipart/form-data" method="post" asp-controller="Endpoints" asp-action="APIAddEndpointFromFile">
     <dl>
         <dt>
             <label asp-for="FileFormat"></label>
         </dt>
         <dd>
-            <select asp-for="FileFormat" asp-items="EndpointFileViewModel.SupportedFormats"></select>
+            <select asp-for="FileFormat" asp-items=@ParseService.SupportedFormats></select>
         </dd>
         <dt>
             <label asp-for="Files"></label>
