@@ -18,11 +18,5 @@ namespace WebView.Models
 
         public IEnumerable<IFormFile> Files { get; set; }
         public string FileFormat { get; set; }
-
-        public List<SelectListItem> SupportedFormats = new List<SelectListItem>
-        {
-            new SelectListItem { Value = ParserConstants.FiddlerValue, Text = ParserConstants.FiddlerDiplayName },
-            new SelectListItem { Value = ParserConstants.BurpValue, Text = ParserConstants.BurpDisplayName },
-        };
     }
 }

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebView.Models;
+using WebView.Models.Services;
 
 namespace WebView
 {
@@ -26,7 +28,14 @@ namespace WebView
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IFuzzerRepository, FuzzerRepository>();
-            services.AddTransient<IParserFactory, ParserFactory>();
+
+            //TODO: add logging to classes to make use of DI
+            //tODO: may want to use the fancy "register all of type" extension later
+            services.AddTransient<ICaptureParse, TextCaptureParse>();
+            services.AddTransient<ICaptureParse, BurpCaptureParse>();
+            services.AddSingleton<IParserFactory, ParserFactory>();
+            services.AddTransient<ParserService>();
+
             services.AddControllersWithViews();
             services.AddHttpClient();
         }
