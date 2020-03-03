@@ -383,6 +383,44 @@ namespace Database
             }
         }
 
+        public void AddDictionary(string name, List<string> contents)
+        {
+            using (var connection = GetConnection())
+            {
+                DictionaryNameEntity nameEntity = new DictionaryNameEntity();
+                nameEntity.name = name;
+
+                connection.Open();
+                nameEntity.id = connection.Query<int>(
+                    @"INSERT INTO dictionary_name
+                    ( name ) VALUES 
+                    ( @name )
+                    RETURNING id;", nameEntity).First();
+
+                foreach(string value in contents)
+                {
+                    DictionaryEntryEntity entry = new DictionaryEntryEntity();
+                    entry.dictionary_id = nameEntity.id.Value;
+                    entry.content = value;
+
+                    connection.Execute(@"INSERT INTO dictionary_entry
+                    ( content, dictionary_id ) VALUES
+                    ( @content, @dictionary_id );", entry);
+                }
+            }
+        }
+
+        public async Task<List<string>> GetAllDictionaryEntries()
+        {
+            using (IDbConnection conn = GetConnection())
+            {
+                string sQuery = "SELECT content FROM dictionary_entry";
+                conn.Open();
+                var result = await conn.QueryAsync<string>(sQuery);
+                return result.ToList();
+            }
+        }
+
         public async Task AddRequestSequence(RequestSequence sequence, FuzzerRunEntity run)
         {
             RequestSequenceEntity model = new RequestSequenceEntity();

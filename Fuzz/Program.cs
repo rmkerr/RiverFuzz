@@ -24,7 +24,6 @@ namespace Fuzz
 
         static async Task Main(string[] args)
         {
-            //string fuzzerConfig = System.IO.File.ReadAllText(@"C:\Users\Richa\Documents\RiverFuzzResources\Wordpress\FuzzerConfig\fuzz.json");
             string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
             JObject config = JObject.Parse(fuzzerConfig);
             
@@ -74,8 +73,9 @@ namespace Fuzz
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
             generators.Add(new RemoveTokenGenerator(50));
-            generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\blns.txt", 10));
-            // generators.Add(new DictionarySubstitutionGenerator(@"C:\Users\Richa\Documents\Tools\Lists\xss_payloads_quick.txt", 10));
+
+            List<string> dictionary = await databaseHelper.GetAllDictionaryEntries();
+            generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
 
             // Parse the list of endpoints we should include in this run, then load them.
             DatabaseLoader databaseParse = new DatabaseLoader(databaseHelper, config.Value<string>("Target"));
@@ -220,8 +220,6 @@ namespace Fuzz
                     await databaseHelper.AddRequestSequence(sequence, runInfo);
                 }     
             }
-
-            
         }
     }
 }
