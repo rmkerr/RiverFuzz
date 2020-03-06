@@ -1,0 +1,26 @@
+﻿@model DictionaryUploadViewModel
+@using  WebView.Models.Services
+@inject ParserService ParseService
+@{
+    ViewData["Title"] = "Upload Dictionaries";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form enctype="multipart/form-data" method="post" asp-controller="Dictionary" asp-action="APIAddEndpointFromFile">
+    <dl>
+        <dt>
+            <label asp-for="Name"></label>
+        </dt>
+        <dd>
+            <input asp-for="Name" type="text">
+        </dd>
+        <dt>
+            <label asp-for="Files"></label>
+        </dt>
+        <dd>
+            <input asp-for="Files" type="file" multiple>
+        </dd>
+    </dl>
+    <input class="btn btn-primary" type="submit" />
+</form>

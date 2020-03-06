@@ -134,6 +134,21 @@ namespace Database
                         execution_time      TIME        NOT NULL,
                         executed_requests   INTEGER     NOT NULL
                     );");
+
+                // Dictionary metadata.
+                connection.Execute(
+                    @"CREATE TABLE dictionary_name (
+                        id                  SERIAL      PRIMARY KEY,
+                        name                TEXT        NOT NULL
+                    );");
+
+                // Dictionary entries.
+                connection.Execute(
+                    @"CREATE TABLE dictionary_entry (
+                        id                  SERIAL      PRIMARY KEY,
+                        dictionary_id       INTEGER     NOT NULL,
+                        content             TEXT        NOT NULL
+                    );");
             }
         }
 

@@ -47,5 +47,8 @@ namespace Database.Repositories
         // Fuzzer Runs
         Task<List<FuzzerRunEntity>> GetAllFuzzerRuns();
         Task<List<FuzzerGenerationEntity>> GetFuzzerGenerationByRun(int id);
+
+        // Dictionaries
+        void AddDictionary(string name, List<string> contents);
     }
 }

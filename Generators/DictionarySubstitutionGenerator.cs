@@ -11,12 +11,12 @@ namespace Generators
     {
         public int MaxSubstitutions { get; }
 
-        private string[] dictionary;
+        private List<string> dictionary;
         private Random rand;
-        public DictionarySubstitutionGenerator(string dictionaryPath, int maxSubstitutions)
+        public DictionarySubstitutionGenerator(List<string> entries, int maxSubstitutions)
         {
             MaxSubstitutions = maxSubstitutions;
-            dictionary = System.IO.File.ReadAllLines(dictionaryPath);
+            dictionary = entries;
             rand = new Random();
         }
 
@@ -43,7 +43,7 @@ namespace Generators
                 ISubstitution sub = newSequence.Get(selectedStage).Substitutions[subIndex];
                 newSequence.Get(selectedStage).Substitutions.RemoveAt(subIndex);
 
-                string replacement = dictionary[rand.Next(0, dictionary.Length)];
+                string replacement = dictionary[rand.Next(0, dictionary.Count)];
                 SubstituteConstant substituteConstant = new SubstituteConstant(sub.GetTarget(), replacement);
                 newSequence.Get(selectedStage).Substitutions.Add(substituteConstant);
 
