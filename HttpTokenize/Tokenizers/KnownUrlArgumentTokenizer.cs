@@ -23,7 +23,7 @@ namespace HttpTokenize.Tokenizers
                     string[] parsed = trimmed.Split(':');
 
                     // TODO: Parse supported types.
-                    tokens.Add(new PathToken(i, parsed[0], parsed[1], Types.Integer));
+                    tokens.Add(new PathToken(i, parsed[0], parsed[1], Types.Integer | Types.String));
                 }
             }
 

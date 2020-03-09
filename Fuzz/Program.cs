@@ -72,7 +72,7 @@ namespace Fuzz
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new RemoveTokenGenerator(50));
+            generators.Add(new RemoveTokenGenerator(5));
 
             List<string> dictionary = await databaseHelper.GetAllDictionaryEntries();
             generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
