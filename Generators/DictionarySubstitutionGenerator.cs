@@ -22,6 +22,11 @@ namespace Generators
 
         public IEnumerable<RequestSequence> Generate(List<KnownEndpoint> endpoints, RequestSequence sequence, List<TokenCollection> sequenceResults)
         {
+            if (dictionary.Count == 0)
+            {
+                yield break;
+            }
+
             for (int i = 0; i < MaxSubstitutions; ++i)
             {
                 if (sequence.StageCount() == 0)
