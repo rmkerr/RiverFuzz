@@ -65,10 +65,6 @@ namespace Fuzz
 
             TokenCollection startingData = new TokenCollection();
 
-            // OWASP juice shop
-            startingData.Add(new HttpTokenize.Tokens.JsonToken("user", "asdfg@asdfg.com", "", Types.String));
-            startingData.Add(new HttpTokenize.Tokens.JsonToken("password", "asdfg", "", Types.String));
-
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
             generators.Add(new BestKnownMatchGenerator());
