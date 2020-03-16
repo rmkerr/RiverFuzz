@@ -370,6 +370,18 @@ namespace Database
             }
         }
 
+        public void UpdateFuzzerRunEndTime(FuzzerRunEntity model)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                connection.Execute(
+                    @"UPDATE fuzzer_run
+                      SET end_time = @end_time 
+                      WHERE id = @id;", model);
+            }
+        }
+
         public void AddFuzzerGeneration(FuzzerGenerationEntity model)
         {
             using (var connection = GetConnection())

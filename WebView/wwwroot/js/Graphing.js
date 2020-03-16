@@ -39,17 +39,24 @@
 }
 
 $(document).ready(function () {
-    $.getJSON('/Results/API/Statistics', function (data) {
-        // <div id="tutorial-result" class="plottable"  style="width:100%; min-height:15em"></div>
-        console.log(data.length);
-        for (j = 0; j < data.length; j++) {
-            var element = document.createElement("div");
-            element.id = "graph-child-" + j;
-            console.log("Creating element: " + element.id);
-            element.style.height = "15em";
-            document.getElementById("graph-parent").appendChild(element);
-            makeBasicChart(data[j], element.id);
-        }
+    setInterval(function () {
+        $.getJSON('/Results/API/Statistics', function (data) {
+            // <div id="tutorial-result" class="plottable"  style="width:100%; min-height:15em"></div>
+            console.log(data.length);
+            for (j = 0; j < data.length; j++) {
+                var element = document.getElementById("graph-child-" + j);
+                if (element) {
+                    element.parentNode.removeChild(element);
+                }
+
+                element = document.createElement("div");
+                element.id = "graph-child-" + j;
+                console.log("Creating element: " + element.id);
+                element.style.height = "15em";
+                document.getElementById("graph-parent").appendChild(element);
+                makeBasicChart(data[j], element.id);
+            }
+        }, 10000);
     });
     
 });

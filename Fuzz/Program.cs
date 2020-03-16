@@ -83,22 +83,7 @@ namespace Fuzz
             foreach (KnownEndpoint endpoint in endpoints)
             {
                 endpoint.Tokenize(requestTokenizers, responseTokenizers);
-
-                if (endpoint.Request.Url.AbsolutePath.Contains("login"))
-                {
-                    // The bucketer sorts based on the token names produced by each result, and ignores
-                    // the values. However, we can specify individual token names we are interested in
-                    // the value of. In this case, we can specifically check which user is logged in.
-                    population.AddEndpoint(endpoint, new TokenNameBucketer(new string[] { "umail" }));
-                }
-                else if (endpoint.Request.Url.AbsolutePath.Contains("Addresss"))
-                {
-                    population.AddEndpoint(endpoint, new StatusCodeBucketer());
-                }
-                else
-                {
-                    population.AddEndpoint(endpoint, new TokenNameBucketer());
-                }
+                population.AddEndpoint(endpoint, new TokenNameBucketer());
 
                 // If the endpoint is not already in the database, add it.
                 if (endpoint.Request.Id == null)
@@ -111,7 +96,8 @@ namespace Fuzz
             FuzzerRunEntity runInfo = new FuzzerRunEntity();
             runInfo.name = config.Value<string?>("RunName") ?? "Untitled Fuzzer Run";
             runInfo.start_time = DateTime.Now;
-            List<FuzzerGenerationEntity> generationInfo = new List<FuzzerGenerationEntity>();
+            runInfo.end_time = DateTime.MaxValue;
+            databaseHelper.AddFuzzerRun(runInfo);
 
             // TimeSpan used to stop the fuzzer.
             TimeSpan timeLimit = TimeSpan.FromMinutes(config.Value<int>("ExecutionTime"));
@@ -188,25 +174,21 @@ namespace Fuzz
                 generationStopwatch.Stop();
                 Console.WriteLine($"Generation {generation} completed in {generationStopwatch.ElapsedMilliseconds}ms");
 
-                generationInfo.Add(new FuzzerGenerationEntity
-                {
+                FuzzerGenerationEntity genEntity = new FuzzerGenerationEntity {
                     population_size = population.Population.Count,
                     run_position = generation,
                     execution_time = generationStopwatch.Elapsed,
-                    executed_requests = requestCount
-                });
+                    executed_requests = requestCount,
+                    run_id = runInfo.id.Value
+                };
+                databaseHelper.AddFuzzerGeneration(genEntity);
 
                 Console.WriteLine($"Population size: {population.Population.Count}");
                 Console.WriteLine($"Requests per second: {requestCount / generationStopwatch.Elapsed.TotalSeconds}");
             }
 
             runInfo.end_time = DateTime.Now;
-            databaseHelper.AddFuzzerRun(runInfo);
-            foreach (FuzzerGenerationEntity entity in generationInfo)
-            {
-                entity.run_id = runInfo.id.Value;
-                databaseHelper.AddFuzzerGeneration(entity);
-            }
+            databaseHelper.UpdateFuzzerRunEndTime(runInfo);
 
             foreach (RequestSequence sequence in population.Population)
             {
