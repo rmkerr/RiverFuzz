@@ -64,6 +64,15 @@ namespace Database
                         run_id              INTEGER     NOT NULL
                     );");
 
+                // Sequence metadata
+                connection.Execute(
+                    @"CREATE TABLE sequence_metadata (
+                        id                  SERIAL      PRIMARY KEY,
+                        sequence_id         INTEGER     NOT NULL,
+                        type                TEXT        NOT NULL,
+                        content             TEXT        NOT NULL
+                    );");
+
                 // All executed requests.
                 connection.Execute(
                     @"CREATE TABLE requests (

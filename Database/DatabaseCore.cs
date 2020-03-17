@@ -433,6 +433,17 @@ namespace Database
             }
         }
 
+        public async Task<List<SequenceMetadataEntity>> GetSequenceMetadata(int sequence_id)
+        {
+            using (IDbConnection conn = GetConnection())
+            {
+                string sQuery = "SELECT * FROM sequence_metadata WHERE sequence_id = @ID";
+                conn.Open();
+                var result = await conn.QueryAsync<SequenceMetadataEntity>(sQuery, new { ID = sequence_id });
+                return result.ToList();
+            }
+        }
+
         public async Task AddRequestSequence(RequestSequence sequence, FuzzerRunEntity run)
         {
             RequestSequenceEntity model = new RequestSequenceEntity();
@@ -449,6 +460,16 @@ namespace Database
                     ( request_count, substitution_count, run_id ) VALUES 
                     ( @request_count, @substitution_count, @run_id )
                     RETURNING id;", model).First();
+
+                foreach (SequenceMetadata meta in sequence.GetDebugMetadata())
+                {
+                    SequenceMetadataEntity metadata_entity =
+                        new SequenceMetadataEntity { sequence_id = model.id, content = meta.Content, type = meta.Type };
+
+                    connection.Execute(@"INSERT INTO sequence_metadata 
+                                         ( sequence_id, type, content ) VALUES
+                                         ( @sequence_id, @type, @content );", metadata_entity);
+                }
             }
 
             sequence.Id = model.id;

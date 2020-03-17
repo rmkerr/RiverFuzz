@@ -32,12 +32,25 @@ namespace HttpTokenize
         }
     }
 
+    public class SequenceMetadata
+    {
+        public string Type { get; set; }
+        public string Content { get; set; }
+
+        public SequenceMetadata(string type, string content)
+        {
+            Type = type;
+            Content = content;
+        }
+    }
+
     //
     public class RequestSequence : IEnumerable<Stage>
     {
         readonly List<Stage> Stages;
         private List<TokenCollection>? Results;
         private List<Response>? Responses;
+        private List<SequenceMetadata> DebugMetadata;
 
         // ID that uniquely identifies this request. Primarily used by database.
         public int? Id { get; set; }
@@ -47,6 +60,7 @@ namespace HttpTokenize
             Stages = new List<Stage>();
             Results = null;
             Responses = null;
+            DebugMetadata = new List<SequenceMetadata>();
         }
 
         public List<TokenCollection>? GetResults()
@@ -199,6 +213,16 @@ namespace HttpTokenize
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<Stage>)Stages).GetEnumerator();
+        }
+
+        public void AddMetadata(string type, string content)
+        {
+            DebugMetadata.Add(new SequenceMetadata(type, content));
+        }
+
+        public List<SequenceMetadata> GetDebugMetadata()
+        {
+            return DebugMetadata;
         }
     }
 }

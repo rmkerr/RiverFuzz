@@ -59,6 +59,11 @@ namespace Population.Bucketers
                 }
             }
 
+            if (!sequence.GetDebugMetadata().Exists(x => x.Type == "BucketDebug"))
+            {
+                sequence.AddMetadata("BucketDebug", sb.ToString());
+            }
+
             if (!Sorted.ContainsKey(sb.ToString()))
             {
                 Console.WriteLine($"Added new bucket {sb.ToString()}");
