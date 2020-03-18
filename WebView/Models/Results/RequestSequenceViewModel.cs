@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebView.Models.Results;
 
 namespace WebView.Models
 {
@@ -19,6 +20,7 @@ namespace WebView.Models
             Responses = new List<ResponseViewModel>();
             Substitutions = new List<List<SubstitutionViewModel>>();
             Labels = new List<RequestSequenceLabelViewModel>();
+            Metadata = new List<SequenceMetadataViewModel>();
         }
 
         // From entity
@@ -32,7 +34,6 @@ namespace WebView.Models
         public List<ResponseViewModel> Responses { get; set; }
         public List<List<SubstitutionViewModel>> Substitutions { get; set; }
         public List<RequestSequenceLabelViewModel> Labels { get; set; }
-        // TODO: Add substitutions.
-        // TODO: Add tags.
+        public List<SequenceMetadataViewModel> Metadata { get; set; }
     }
 }

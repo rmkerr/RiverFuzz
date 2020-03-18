@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebView.Models;
+using WebView.Models.Results;
 
 namespace WebView.Controllers
 {
@@ -95,7 +96,7 @@ namespace WebView.Controllers
         [Route("Results/Sequence/{id}")]
         public async Task<IActionResult> Sequence(int id)
         {
-            RequestSequenceViewModel requestSequence = await GetFullSequence(id);
+            RequestSequenceViewModel requestSequence = await GetFullSequence(id, include_metadata:true);
 
             return View(requestSequence);
         }
@@ -163,7 +164,7 @@ namespace WebView.Controllers
             return runModels;
         }
 
-        private async Task<RequestSequenceViewModel> GetFullSequence(int id)
+        private async Task<RequestSequenceViewModel> GetFullSequence(int id, bool include_metadata = false)
         {
             RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);
             List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
@@ -218,6 +219,15 @@ namespace WebView.Controllers
                     }
                 }
                 sequenceViewModel.Substitutions.Add(stage);
+            }
+
+            if (include_metadata)
+            {
+                List<SequenceMetadataEntity> metadataEntities = await _endpointRepository.GetSequenceMetadata(id);
+                foreach (SequenceMetadataEntity entity in metadataEntities)
+                {
+                    sequenceViewModel.Metadata.Add(new SequenceMetadataViewModel(entity));
+                }
             }
 
             return sequenceViewModel;

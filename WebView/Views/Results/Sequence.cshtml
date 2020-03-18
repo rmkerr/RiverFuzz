@@ -1,4 +1,5 @@
 ﻿@model RequestSequenceViewModel
+@using WebView.Models.Results
 @{
     ViewData["Title"] = "Executed Requests";
     Layout = "_Sidebar";
@@ -19,7 +20,7 @@
 }
 
 <a asp-controller="Results" asp-action="Summary" asp-route-id="@(Model.run_id)">Back to run summary</a>
-<br/>
+<br />
 
 <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.id-1)">Previous</a>
 <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.id+1)" class="float-right">Next</a>
@@ -57,3 +58,12 @@
         }
     }
 </div>
+
+<br>
+<h3>Debug Metadata</h3>
+@foreach (SequenceMetadataViewModel metadata in Model.Metadata)
+{
+    <b>@metadata.Type</b>
+    <p>@metadata.Content</p>
+    <br>
+}

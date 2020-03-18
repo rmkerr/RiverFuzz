@@ -28,6 +28,9 @@ namespace Database.Repositories
         Task<List<RequestSequenceEntity>> GetRequestSequencesByRunId(int id);
         Task<List<RequestSequenceEntity>> GetAllRequestSequences();
 
+        // Request Sequence Metadata
+        Task<List<SequenceMetadataEntity>> GetSequenceMetadata(int id);
+
         // Request Sequence Summaries
         Task<List<SequenceSummaryEntity>> GetAllSequenceSummaries();
         Task<List<SequenceSummaryEntity>> GetSequenceSummariesByRunId(int id);
