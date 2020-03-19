@@ -1,18 +1,19 @@
-﻿$aperio-main: #F9F8EB !default;
-$aperio-secondary: #76B39D !default;
-$aperio-accent: #05004E !default;
+﻿$aperio-background: #3c415e !default;
+$aperio-main: #738598 !default;
+$aperio-secondary: #dfe2e2 !default;
+$aperio-accent: #1cb3c8 !default;
 $aperio-emphasis: #FD5F00 !default;
 
-$body-bg: #F9F8EB;
-$body-color: #76B39D;
+$body-bg: $aperio-background;
+$body-color: $aperio-secondary;
 
-$primary: $blue !default;
-$secondary: $gray-600 !default;
-$success: $green !default;
+$primary: $aperio-main !default;
+$secondary: $aperio-secondary !default;
+/*$success: $green !default;
 $info: $cyan !default;
 $warning: $yellow !default;
-$danger: $red !default;
-$light: $gray-100 !default;
-$dark: $gray-800 !default;
+$danger: $red !default;*/
+$light: $aperio-main !default;
+$dark: $aperio-secondary !default;
 
 @import "../lib/bootstrap/scss/bootstrap.scss";
