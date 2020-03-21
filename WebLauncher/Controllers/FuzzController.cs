@@ -9,16 +9,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using WebLauncher.Services;
 
 namespace WebLauncher.Controllers
 {
     public class FuzzController : Controller
     {
         private readonly ILogger<FuzzController> _logger;
+        private readonly IFuzzerJobQueue _fuzzerJobQueue;
 
-        public FuzzController(ILogger<FuzzController> logger)
+        public FuzzController(ILogger<FuzzController> logger, IFuzzerJobQueue jobQueue)
         {
             _logger = logger;
+            _fuzzerJobQueue = jobQueue;
         }
 
         [HttpPost]
@@ -34,9 +37,7 @@ namespace WebLauncher.Controllers
 
             _logger.LogDebug($"Fuzzer Config: {jsonString}");
 
-            JObject config = JObject.Parse(jsonString);
-
-            Fuzz.Program.Fuzz(config);
+            _fuzzerJobQueue.AddFuzzerJob(jsonString);
 
             return new EmptyResult();
         }
