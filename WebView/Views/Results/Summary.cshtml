@@ -5,7 +5,7 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<table class="table">
+<table class="table" id="sequence-summary-table">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -22,12 +22,23 @@
                 <td>@summary.status</td>
                 <td class="text-break">@summary.url</td>
                 <td>
-                     @foreach (RequestSequenceLabelViewModel label in summary.Labels)
-                      {
-                          <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
-                      }
+                    @foreach (RequestSequenceLabelViewModel label in summary.Labels)
+                    {
+                        <span class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(label.name,"badge-primary")">@label.name</span>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts
+{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function () {
+            $('#sequence-summary-table').DataTable();
+        } );
+    </script>
+}
