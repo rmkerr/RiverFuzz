@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using Database.Entities;
 using HttpTokenize;
 using HttpTokenize.Substitutions;
@@ -54,10 +55,9 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM sequences WHERE id = @ID";
                 conn.Open();
-                var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
-                return result.FirstOrDefault();
+                var result = await conn.GetAsync<RequestSequenceEntity>(id);
+                return result;
             }
         }
 
