@@ -18,6 +18,9 @@ namespace WebView.Models
             next_id = entity.next_id;
             prev_id = entity.prev_id;
 
+            // Used to enable debug metadata.
+            ShowMetadata = false;
+
             Requests = new List<RequestViewModel>();
             Responses = new List<ResponseViewModel>();
             Substitutions = new List<List<SubstitutionViewModel>>();
@@ -38,6 +41,8 @@ namespace WebView.Models
         public List<ResponseViewModel> Responses { get; set; }
         public List<List<SubstitutionViewModel>> Substitutions { get; set; }
         public List<RequestSequenceLabelViewModel> Labels { get; set; }
+
+        public bool ShowMetadata { get; set; }
         public List<SequenceMetadataViewModel> Metadata { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Database.Entities;
 using Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace WebView.Controllers
     {
         private readonly ILogger<EndpointsController> _logger;
         private readonly IFuzzerRepository _endpointRepository;
+        private readonly IConfiguration _configuration;
 
-        public ResultsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo)
+        public ResultsController(ILogger<EndpointsController> logger, IFuzzerRepository endpointRepo, IConfiguration configuration)
         {
             _logger = logger;
             _endpointRepository = endpointRepo;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -96,7 +99,7 @@ namespace WebView.Controllers
         [Route("Results/Sequence/{id}")]
         public async Task<IActionResult> Sequence(int id)
         {
-            RequestSequenceViewModel requestSequence = await GetFullSequence(id, include_metadata:true);
+            RequestSequenceViewModel requestSequence = await GetFullSequence(id);
 
             return View(requestSequence);
         }
@@ -164,7 +167,7 @@ namespace WebView.Controllers
             return runModels;
         }
 
-        private async Task<RequestSequenceViewModel> GetFullSequence(int id, bool include_metadata = false)
+        private async Task<RequestSequenceViewModel> GetFullSequence(int id)
         {
             RequestSequenceEntity sequence = await _endpointRepository.GetRequestSequenceById(id);
             List<RequestEntity> requests = await _endpointRepository.GetExecutedRequestsBySequence(id);
@@ -221,13 +224,14 @@ namespace WebView.Controllers
                 sequenceViewModel.Substitutions.Add(stage);
             }
 
-            if (include_metadata)
+            if (_configuration.GetValue<bool>("ShowDebugMetadata", false))
             {
                 List<SequenceMetadataEntity> metadataEntities = await _endpointRepository.GetSequenceMetadata(id);
                 foreach (SequenceMetadataEntity entity in metadataEntities)
                 {
                     sequenceViewModel.Metadata.Add(new SequenceMetadataViewModel(entity));
                 }
+                sequenceViewModel.ShowMetadata = true;
             }
 
             return sequenceViewModel;

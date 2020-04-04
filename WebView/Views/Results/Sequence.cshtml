@@ -1,7 +1,6 @@
 ﻿@model RequestSequenceViewModel
 @using WebView.Models.Results
 @{
-    ViewData["Title"] = "Executed Requests";
     Layout = "_Sidebar";
 }
 
@@ -19,16 +18,25 @@
     @await Html.PartialAsync("_RequestSequenceLabelPicker", model)
 }
 
-<a asp-controller="Results" asp-action="Summary" asp-route-id="@(Model.run_id)">Back to run summary</a>
+<a asp-controller="Results" asp-action="Summary" asp-route-id="@(Model.run_id)" role="button" class="btn btn-primary">Back to run summary</a>
 <br />
-@if (Model.prev_id != null)
-{
-    <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.prev_id)">Previous</a>
-}
-@if (Model.next_id != null)
-{
-    <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.next_id)" class="float-right">Next</a>
-}
+<div class="row justify-content-between">
+    <div class="col-4">
+        @if (Model.prev_id != null)
+        {
+
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.prev_id)" role="button" class="btn btn-secondary">Previous</a>
+
+        }
+    </div>
+    <div class="col-4">
+        @if (Model.next_id != null)
+        {
+
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.next_id)" role="button" class="float-right btn btn-secondary">Next</a>
+        }
+    </div>
+</div>
 <br />
 <div class="accordion" id="accordionExample" style="width:100%">
     @{
@@ -65,10 +73,13 @@
 </div>
 
 <br>
-<h3>Debug Metadata</h3>
-@foreach (SequenceMetadataViewModel metadata in Model.Metadata)
+@if (Model.ShowMetadata)
 {
-    <b>@metadata.Type</b>
-    <p>@metadata.Content</p>
-    <br>
+    <h3>Debug Metadata</h3>
+    @foreach (SequenceMetadataViewModel metadata in Model.Metadata)
+    {
+        <b>@metadata.Type</b>
+        <p>@metadata.Content</p>
+        <br>
+    }
 }

@@ -36,6 +36,9 @@ namespace WebView
             services.AddSingleton<IParserFactory, ParserFactory>();
             services.AddTransient<ParserService>();
 
+            // TODO: Evaluate if this is the right way to do this:
+            services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddControllersWithViews();
             services.AddHttpClient();
         }
