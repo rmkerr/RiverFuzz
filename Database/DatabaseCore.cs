@@ -55,9 +55,14 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
+                string sQuery = @"select  *,
+                                (SELECT MIN(id) FROM public.sequences sub WHERE sub.run_id = main.run_id AND sub.id > main.id) as next_id,
+                                (SELECT MAX(id) FROM public.sequences sub WHERE sub.run_id = main.run_id AND sub.id<main.id) as prev_id
+                                from public.sequences as main
+                                WHERE id = @ID";
                 conn.Open();
-                var result = await conn.GetAsync<RequestSequenceEntity>(id);
-                return result;
+                var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
+                return result.FirstOrDefault();
             }
         }
 
@@ -65,7 +70,11 @@ namespace Database
         {
             using (IDbConnection conn = GetConnection())
             {
-                string sQuery = "SELECT * FROM sequences WHERE run_id = @ID ORDER BY id ASC";
+                string sQuery = @"select  *,
+                                (SELECT MIN(id) FROM public.sequences sub WHERE sub.run_id = main.run_id AND sub.id > main.id) as next_id,
+                                (SELECT MAX(id) FROM public.sequences sub WHERE sub.run_id = main.run_id AND sub.id<main.id) as prev_id
+                                from public.sequences as main
+                                WHERE id = @ID";
                 conn.Open();
                 var result = await conn.QueryAsync<RequestSequenceEntity>(sQuery, new { ID = id });
                 return result.ToList();

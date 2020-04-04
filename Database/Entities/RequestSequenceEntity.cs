@@ -13,5 +13,9 @@ namespace Database.Entities
         public int request_count { get; set; }
         public int substitution_count { get; set; }
         public int run_id { get; set; }
+
+        // Generated. Not part of the database.
+        public int? next_id { get; set; }
+        public int? prev_id { get; set; }
     }
 }
