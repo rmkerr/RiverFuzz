@@ -1,7 +1,7 @@
 {
   "Target": "http://localhost",
   "TargetEndpoints": [ 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22 ],
-  "ResetDatabase": false,
+  "ResetDatabase": true,
   "ExecutionTime": 5,
   "RunName": "Simplification Test -- Full Endpoint Set"
 }

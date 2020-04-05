@@ -78,6 +78,13 @@ namespace Fuzz
             List<int> endpointIds = config["TargetEndpoints"].Select(x => (int)x).ToList();
             List<KnownEndpoint> endpoints = await databaseParse.LoadEndpointsById(endpointIds);
 
+            // Stop run if no endpoints are present in DB
+            if(endpoints.Count == 0)
+            {
+                Console.WriteLine("No endpoints were found in DB.  Cancelling run...");
+                return;
+            }
+
             // Add the endpoints to the population and set up bucketers.
             PopulationManager population = new PopulationManager();
             foreach (KnownEndpoint endpoint in endpoints)

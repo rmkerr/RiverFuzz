@@ -26,7 +26,11 @@ namespace CaptureParse.Loaders
 
             foreach (int i in ids)
             {
-                endpoints.Add(await LoadSingleEndpointById(i));
+                KnownEndpoint knownEndpoint = await LoadSingleEndpointById(i);
+                if(knownEndpoint != null)
+                {
+                    endpoints.Add(await LoadSingleEndpointById(i));
+                }
             }
 
             return endpoints;
@@ -35,6 +39,7 @@ namespace CaptureParse.Loaders
         public async Task<KnownEndpoint> LoadSingleEndpointById(int id)
         {
             RequestEntity model = await DbHelper.GetEndpointById(id);
+            if (model == null) return null;
 
             HttpMethod method = new HttpMethod(model.method);
             Uri rawUrl = new Uri(model.url);
