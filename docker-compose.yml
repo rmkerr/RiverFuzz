@@ -1,19 +1,44 @@
-version: '3'
+version: '3.4'
+
 services:
   db:
     image: postgres:12.1
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     environment:
       - POSTGRES_DB=riverfuzz
       - POSTGRES_PASSWORD=3r!T8*Qb8YNFlG8Eb8u
     volumes:
       - "postgres:/var/lib/postgresql/data"
 
+  # Map ports to host to allow fuzzing against localhost:80
   juice-shop:
     image: bkimminich/juice-shop:v9.3.1
     ports:
       - "80:3000"
+
+  # UI runs at localhost:5000
+  webview:
+    image: ${DOCKER_REGISTRY-}webview
+    ports:
+      - "5000:80"
+    depends_on:
+      - weblauncher
+      - db
+    build:
+      context: .
+      dockerfile: WebView/Dockerfile
+
+  weblauncher:
+    image: ${DOCKER_REGISTRY-}weblauncher
+    expose:
+      - "80"
+      - "443"
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: WebLauncher/Dockerfile
 
 volumes:
   postgres:
