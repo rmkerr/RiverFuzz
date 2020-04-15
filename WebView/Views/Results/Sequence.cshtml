@@ -24,16 +24,13 @@
     <div class="col-4">
         @if (Model.prev_id != null)
         {
-
-            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.prev_id)" role="button" class="btn btn-secondary">Previous</a>
-
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.prev_id)" role="button" class="btn btn-secondary my-1">Previous</a>
         }
     </div>
     <div class="col-4">
         @if (Model.next_id != null)
         {
-
-            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.next_id)" role="button" class="float-right btn btn-secondary">Next</a>
+            <a asp-controller="Results" asp-action="Sequence" asp-route-id="@(Model.next_id)" role="button" class="float-right btn btn-secondary my-1">Next</a>
         }
     </div>
 </div>
