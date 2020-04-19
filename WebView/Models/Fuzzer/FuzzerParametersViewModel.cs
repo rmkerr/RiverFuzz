@@ -24,6 +24,6 @@ namespace WebView.Models
         [Display(Name = "Run Name")]
         public string RunName { get; set; }
 
-        public List<RequestViewModel> Endpoints { get; } = new List<RequestViewModel>();
+        public List<KnownEndpointViewModel> Endpoints { get; } = new List<KnownEndpointViewModel>();
     }
 }

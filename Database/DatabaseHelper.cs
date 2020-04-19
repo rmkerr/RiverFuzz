@@ -102,7 +102,8 @@ namespace Database
                         url     TEXT    NOT NULL,
                         method  TEXT    NOT NULL,
                         headers TEXT,
-                        content TEXT
+                        content TEXT,
+                        friendly_name TEXT
                     );");
 
                 // Response test table.

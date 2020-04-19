@@ -9,9 +9,9 @@ namespace Database.Repositories
     public interface IFuzzerRepository
     {
         // Endpoints
-        Task<RequestEntity> GetEndpointById(int id);
-        Task<List<RequestEntity>> GetAllEndpoints();
-        void AddEndpoint(RequestEntity endpoint);
+        Task<KnownEndpointEntity> GetEndpointById(int id);
+        Task<List<KnownEndpointEntity>> GetAllEndpoints();
+        void AddEndpoint(KnownEndpointEntity endpoint);
 
         // Executed Requests
         Task<RequestEntity> GetExecutedRequestById(int id);

@@ -20,12 +20,12 @@ namespace Database
             throw new NotImplementedException("Derived DatabaseCore classed must implement GetConnection");
         }
 
-        public async Task<List<RequestEntity>> GetAllEndpoints()
+        public async Task<List<KnownEndpointEntity>> GetAllEndpoints()
         {
             using (IDbConnection connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
+                var result = await connection.QueryAsync<KnownEndpointEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
                 return result.ToList();
             }
         }
@@ -81,13 +81,13 @@ namespace Database
             }
         }
 
-        public async Task<RequestEntity> GetEndpointById(int id)
+        public async Task<KnownEndpointEntity> GetEndpointById(int id)
         {
             using (IDbConnection conn = GetConnection())
             {
                 string sQuery = "SELECT * FROM endpoints WHERE id = @ID";
                 conn.Open();
-                var result = await conn.QueryAsync<RequestEntity>(sQuery, new { ID = id });
+                var result = await conn.QueryAsync<KnownEndpointEntity>(sQuery, new { ID = id });
                 return result.FirstOrDefault();
             }
         }
@@ -302,41 +302,41 @@ namespace Database
             }
         }
 
-        public void AddEndpoint(RequestEntity endpoint)
+        public void AddEndpoint(KnownEndpointEntity endpoint)
         {
             using (var connection = GetConnection())
             {
                 connection.Open();
                 endpoint.id = connection.Query<int>(
                     @"INSERT INTO endpoints 
-                    ( url, method, headers, content ) VALUES 
-                    ( @url, @method, @headers, @content )
+                    ( url, method, headers, content, friendly_name ) VALUES 
+                    ( @url, @method, @headers, @content, @friendly_name )
                     RETURNING id;", endpoint).First();
             }
         }
 
-        public async Task<List<RequestEntity>> AllEndpoints()
+        public async Task<List<KnownEndpointEntity>> AllEndpoints()
         {
             //
 
             using (var connection = GetConnection())
             {
                 connection.Open();
-                var result = await connection.QueryAsync<RequestEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
+                var result = await connection.QueryAsync<KnownEndpointEntity>(@"SELECT * FROM endpoints ORDER BY id ASC");
                 return result.ToList();
             }
         }
 
-        public void AddExecutedRequest(RequestEntity endpoint)
+        public void AddExecutedRequest(RequestEntity request)
         {
             using (var connection = GetConnection())
             {
                 connection.Open();
-                endpoint.id = connection.Query<int>(
+                request.id = connection.Query<int>(
                     @"INSERT INTO requests 
                     ( url, method, headers, content, sequence_id, sequence_position ) VALUES 
                     ( @url, @method, @headers, @content, @sequence_id, @sequence_position )
-                    RETURNING id;", endpoint).First();
+                    RETURNING id;", request).First();
             }
         }
 

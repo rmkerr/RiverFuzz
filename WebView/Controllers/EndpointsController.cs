@@ -32,14 +32,14 @@ namespace WebView.Controllers
 
         [HttpGet]
         [Route("Endpoints/API/ById/{id}")]
-        public async Task<ActionResult<RequestEntity>> GetByID(int id)
+        public async Task<ActionResult<KnownEndpointEntity>> GetByID(int id)
         {
             return await _endpointRepository.GetEndpointById(id);
         }
 
         [HttpGet]
         [Route("Endpoints/API/All")]
-        public async Task<ActionResult<List<RequestEntity>>> GetAll()
+        public async Task<ActionResult<List<KnownEndpointEntity>>> GetAll()
         {
             return await _endpointRepository.GetAllEndpoints();
         }
@@ -48,8 +48,13 @@ namespace WebView.Controllers
         [Route("Endpoints/All")]
         public async Task<IActionResult> GetAllVisual()
         {
-            List<RequestEntity> endpoints = await _endpointRepository.GetAllEndpoints();
-            ViewBag.Endpoints = endpoints;
+            List<KnownEndpointEntity> endpoints = await _endpointRepository.GetAllEndpoints();
+            List<KnownEndpointViewModel> viewModels = new List<KnownEndpointViewModel>();
+            foreach(KnownEndpointEntity entity in endpoints)
+            {
+                viewModels.Add(new KnownEndpointViewModel(entity));
+            }
+            ViewBag.Endpoints = viewModels;
             return View();
         }
 
@@ -64,7 +69,7 @@ namespace WebView.Controllers
         [Route("Endpoints/API/Add")]
         public IActionResult APIAddEndpoint(RequestViewModel request)
         {
-            RequestEntity entity = new RequestEntity();
+            KnownEndpointEntity entity = new KnownEndpointEntity();
 
             entity.content = request.content;
             entity.headers = request.headers;
@@ -95,7 +100,10 @@ namespace WebView.Controllers
 
                 // TODO: Replace the hardcoded URL here.
                 Request request = parser.ParseSingleRequestFile(content, "http://localhost").Request;
-                RequestEntity entity = RequestEntity.FromRequest(request);
+                KnownEndpointEntity entity = KnownEndpointEntity.FromRequest(request);
+
+                // Default friendly name is filename without extension.
+                entity.friendly_name = file.FileName.Split(".")[0];
 
                 _endpointRepository.AddEndpoint(entity);
             }

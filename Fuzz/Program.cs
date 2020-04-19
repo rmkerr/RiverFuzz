@@ -41,7 +41,7 @@ namespace Fuzz
             }
 
             // Set up HttpClient.
-             HttpClientHandler handler = new HttpClientHandler();
+            HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
@@ -88,7 +88,7 @@ namespace Fuzz
                 // If the endpoint is not already in the database, add it.
                 if (endpoint.Request.Id == null)
                 {
-                    databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
+                    databaseHelper.AddEndpoint(KnownEndpointEntity.FromRequest(endpoint.Request));
                 }
             }
 
