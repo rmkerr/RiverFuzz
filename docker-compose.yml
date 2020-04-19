@@ -22,6 +22,7 @@ services:
     image: ${DOCKER_REGISTRY-}webview
     ports:
       - "5000:80"
+      - "5001:443"
     depends_on:
       - weblauncher
       - db
