@@ -5,6 +5,8 @@ services:
     image: postgres:12.1
     expose:
       - "5432"
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=riverfuzz
       - POSTGRES_PASSWORD=3r!T8*Qb8YNFlG8Eb8u

@@ -15,6 +15,8 @@ COPY ["HttpTokenize/HttpTokenize.csproj", "HttpTokenize/"]
 COPY ["PopulationManager/Population.csproj", "PopulationManager/"]
 COPY ["Generators/Generators.csproj", "Generators/"]
 COPY ["ProjectSpecific/ProjectSpecific.csproj", "ProjectSpecific/"]
+COPY ["Configuration/Configuration.csproj", "Configuration/"]
+
 RUN dotnet restore "WebLauncher/WebLauncher.csproj"
 COPY . .
 WORKDIR "/src/WebLauncher"

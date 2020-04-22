@@ -15,6 +15,8 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using CaptureParse.Parsers;
 using CaptureParse.Loaders;
+using Microsoft.Extensions.Configuration;
+using Configuration;
 
 namespace Fuzz
 {
@@ -24,24 +26,29 @@ namespace Fuzz
 
         static async Task Main(string[] args)
         {
-            string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
-            JObject config = JObject.Parse(fuzzerConfig);
-            
+            //string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
+            //JObject config = JObject.Parse(fuzzerConfig);
+            IConfigurationRoot config = new ConfigurationBuilder()
+                .AddJsonFile(@"fuzz.json")
+                .Build();
+
             await Fuzz(config);
         }
 
-        public static async Task Fuzz(JObject config)
+        public static async Task Fuzz(IConfiguration config)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
-            if (config.Value<bool?>("ResetDatabase") ?? false)
-            {
-                databaseHelper.DeleteDatabase();
-                databaseHelper.CreateDatabase();
-            }
+            //DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
+            DatabaseHelper databaseHelper = new DatabaseHelper(config);
+            var fuzzRunOptions = new FuzzRunOptions(config);
+            //if (config.Value<bool?>("ResetDatabase") ?? false)
+            //{
+            //    databaseHelper.DeleteDatabase();
+            //    databaseHelper.CreateDatabase();
+            //}
 
             // Set up HttpClient.
-             HttpClientHandler handler = new HttpClientHandler();
+            HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = false;
             handler.AllowAutoRedirect = false;
             HttpClient client = new HttpClient(handler);
@@ -74,7 +81,7 @@ namespace Fuzz
             generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
 
             // Parse the list of endpoints we should include in this run, then load them.
-            DatabaseLoader databaseParse = new DatabaseLoader(databaseHelper, config.Value<string>("Target"));
+            DatabaseLoader databaseParse = new DatabaseLoader(databaseHelper, fuzzRunOptions.Target);
             List<int> endpointIds = config["TargetEndpoints"].Select(x => (int)x).ToList();
             List<KnownEndpoint> endpoints = await databaseParse.LoadEndpointsById(endpointIds);
 
@@ -101,13 +108,13 @@ namespace Fuzz
 
             // Record the time we started this run.
             FuzzerRunEntity runInfo = new FuzzerRunEntity();
-            runInfo.name = config.Value<string?>("RunName") ?? "Untitled Fuzzer Run";
+            runInfo.name = fuzzRunOptions.RunName;
             runInfo.start_time = DateTime.Now;
             runInfo.end_time = DateTime.MaxValue;
             databaseHelper.AddFuzzerRun(runInfo);
 
             // TimeSpan used to stop the fuzzer.
-            TimeSpan timeLimit = TimeSpan.FromMinutes(config.Value<int>("ExecutionTime"));
+            TimeSpan timeLimit = TimeSpan.FromMinutes(fuzzRunOptions.ExecutionTime);
             Stopwatch runTime = new Stopwatch();
             runTime.Start();
 

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Database.Repositories;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace WebLauncher.Services
         // Fuzzer jobs are represented as JSON strings
         private ConcurrentQueue<string> jobQueue;
         private CancellationTokenSource cancelFuzzer;
-        public LocalFuzzerJobQueue()
+        public LocalFuzzerJobQueue(IConfiguration configuration)
         {
             jobQueue = new ConcurrentQueue<string>();
             cancelFuzzer = new CancellationTokenSource();
@@ -24,8 +26,8 @@ namespace WebLauncher.Services
                     string nextConfig = "";
                     if (jobQueue.TryDequeue(out nextConfig))
                     {
-                        JObject config = JObject.Parse(nextConfig);
-                        await Fuzz.Program.Fuzz(config);
+                        //JObject config = JObject.Parse(nextConfig);
+                        await Fuzz.Program.Fuzz(configuration);
                     }
                     else
                     {

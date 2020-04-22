@@ -12,6 +12,7 @@ COPY ["CaptureParse/CaptureParse.csproj", "CaptureParse/"]
 COPY ["Database/Database.csproj", "Database/"]
 COPY ["HttpTokenize/HttpTokenize.csproj", "HttpTokenize/"]
 COPY ["Generators/Generators.csproj", "Generators/"]
+COPY ["Configuration/Configuration.csproj", "Configuration/"]
 RUN dotnet restore "WebView/WebView.csproj"
 COPY . .
 WORKDIR "/src/WebView"
