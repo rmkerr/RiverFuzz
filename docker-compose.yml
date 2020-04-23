@@ -23,8 +23,8 @@ services:
   webview:
     image: ${DOCKER_REGISTRY-}webview
     ports:
-      - "5000:80"
-      - "5001:443"
+      - "8000:80"
+      - "8001:443"
     depends_on:
       - weblauncher
       - db
@@ -42,6 +42,13 @@ services:
     build:
       context: .
       dockerfile: WebLauncher/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=aperio
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
 volumes:
   postgres:

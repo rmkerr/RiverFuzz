@@ -66,6 +66,7 @@ namespace Database
                                     SELECT datname FROM pg_database
                                     WHERE datname = '{this.DbName}')";
 
+                //Have to check tables too since it creates an empty db if you log in as it
                 string tableCountQuery = @"SELECT count(*)
                                     FROM
 	                                    pg_catalog.pg_tables
