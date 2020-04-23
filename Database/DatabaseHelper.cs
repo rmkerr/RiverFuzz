@@ -60,7 +60,8 @@ namespace Database
             bool exists = false;
             int tableCount = 0;
 
-            using(var connection = GetConnection("postgres"))
+            using(var masterConnection = GetConnection("postgres"))
+            using(var appDbConnection = GetConnection())
             {
                 string dbExistsQuery = $@"SELECT exists(
                                     SELECT datname FROM pg_database
@@ -73,9 +74,8 @@ namespace Database
                                     WHERE
 	                                    schemaname != 'pg_catalog'
                                     AND schemaname != 'information_schema'";
-
-                exists = connection.ExecuteScalar<bool>(dbExistsQuery);
-                tableCount = connection.ExecuteScalar<int>(tableCountQuery);
+                exists = masterConnection.ExecuteScalar<bool>(dbExistsQuery);
+                tableCount = appDbConnection.ExecuteScalar<int>(tableCountQuery);
             }
 
             if(!exists || tableCount == 0 )
