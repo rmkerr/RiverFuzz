@@ -32,15 +32,15 @@ namespace WebView.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            List<RequestEntity> endpoints = await _endpointRepository.GetAllEndpoints();
+            List<KnownEndpointEntity> endpoints = await _endpointRepository.GetAllEndpoints();
 
             FuzzerParametersViewModel model = new FuzzerParametersViewModel();
             model.ExecutionTime = 2;
             model.Target = @"http://riverfuzzjuiceshop.azurewebsites.net";
 
-            foreach (RequestEntity requestEntity in endpoints)
+            foreach (KnownEndpointEntity requestEntity in endpoints)
             {
-                model.Endpoints.Add(new RequestViewModel(requestEntity));
+                model.Endpoints.Add(new KnownEndpointViewModel(requestEntity));
             }
 
             return View(model);

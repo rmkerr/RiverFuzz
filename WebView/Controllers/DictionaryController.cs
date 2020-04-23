@@ -45,7 +45,7 @@ namespace WebView.Controllers
                     content = sr.ReadLine();
                 }
 
-                _endpointRepository.AddDictionary(model.Name, entries);
+                _endpointRepository.AddDictionary(model.Name ?? "", entries);
             }
             return RedirectToAction("AddFromFile");
         }

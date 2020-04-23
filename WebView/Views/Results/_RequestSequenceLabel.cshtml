@@ -1,10 +1,12 @@
 ﻿@model RequestSequenceLabelViewModel
 
-<form class="badge @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(Model.name,"badge-primary")" asp-action="DeleteRequestSequenceLabel" asp-controller="Results">
-    <label>@Model.name</label>
-    <input class="form-control" type="hidden" asp-for="sequence_id" value="@Model.sequence_id" />
-    <input class="form-control" type="hidden" asp-for="id" value="@Model.id" />
-    <button type="submit" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</form>
+<div class="badge my-1 @RequestSequenceLabelViewModel.ColorMappings.GetValueOrDefault(Model.name,"badge-primary")">
+    <form asp-action="DeleteRequestSequenceLabel" asp-controller="Results" style="padding:0.375rem; font-weight:400; font-size:1rem;">
+        <span style="display:inline-block;">@Model.name</span>
+        <button style="display:inline-block; border:0; background:transparent;" type="submit" aria-label="Remove Label">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <input class="form-control" type="hidden" asp-for="sequence_id" value="@Model.sequence_id" />
+        <input class="form-control" type="hidden" asp-for="id" value="@Model.id" />
+    </form>
+</div>

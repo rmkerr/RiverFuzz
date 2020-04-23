@@ -103,7 +103,7 @@ namespace Fuzz
                 // If the endpoint is not already in the database, add it.
                 if (endpoint.Request.Id == null)
                 {
-                    databaseHelper.AddEndpoint(RequestEntity.FromRequest(endpoint.Request));
+                    databaseHelper.AddEndpoint(KnownEndpointEntity.FromRequest(endpoint.Request));
                 }
             }
 
