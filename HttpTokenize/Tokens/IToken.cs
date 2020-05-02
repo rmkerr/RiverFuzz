@@ -12,7 +12,8 @@ namespace HttpTokenize.Tokens
         Integer = 1,
         String = 2,
         Boolean = 4,
-        BearerToken = 8
+        BearerToken = 8,
+        Url = 16,
     };
 
     // TODO

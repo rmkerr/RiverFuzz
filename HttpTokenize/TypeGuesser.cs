@@ -10,6 +10,7 @@ namespace HttpTokenize
         {
             Types supported = Types.None;
 
+            // Check if it's an integer
             int intGuess = 0;
             if (int.TryParse(input, out intGuess))
             {
@@ -22,10 +23,18 @@ namespace HttpTokenize
                 }
             }
 
+            // Check if it's a boolean
             bool boolGuess = false;
             if (bool.TryParse(input, out boolGuess))
             {
                 supported |= Types.Boolean;
+            }
+
+            // Check if it's a URL. We could use Uri.TryParse here, but it's so slow.
+            if (input.StartsWith(@"http://") || input.StartsWith(@"https://") || input.StartsWith(@"ws://") || input.StartsWith(@"wss://"))
+            {
+                supported |= Types.Url;
+                supported |= Types.String;
             }
 
             if (supported == Types.None)
