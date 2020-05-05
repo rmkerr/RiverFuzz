@@ -13,12 +13,6 @@ services:
     volumes:
       - "postgres:/var/lib/postgresql/data"
 
-  # Map ports to host to allow fuzzing against localhost:80
-  juice-shop:
-    image: bkimminich/juice-shop:v9.3.1
-    ports:
-      - "80:3000"
-
   # UI runs at localhost:5000
   webview:
     image: ${DOCKER_REGISTRY-}webview

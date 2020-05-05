@@ -29,7 +29,7 @@ namespace CaptureParse.Loaders
                 KnownEndpoint knownEndpoint = await LoadSingleEndpointById(i);
                 if(knownEndpoint != null)
                 {
-                    endpoints.Add(await LoadSingleEndpointById(i));
+                    endpoints.Add(knownEndpoint);
                 }
             }
 
