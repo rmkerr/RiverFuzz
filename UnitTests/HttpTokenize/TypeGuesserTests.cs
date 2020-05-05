@@ -17,6 +17,10 @@ namespace UnitTests.HttpTokenize
         [InlineData("True", Types.Boolean)]
         [InlineData("false", Types.Boolean)]
         [InlineData("Test string", Types.String)]
+        [InlineData("http://test.com/", Types.Url | Types.String)]
+        [InlineData("https://test.com/", Types.Url | Types.String)]
+        [InlineData("ws://test.com/", Types.Url | Types.String)]
+        [InlineData("wss://test.com/", Types.Url | Types.String)]
         void TypeGuesser_SimpleData_TypeInferredCorrectly(string val, Types expected)
         {
             Types types = TypeGuesser.GuessTypes(val);
