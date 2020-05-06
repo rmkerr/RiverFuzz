@@ -1,7 +1,10 @@
-version: '3'
+version: '3.4'
+
 services:
   db:
     image: postgres:12.1
+    expose:
+      - "5432"
     ports:
       - "5432:5432"
     environment:
@@ -10,10 +13,36 @@ services:
     volumes:
       - "postgres:/var/lib/postgresql/data"
 
-  juice-shop:
-    image: bkimminich/juice-shop:v9.3.1
+  # UI runs at localhost:5000
+  webview:
+    image: ${DOCKER_REGISTRY-}webview
     ports:
-      - "80:3000"
+      - "8000:80"
+      - "8001:443"
+    depends_on:
+      - weblauncher
+      - db
+    build:
+      context: .
+      dockerfile: WebView/Dockerfile
+
+  weblauncher:
+    image: ${DOCKER_REGISTRY-}weblauncher
+    expose:
+      - "80"
+      - "443"
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: WebLauncher/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=aperio
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
 volumes:
   postgres:

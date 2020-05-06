@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CaptureParse.Parsers;
+using Database;
 using Database.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,7 @@ namespace WebView
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IFuzzerRepository, FuzzerRepository>();
+            services.AddSingleton<IDatabaseHelper, DatabaseHelper>();
 
             //TODO: add logging to classes to make use of DI
             //tODO: may want to use the fancy "register all of type" extension later
@@ -44,7 +46,10 @@ namespace WebView
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IDatabaseHelper dbHelper)
         {
             if (env.IsDevelopment())
             {
@@ -70,6 +75,8 @@ namespace WebView
                     name: "default",
                     pattern: "{controller=FuzzerRun}/{action=Summary}");
             });
+
+            dbHelper.CreateIfNotExists();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +33,15 @@ namespace WebLauncher
                         options.BlobName = "log.txt";
                     })
                 )
+                .ConfigureAppConfiguration((hostingContext, configuration) =>
+                {
+                    var env = hostingContext.HostingEnvironment;
+                    string prodFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sharedSettings.json");
+                    string environmentFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"sharedSettings.{env.EnvironmentName}.json");
+                    configuration.AddJsonFile(prodFilePath);
+                    configuration.AddJsonFile(environmentFilePath);
+                    configuration.AddEnvironmentVariables();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -418,7 +418,7 @@ namespace Database
                     ( @name )
                     RETURNING id;", nameEntity).First();
 
-                foreach(string value in contents)
+                foreach (string value in contents)
                 {
                     DictionaryEntryEntity entry = new DictionaryEntryEntity();
                     entry.dictionary_id = nameEntity.id.Value;

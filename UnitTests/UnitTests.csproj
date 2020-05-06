@@ -21,8 +21,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CaptureParse\CaptureParse.csproj" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
     <ProjectReference Include="..\PopulationManager\Population.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Json\fuzzRequestOptions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

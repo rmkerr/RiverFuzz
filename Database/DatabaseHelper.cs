@@ -8,38 +8,81 @@ using Database.Entities;
 using System.Threading.Tasks;
 using Npgsql;
 using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace Database
 {
     /**
      * Used by the command line interface.
      * */
-    public class DatabaseHelper : DatabaseCore
+    public class DatabaseHelper : DatabaseCore, IDatabaseHelper
     {
         private string DbName;
-        private bool Production;
+        private bool IsProduction;
+        private string ConnectionString;
 
-        public DatabaseHelper(string dbname, bool production)
+        public DatabaseHelper(IConfiguration configuration)
         {
-            DbName = dbname;
-            Production = production;
+            this.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            var csBuilder = new NpgsqlConnectionStringBuilder(ConnectionString);
+            if(csBuilder.Database == null)
+            {
+                throw new ArgumentNullException("No name in database field of connection string");
+            }
+            this.DbName = csBuilder.Database;
         }
 
+        //public DatabaseHelper(string dbname, bool production)
+        //{
+        //    DbName = dbname;
+        //    IsProduction = production;
+        //}
+
+        //TODO: we should look at putting these in a config class or something
         internal IDbConnection GetConnection(string DbName)
         {
-            if (Production)
-            {
-                return new NpgsqlConnection($"Server=riverfuzz-postgres.postgres.database.azure.com;Database={DbName};Port=5432;User Id=postgres@riverfuzz-postgres;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
-            }
-            else
-            {
-                return new NpgsqlConnection($"Server=localhost;Database={DbName};Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
-            }
+            //return IsProduction
+            //    ? new NpgsqlConnection($"Server=riverfuzz-postgres.postgres.database.azure.com;Database={DbName};Port=5432;User Id=postgres@riverfuzz-postgres;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;")
+            //    : new NpgsqlConnection($"Server=db;Database={DbName};Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
+            var builder = new NpgsqlConnectionStringBuilder(this.ConnectionString);
+            builder.Database = DbName;
+
+            return new NpgsqlConnection(builder.ConnectionString);
         }
 
         internal override IDbConnection GetConnection()
         {
             return GetConnection(DbName);
+        }
+        
+        public void CreateIfNotExists()
+        {
+            bool exists = false;
+            int tableCount = 0;
+
+            using(var masterConnection = GetConnection("postgres"))
+            using(var appDbConnection = GetConnection())
+            {
+                string dbExistsQuery = $@"SELECT exists(
+                                    SELECT datname FROM pg_database
+                                    WHERE datname = '{this.DbName}')";
+
+                //Have to check tables too since it creates an empty db if you log in as it
+                string tableCountQuery = @"SELECT count(*)
+                                    FROM
+	                                    pg_catalog.pg_tables
+                                    WHERE
+	                                    schemaname != 'pg_catalog'
+                                    AND schemaname != 'information_schema'";
+                exists = masterConnection.ExecuteScalar<bool>(dbExistsQuery);
+                tableCount = appDbConnection.ExecuteScalar<int>(tableCountQuery);
+            }
+
+            if(!exists || tableCount == 0 )
+            {
+                this.DeleteDatabase();
+                this.CreateDatabase();
+            }
         }
 
         public void CreateDatabase()

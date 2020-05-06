@@ -1,0 +1,37 @@
+version: '3'
+services:
+  db:
+    image: postgres:12.1
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=riverfuzz
+      - POSTGRES_PASSWORD=3r!T8*Qb8YNFlG8Eb8u
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+
+  juice-shop:
+    image: bkimminich/juice-shop:v9.3.1
+    ports:
+      - "80:3000"
+
+  web-launcher:
+    image: weblauncher:dev
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+      - "4431:443"
+
+  web-view:
+    image: webview:dev
+    depends_on:
+      - db
+      - web-launcher
+    ports:
+      - "8080:80"
+      - "4430:443"
+    
+
+volumes:
+  postgres:

@@ -26,7 +26,11 @@ namespace CaptureParse.Loaders
 
             foreach (int i in ids)
             {
-                endpoints.Add(await LoadSingleEndpointById(i));
+                KnownEndpoint knownEndpoint = await LoadSingleEndpointById(i);
+                if(knownEndpoint != null)
+                {
+                    endpoints.Add(knownEndpoint);
+                }
             }
 
             return endpoints;
