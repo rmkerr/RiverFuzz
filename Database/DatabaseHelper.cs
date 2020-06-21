@@ -17,24 +17,15 @@ namespace Database
     public class DatabaseHelper : DatabaseCore
     {
         private string DbName;
-        private bool Production;
 
-        public DatabaseHelper(string dbname, bool production)
+        public DatabaseHelper(string dbname)
         {
             DbName = dbname;
-            Production = production;
         }
 
         internal IDbConnection GetConnection(string DbName)
         {
-            if (Production)
-            {
-                return new NpgsqlConnection($"Server=riverfuzz-postgres.postgres.database.azure.com;Database={DbName};Port=5432;User Id=postgres@riverfuzz-postgres;Password='3r!T8*Qb8YNFlG8Eb8u';Ssl Mode=Require;");
-            }
-            else
-            {
-                return new NpgsqlConnection($"Server=localhost;Database={DbName};Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
-            }
+            return new NpgsqlConnection($"Server=localhost;Database={DbName};Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
         }
 
         internal override IDbConnection GetConnection()
