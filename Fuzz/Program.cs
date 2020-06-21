@@ -20,8 +20,6 @@ namespace Fuzz
 {
     public class Program
     {
-        static bool production = false;
-
         static async Task Main(string[] args)
         {
             string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
@@ -33,7 +31,7 @@ namespace Fuzz
         public static async Task Fuzz(JObject config)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
+            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz");
             if (config.Value<bool?>("ResetDatabase") ?? false)
             {
                 databaseHelper.DeleteDatabase();
