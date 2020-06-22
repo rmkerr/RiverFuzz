@@ -33,15 +33,8 @@ namespace Database
             return GetConnection(DbName);
         }
 
-        public void CreateDatabase()
+        public void InitializeDatabase()
         {
-
-            using (var connection = GetConnection("postgres"))
-            {
-                //CREATE DATABASE riverfuzz;
-                connection.Execute($"CREATE DATABASE {DbName};", null, null, 1000);
-            }
-
             using (var connection = GetConnection())
             {
                 connection.Open();
@@ -150,18 +143,6 @@ namespace Database
                         dictionary_id       INTEGER     NOT NULL,
                         content             TEXT        NOT NULL
                     );");
-            }
-        }
-
-        public void DeleteDatabase()
-        {
-            using (var connection = GetConnection("postgres"))
-            {
-                connection.Open();
-
-                // Executed sequences
-                connection.Execute(
-                    @"DROP DATABASE IF EXISTS riverfuzz;", null, null, 1000);
             }
         }
     }

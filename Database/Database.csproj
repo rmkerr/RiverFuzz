@@ -19,4 +19,8 @@
     <ProjectReference Include="..\HttpTokenize\HttpTokenize.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SqlScripts\" />
+  </ItemGroup>
+
 </Project>

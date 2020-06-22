@@ -33,11 +33,10 @@ namespace Fuzz
         public static async Task Fuzz(JObject config)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz", production);
+            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz");
             if (config.Value<bool?>("ResetDatabase") ?? false)
             {
-                databaseHelper.DeleteDatabase();
-                databaseHelper.CreateDatabase();
+                databaseHelper.InitializeDatabase();
             }
 
             // Set up HttpClient.
