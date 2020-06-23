@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using CaptureParse.Parsers;
 using CaptureParse.Loaders;
+using Database.Repositories;
 
 namespace Fuzz
 {
@@ -33,7 +34,8 @@ namespace Fuzz
         public static async Task Fuzz(JObject config)
         {
             // Set up a database connection to store the results.
-            DatabaseHelper databaseHelper = new DatabaseHelper("riverfuzz");
+            // TODO: Move this hardcoded connection string to a config file.
+            FuzzerRepository databaseHelper = new FuzzerRepository("Server=db;Database=riverfuzz;Port=5432;User Id=postgres;Password='3r!T8*Qb8YNFlG8Eb8u';");
             if (config.Value<bool?>("ResetDatabase") ?? false)
             {
                 databaseHelper.InitializeDatabase();
