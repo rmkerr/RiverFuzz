@@ -36,7 +36,7 @@ namespace WebView.Controllers
 
             FuzzerParametersViewModel model = new FuzzerParametersViewModel();
             model.ExecutionTime = 2;
-            model.Target = @"http://riverfuzzjuiceshop.azurewebsites.net";
+            model.Target = @"http://host.docker.internal";
 
             foreach (KnownEndpointEntity requestEntity in endpoints)
             {
