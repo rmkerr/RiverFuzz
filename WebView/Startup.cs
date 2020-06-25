@@ -27,7 +27,7 @@ namespace WebView
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IFuzzerRepository, FuzzerRepository>();
+            services.AddTransient<IFuzzerRepository>(s => new FuzzerRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             //TODO: add logging to classes to make use of DI
             //tODO: may want to use the fancy "register all of type" extension later

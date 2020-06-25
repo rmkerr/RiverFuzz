@@ -1,5 +1,24 @@
-version: '3'
+version: '3.4'
+
 services:
+  webview:
+    image: ${DOCKER_REGISTRY-}webview
+    build:
+      context: .
+      dockerfile: WebView/Dockerfile
+    networks:
+      - database
+    depends_on:
+      - db
+  weblauncher:
+    image: ${DOCKER_REGISTRY-}weblauncher
+    build:
+      context: .
+      dockerfile: WebLauncher/Dockerfile
+    networks:
+      - database
+    depends_on:
+      - db
   db:
     image: postgres:12.1
     ports:
@@ -9,11 +28,12 @@ services:
       - POSTGRES_PASSWORD=3r!T8*Qb8YNFlG8Eb8u
     volumes:
       - "postgres:/var/lib/postgresql/data"
-
-  juice-shop:
-    image: bkimminich/juice-shop:v9.3.1
-    ports:
-      - "80:3000"
+    networks:
+      - database
 
 volumes:
   postgres:
+
+networks:
+  database:
+    driver: bridge

@@ -8,6 +8,9 @@ namespace Database.Repositories
 {
     public interface IFuzzerRepository
     {
+        // Database Creation
+        void InitializeDatabase();
+
         // Endpoints
         Task<KnownEndpointEntity> GetEndpointById(int id);
         Task<List<KnownEndpointEntity>> GetAllEndpoints();

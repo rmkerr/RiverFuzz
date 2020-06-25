@@ -15,16 +15,16 @@ namespace Database.Repositories
 {
     public class FuzzerRepository : DatabaseCore, IFuzzerRepository
     {
-        private readonly IConfiguration config_;
+        private readonly string dbConnection;
 
-        public FuzzerRepository(IConfiguration config)
+        public FuzzerRepository(string connectionString)
         {
-            config_ = config;
+            dbConnection = connectionString;
         }
 
         internal override IDbConnection GetConnection()
         {
-            return new NpgsqlConnection(config_.GetConnectionString("DefaultConnection"));
+            return new NpgsqlConnection(dbConnection);
         }
     }
 }

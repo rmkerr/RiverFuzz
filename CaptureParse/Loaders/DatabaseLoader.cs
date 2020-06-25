@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.Entities;
+using Database.Repositories;
 using HttpTokenize;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ namespace CaptureParse.Loaders
 {
     public class DatabaseLoader
     {
-        DatabaseHelper DbHelper;
+        IFuzzerRepository DbHelper;
         Uri Host;
-        public DatabaseLoader(DatabaseHelper dbHelper, string host)
+        public DatabaseLoader(IFuzzerRepository dbHelper, string host)
         {
             DbHelper = dbHelper;
             Host = new Uri(host);
