@@ -21,8 +21,6 @@ namespace Fuzz
 {
     public class Program
     {
-        static bool production = false;
-
         static async Task Main(string[] args)
         {
             string fuzzerConfig = System.IO.File.ReadAllText(@"fuzz.json");
