@@ -2,19 +2,13 @@ version: '3.4'
 
 services:
   webview:
-    image: ${DOCKER_REGISTRY-}webview
-    build:
-      context: .
-      dockerfile: WebView/Dockerfile
+    image: rmkerr/webview
     networks:
       - database
     depends_on:
       - db
   weblauncher:
-    image: ${DOCKER_REGISTRY-}weblauncher
-    build:
-      context: .
-      dockerfile: WebLauncher/Dockerfile
+    image: rmkerr/weblauncher
     networks:
       - database
     depends_on:

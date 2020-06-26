@@ -2,6 +2,10 @@ version: '3.4'
 
 services:
   webview:
+    image: ${DOCKER_REGISTRY-}webview
+    build:
+      context: .
+      dockerfile: WebView/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -11,3 +15,8 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  weblauncher:
+    image: ${DOCKER_REGISTRY-}weblauncher
+    build:
+      context: .
+      dockerfile: WebLauncher/Dockerfile
