@@ -70,6 +70,13 @@ namespace WebView
                     name: "default",
                     pattern: "{controller=FuzzerRun}/{action=Summary}");
             });
+
+            // TODO: Figure out where I should actually initialize the database.
+            var database = new FuzzerRepository(Configuration.GetConnectionString("DefaultConnection"));
+            if (!database.DatabaseInitialized())
+            {
+                database.InitializeDatabase();
+            }
         }
     }
 }

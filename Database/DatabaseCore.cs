@@ -549,6 +549,18 @@ namespace Database
             }
         }
 
+        public bool DatabaseInitialized()
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                return connection.ExecuteScalar<bool>(@"SELECT EXISTS (
+                   SELECT FROM information_schema.tables
+                   WHERE  table_name = 'db_version'
+                );");
+            }
+        }
+
         public void InitializeDatabase()
         {
             using (var connection = GetConnection())
@@ -659,6 +671,16 @@ namespace Database
                         dictionary_id       INTEGER     NOT NULL,
                         content             TEXT        NOT NULL
                     );");
+
+                // Database version.
+                connection.Execute(
+                    @"CREATE TABLE db_version (
+                        version             TEXT      PRIMARY KEY
+                    );");
+
+                connection.Execute(
+                    @"INSERT INTO db_version VALUES (@Version);",
+                        new { Version = GetType().Assembly.GetName().Version.ToString() });
             }
         }
     }
