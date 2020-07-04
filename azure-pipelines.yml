@@ -53,3 +53,11 @@ steps:
     additionalDockerComposeFiles: docker-compose.override.yml
     action: 'Push services'
     includeLatestTag: true
+
+- task: ServiceFabricComposeDeploy@0
+  inputs:
+    clusterConnection: 'serviceFabricDemo'
+    composeFilePath: '**/docker-compose.yml'
+    applicationName: 'fabric:/AperioDemo'
+    registryCredentials: 'ContainerRegistryEndpoint'
+    dockerRegistryConnection: 'dockerHubService'
