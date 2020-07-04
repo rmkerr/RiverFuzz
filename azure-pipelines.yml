@@ -16,6 +16,7 @@ steps:
     packageType: runtime
 
 - task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
     projects: '**/*.csproj'
     command: 'restore'
@@ -26,11 +27,6 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   inputs:
