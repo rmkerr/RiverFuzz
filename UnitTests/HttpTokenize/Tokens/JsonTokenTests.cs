@@ -20,9 +20,9 @@ namespace UnitTests
 
             // On linux, json.net uses LF instead of CRLF. This is probably the correct behavior,
             // but we need to normalize for the tests.
-            string content = request.Content.Replace("\n", "\r\n");
+            string content = request.Content.Replace("\r\n", "\n");
 
-            Assert.Equal("{\r\n  \"testname\": \"newvalue\"\r\n}", request.Content);
+            Assert.Equal("{\n  \"testname\": \"newvalue\"\n}", content);
         }
 
         [Fact]
