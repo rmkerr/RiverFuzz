@@ -41,6 +41,7 @@ steps:
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: 'dockerHubService'
     dockerComposeFile: '**/docker-compose.yml'
+    additionalDockerComposeFiles: docker-compose.override.yml
     action: 'Build services'
     includeLatestTag: true
 
@@ -49,5 +50,6 @@ steps:
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: 'dockerHubService'
     dockerComposeFile: '**/docker-compose.yml'
+    additionalDockerComposeFiles: docker-compose.override.yml
     action: 'Push services'
     includeLatestTag: true
