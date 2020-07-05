@@ -37,6 +37,7 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DockerCompose@0
+  displayName: Docker Compose Build
   inputs:
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: 'dockerHubService'
@@ -46,6 +47,7 @@ steps:
     includeLatestTag: true
 
 - task: DockerCompose@0
+  displayName: Push to Docker Hub
   inputs:
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: 'dockerHubService'
