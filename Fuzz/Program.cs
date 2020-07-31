@@ -72,6 +72,12 @@ namespace Fuzz
             List<string> dictionary = await databaseHelper.GetAllDictionaryEntries();
             generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
 
+            Dictionary<string, int> generatorStats = new Dictionary<string, int>();
+            foreach (IGenerator type in generators)
+            {
+                generatorStats.Add(type.GetType().Name, 0);
+            }
+
             // Parse the list of endpoints we should include in this run, then load them.
             DatabaseLoader databaseParse = new DatabaseLoader(databaseHelper, config.Value<string>("Target"));
             List<int> endpointIds = config["TargetEndpoints"].Select(x => (int)x).ToList();
@@ -149,7 +155,10 @@ namespace Fuzz
                             await candidate.Execute(client, responseTokenizers, startingData);
 
                             // Add a response to the population. If it looks interesting, we will look at it later.
-                            population.AddResponse(candidate);
+                            if (population.AddResponse(candidate))
+                            {
+                                generatorStats[generator.GetType().Name] += 1;
+                            }
 
                             List<Response>? responses = candidate.GetResponses();
                             if (responses != null)
@@ -188,6 +197,9 @@ namespace Fuzz
 
             runInfo.end_time = DateTime.Now;
             databaseHelper.UpdateFuzzerRunEndTime(runInfo);
+
+            Console.WriteLine("Generator stats:");
+            Console.WriteLine(string.Join(Environment.NewLine, generatorStats));
 
             foreach (RequestSequence sequence in population.Population)
             {

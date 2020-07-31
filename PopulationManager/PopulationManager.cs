@@ -34,10 +34,10 @@ namespace Population
             Bucketers.Add(endpoint.Request.OriginalEndpoint, bucketer);
         }
 
-        public void AddResponse(RequestSequence sequence)
+        public bool AddResponse(RequestSequence sequence)
         {
             Request finalRequest = sequence.Get(sequence.StageCount() - 1).Request;
-            Bucketers[finalRequest.OriginalEndpoint].Add(sequence);
+            return Bucketers[finalRequest.OriginalEndpoint].Add(sequence);
         }
 
         public void MinimizePopulation()
