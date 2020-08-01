@@ -96,6 +96,8 @@ namespace HttpTokenize
             Responses = new List<Response>();
             Results = new List<TokenCollection>();
 
+            Results.Add(new TokenCollection());
+
             // For each request.
             for (int i = 0; i < Stages.Count; ++i)
             {
