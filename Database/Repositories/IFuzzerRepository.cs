@@ -56,5 +56,6 @@ namespace Database.Repositories
 
         // Dictionaries
         void AddDictionary(string name, List<string> contents);
+        Task<List<string>> GetAllDictionaryEntries();
     }
 }

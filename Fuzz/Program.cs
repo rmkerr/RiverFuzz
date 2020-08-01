@@ -16,6 +16,7 @@ using System.Linq;
 using CaptureParse.Parsers;
 using CaptureParse.Loaders;
 using Database.Repositories;
+using System.Net.NetworkInformation;
 
 namespace Fuzz
 {
@@ -47,18 +48,13 @@ namespace Fuzz
             client.Timeout = TimeSpan.FromMilliseconds(1000);
 
             // Load all response tokenizers.
-            List<IResponseTokenizer> responseTokenizers = LoadResponseTokenizers();
+            List<IResponseTokenizer> responseTokenizers = await LoadResponseTokenizers(databaseHelper);
 
             // Load all request tokenizers.
-            List<IRequestTokenizer> requestTokenizers = LoadRequestTokenizers();
+            List<IRequestTokenizer> requestTokenizers = await LoadRequestTokenizers(databaseHelper);
 
-            // Generators take a sequence and modify it.
-            List<IGenerator> generators = new List<IGenerator>();
-            generators.Add(new BestKnownMatchGenerator());
-            generators.Add(new RemoveTokenGenerator(5));
-
-            List<string> dictionary = await databaseHelper.GetAllDictionaryEntries();
-            generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
+            // Generators take a sequence and modify it. Load and configure them.
+            List<IGenerator> generators = await LoadGenerators(databaseHelper);
 
             Dictionary<string, int> generatorStats = new Dictionary<string, int>();
             foreach (IGenerator type in generators)
@@ -198,7 +194,9 @@ namespace Fuzz
             }
         }
 
-        public static List<IRequestTokenizer> LoadRequestTokenizers()
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public static async Task<List<IRequestTokenizer>> LoadRequestTokenizers(IFuzzerRepository databaseHelper)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             // Load all request tokenizers.
             List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
@@ -211,7 +209,9 @@ namespace Fuzz
             return requestTokenizers;
         }
 
-        public static List<IResponseTokenizer> LoadResponseTokenizers()
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public static async Task<List<IResponseTokenizer>> LoadResponseTokenizers(IFuzzerRepository databaseHelper)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
             responseTokenizers.Add(new JsonTokenizer());
@@ -219,6 +219,19 @@ namespace Fuzz
             responseTokenizers.Add(new HtmlFormTokenizer());
             responseTokenizers.Add(new CookieTokenizer());
             return responseTokenizers;
+        }
+
+        private static async Task<List<IGenerator>> LoadGenerators(IFuzzerRepository databaseHelper)
+        {
+            // Generators take a sequence and modify it.
+            List<IGenerator> generators = new List<IGenerator>();
+            generators.Add(new BestKnownMatchGenerator());
+            generators.Add(new RemoveTokenGenerator(5));
+
+            List<string> dictionary = await databaseHelper.GetAllDictionaryEntries();
+            generators.Add(new DictionarySubstitutionGenerator(dictionary, 10));
+
+            return generators;
         }
 
     }

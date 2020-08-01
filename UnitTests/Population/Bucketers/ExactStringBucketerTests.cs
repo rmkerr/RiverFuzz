@@ -43,7 +43,7 @@ namespace UnitTests.Population.Bucketers
             RequestSequence sequence = new RequestSequence();
             
             // Force creation of the results list by 'executing' the empty sequence.
-            sequence.Execute(null, null, null);
+            sequence.Execute(null, null);
 
             for (int i = 0; i < numStages; ++i)
             {
