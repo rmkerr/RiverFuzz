@@ -94,7 +94,7 @@ namespace ProjectSpecific
 
         public async Task Reset(HttpClient client)
         {
-            await ResetSequence.Execute(client, ResponseTokenizers, new TokenCollection());
+            await ResetSequence.Execute(client, ResponseTokenizers);
         }
     }
 }

@@ -47,22 +47,10 @@ namespace Fuzz
             client.Timeout = TimeSpan.FromMilliseconds(1000);
 
             // Load all response tokenizers.
-            List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
-            responseTokenizers.Add(new JsonTokenizer());
-            responseTokenizers.Add(new BearerTokenizer());
-            responseTokenizers.Add(new HtmlFormTokenizer());
-            responseTokenizers.Add(new CookieTokenizer());
+            List<IResponseTokenizer> responseTokenizers = LoadResponseTokenizers();
 
             // Load all request tokenizers.
-            List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
-            requestTokenizers.Add(new JsonTokenizer());
-            requestTokenizers.Add(new QueryTokenizer());
-            requestTokenizers.Add(new BearerTokenizer());
-            requestTokenizers.Add(new KnownUrlArgumentTokenizer());
-            requestTokenizers.Add(new HtmlFormTokenizer());
-            requestTokenizers.Add(new CookieTokenizer());
-
-            TokenCollection startingData = new TokenCollection();
+            List<IRequestTokenizer> requestTokenizers = LoadRequestTokenizers();
 
             // Generators take a sequence and modify it.
             List<IGenerator> generators = new List<IGenerator>();
@@ -135,7 +123,6 @@ namespace Fuzz
                     if (population.Population[seed].GetResults() == null)
                     {
                         seedTokens = new List<TokenCollection>();
-                        seedTokens.Add(new TokenCollection(startingData));
                     }
                     else
                     {
@@ -152,7 +139,7 @@ namespace Fuzz
                             candidateStopwatch.Start();
 
                             // Execute the request sequence.
-                            await candidate.Execute(client, responseTokenizers, startingData);
+                            await candidate.Execute(client, responseTokenizers);
 
                             // Add a response to the population. If it looks interesting, we will look at it later.
                             if (population.AddResponse(candidate))
@@ -210,5 +197,29 @@ namespace Fuzz
                 }     
             }
         }
+
+        public static List<IRequestTokenizer> LoadRequestTokenizers()
+        {
+            // Load all request tokenizers.
+            List<IRequestTokenizer> requestTokenizers = new List<IRequestTokenizer>();
+            requestTokenizers.Add(new JsonTokenizer());
+            requestTokenizers.Add(new QueryTokenizer());
+            requestTokenizers.Add(new BearerTokenizer());
+            requestTokenizers.Add(new KnownUrlArgumentTokenizer());
+            requestTokenizers.Add(new HtmlFormTokenizer());
+            requestTokenizers.Add(new CookieTokenizer());
+            return requestTokenizers;
+        }
+
+        public static List<IResponseTokenizer> LoadResponseTokenizers()
+        {
+            List<IResponseTokenizer> responseTokenizers = new List<IResponseTokenizer>();
+            responseTokenizers.Add(new JsonTokenizer());
+            responseTokenizers.Add(new BearerTokenizer());
+            responseTokenizers.Add(new HtmlFormTokenizer());
+            responseTokenizers.Add(new CookieTokenizer());
+            return responseTokenizers;
+        }
+
     }
 }
