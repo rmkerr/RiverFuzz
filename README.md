@@ -2,7 +2,7 @@
 
 Core fuzzing code is located in `/Fuzz/Program.cs`.
 
-The program has a bunch of hardcoded paths, so it probably won't work if you just install it. If you want to set it up let me know, and I can set up some sort of resources config.
+The easiest way to run this project is to use docker compose. It will build the project and run postgres.
 
 ## Dependencies:
  - PosgreSQL 11
